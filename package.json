@@ -12,14 +12,36 @@
     "develop": "gatsby develop",
     "start": "gatsby develop",
     "build": "gatsby build",
+    "create": "gatsby-post-gen",
     "serve": "gatsby serve",
     "clean": "gatsby clean"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.17",
+    "@heroicons/react": "^2.0.18",
+    "@material-tailwind/react": "^2.1.5",
+    "@mdx-js/react": "^2.3.0",
     "bootstrap": "^5.3.1",
     "gatsby": "^5.11.0",
+    "gatsby-plugin-gatsby-cloud": "^5.12.2",
+    "gatsby-plugin-image": "^3.13.0",
+    "gatsby-plugin-mdx": "^5.12.3",
+    "gatsby-plugin-page-creator": "^5.12.3",
+    "gatsby-plugin-sharp": "^5.13.0",
+    "gatsby-plugin-typography": "^5.12.0",
+    "gatsby-source-filesystem": "^5.13.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.8.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-icons": "^4.12.0",
+    "react-typography": "^0.16.23",
+    "styled-components": "^6.1.4",
+    "tw-elements-react": "^1.0.0-alpha2",
+    "typography": "^0.16.24",
+    "typography-theme-fairy-gates": "^0.16.19"
+  },
+  "devDependencies": {
+    "gatsby-plugin-postcss": "^6.12.0",
+    "gatsby-post-gen": "^1.0.0"
   }
 }
