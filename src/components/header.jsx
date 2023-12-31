@@ -21,6 +21,7 @@ font-size: 20px;
 background: powderblue;
 border-radius: 1rem;
 transition: 0.5s;
+flex: 1 1 0;
 &:hover {
   background: cornflowerblue;
   color: white;
@@ -31,10 +32,24 @@ transition: 0.5s;
 
 
 
+
+let ThreePartBox = styled.div`
+flex: 1 1 0;
+`
+
+
+let ThreePartBox3 = styled.div`
+flex: 2 1 0;
+display : flex;
+
+`
+
+
+
 const header = () => {
 
 
-  const [linkBox, setLinkBox] = useState([{title : 'jaejung Blog', path : '/'},
+  const [linkBox, setLinkBox] = useState([
   {title : 'Programming', path : '/blog'},
    {title : 'Experience', path : '/blog'},
    {title : 'Tag', path : '/tag'}  ,
@@ -45,7 +60,9 @@ const header = () => {
     
             <HeaderBox>
             <NavBox>
-            {linkBox.map((val, idx)=>{
+              <ThreePartBox> <NavTitle><Link to='/'>jaejung Blog</Link></NavTitle></ThreePartBox>
+             
+             <ThreePartBox3>{linkBox.map((val, idx)=>{
           return (
             <NavTitle >
             <Link to={val.path}>
@@ -53,11 +70,8 @@ const header = () => {
             </Link>
           </NavTitle>
           )
-        })}
-      
-      
-       
-     
+        })}</ThreePartBox3>
+             <ThreePartBox> <input></input><button>검색</button></ThreePartBox>
       </NavBox>
             </HeaderBox>
      
