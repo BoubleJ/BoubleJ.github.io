@@ -1,7 +1,13 @@
 import * as React from "react";
 import { useStaticQuery, graphql } from "gatsby";
+import styled from "styled-components";
 
-import Header from "./header";
+import Header from 'components/header'
+
+let Main = styled.main`
+padding: 0 200px;
+
+`;
 
 const layout = ({ pageTitle, children }) => {
   const data = useStaticQuery(graphql`
@@ -17,10 +23,10 @@ const layout = ({ pageTitle, children }) => {
     <>
       <Header />
 
-      <main>
+      <Main>
         <h1>{pageTitle}</h1>
         {children}
-      </main>
+      </Main>
     </>
   );
 };
