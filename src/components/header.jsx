@@ -29,12 +29,28 @@ flex: 1 1 0;
 }
 `
 
+let NavTitle2 = styled.div`
+padding: 1rem;
+font-size: 20px;
+background: powderblue;
+border-radius: 1rem;
+transition: 0.5s;
+height : 50px;
+flex: 1 1 0;
+&:hover {
+  background: cornflowerblue;
+  color: white;
+  transition: 0.5s;
+}
+
+`
 
 
 
 
 let ThreePartBox = styled.div`
 flex: 1 1 0;
+height : 100%;
 `
 
 
@@ -60,7 +76,7 @@ const header = () => {
     
             <HeaderBox>
             <NavBox>
-              <ThreePartBox> <NavTitle><Link to='/'>jaejung Blog</Link></NavTitle></ThreePartBox>
+              <ThreePartBox> <NavTitle2><Link to='/'>jaejung Blog</Link></NavTitle2></ThreePartBox>
              
              <ThreePartBox3>{linkBox.map((val, idx)=>{
           return (
