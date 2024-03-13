@@ -1,4 +1,5 @@
 import React, { createRef, FunctionComponent, useEffect } from "react";
+import styled from '@emotion/styled'
 
 const UtterancesWrapper = styled.div`
   @media (max-width: 768px) {

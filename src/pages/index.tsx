@@ -4,7 +4,7 @@ import GlobalStyle from "components/Common/GlobalStyle";
 import CategoryList, { CategoryListProps } from "components/Main/CategoryList";
 import Introduction from "components/Main/Introduction";
 import Footer from "components/Common/Footer";
-import PostList from "components/Main/PostList";
+import PostList, { PostType } from "components/Main/PostList";
 import Template from 'components/Common/Template'
 import { graphql } from 'gatsby'
 import { PostListItemType } from 'types/PostItem.types'
