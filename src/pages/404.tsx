@@ -1,49 +1,57 @@
-import * as React from "react"
-import { Link } from "gatsby"
+import React, { FunctionComponent } from "react";
+import styled from "@emotion/styled";
+import { Link } from "gatsby";
+import GlobalStyle from "components/Common/GlobalStyle";
 
-const pageStyles = {
-  color: "#232129",
-  padding: "96px",
-  fontFamily: "-apple-system, Roboto, sans-serif, serif",
-}
-const headingStyles = {
-  marginTop: 0,
-  marginBottom: 64,
-  maxWidth: 320,
-}
+const NotFoundPageWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+`;
 
-const paragraphStyles = {
-  marginBottom: 48,
-}
-const codeStyles = {
-  color: "#8A6534",
-  padding: 4,
-  backgroundColor: "#FFF4DB",
-  fontSize: "1.25rem",
-  borderRadius: 4,
-}
+const NotFoundText = styled.div`
+  font-size: 150px;
+  font-weight: 800;
 
-const NotFoundPage = () => {
+  @media (max-width: 768px) {
+    font-size: 100px;
+  }
+`;
+
+const NotFoundDescription = styled.div`
+  font-size: 25px;
+  text-align: center;
+  line-height: 1.3;
+
+  @media (max-width: 768px) {
+    font-size: 20px;
+  }
+`;
+
+const GoToMainButton = styled(Link)`
+  margin-top: 30px;
+  font-size: 20px;
+  text-decoration: underline;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+const NotFoundPage: FunctionComponent = function () {
   return (
-    <main style={pageStyles}>
-      <h1 style={headingStyles}>Page not found</h1>
-      <p style={paragraphStyles}>
-        Sorry 😔, we couldn’t find what you were looking for.
-        <br />
-        {process.env.NODE_ENV === "development" ? (
-          <>
-            <br />
-            Try creating a page in <code style={codeStyles}>src/pages/</code>.
-            <br />
-          </>
-        ) : null}
-        <br />
-        <Link to="/">Go home</Link>.
-      </p>
-    </main>
-  )
-}
+    <NotFoundPageWrapper>
+      <GlobalStyle />
+      <NotFoundText>404</NotFoundText>
+      <NotFoundDescription>
+        찾을 수 없는 페이지입니다. <br />
+        다른 콘텐츠를 보러 가보시겠어요?
+      </NotFoundDescription>
+      <GoToMainButton to="/">메인으로</GoToMainButton>
+    </NotFoundPageWrapper>
+  );
+};
 
-export default NotFoundPage
-
-export const Head = () => <title>Not found</title>
+export default NotFoundPage;
