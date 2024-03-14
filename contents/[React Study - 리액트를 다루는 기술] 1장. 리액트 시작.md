@@ -1,7 +1,7 @@
 ---
 date: "2024-01-17"
 title: "[React Study - 리액트를 다루는 기술] 1장. 리액트 시작"
-categories: ["리액트 스터디"]
+categories: ["ReactStudy"]
 summary: "자바스크립트 프레임워크 - Vue.js, electron, React Native, Angular 등"
 thumbnail: "./test.png"
 ---

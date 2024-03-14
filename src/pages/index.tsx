@@ -2,38 +2,35 @@ import React, { FunctionComponent, useMemo } from "react";
 import CategoryList, { CategoryListProps } from "components/Main/CategoryList";
 import Introduction from "components/Main/Introduction";
 import PostList, { PostType } from "components/Main/PostList";
-import Template from 'components/Common/Template'
-import { graphql } from 'gatsby'
-import { PostListItemType } from 'types/PostItem.types'
-import { IGatsbyImageData } from 'gatsby-plugin-image'
-import queryString, { ParsedQuery } from 'query-string'
+import Template from "components/Common/Template";
+import { graphql } from "gatsby";
+import { PostListItemType } from "types/PostItem.types";
+import { IGatsbyImageData } from "gatsby-plugin-image";
+import queryString, { ParsedQuery } from "query-string";
 
 type IndexPageProps = {
   location: {
-    search: string
-  }
+    search: string;
+  };
   data: {
     site: {
       siteMetadata: {
-        title: string
-        description: string
-        siteUrl: string
-      }
-    }
+        title: string;
+        description: string;
+        siteUrl: string;
+      };
+    };
     allMarkdownRemark: {
-      edges: PostListItemType[]
-    }
+      edges: PostListItemType[];
+    };
     file: {
       childImageSharp: {
-        gatsbyImageData: IGatsbyImageData
-      }
-      publicURL: string
-    }
-  }
-}
-
-
-
+        gatsbyImageData: IGatsbyImageData;
+      };
+      publicURL: string;
+    };
+  };
+};
 
 const IndexPage: FunctionComponent<IndexPageProps> = function ({
   location: { search },
@@ -48,45 +45,46 @@ const IndexPage: FunctionComponent<IndexPageProps> = function ({
     },
   },
 }) {
-  const parsed: ParsedQuery<string> = queryString.parse(search)
+  const parsed: ParsedQuery<string> = queryString.parse(search);
   const selectedCategory: string =
-    typeof parsed.category !== 'string' || !parsed.category
-      ? 'All'
-      : parsed.category
+    typeof parsed.category !== "string" || !parsed.category
+      ? "All"
+      : parsed.category;
 
   type NewType = CategoryListProps;
 
-      const categoryList = useMemo(
-        () =>
-          edges.reduce(
-            (
-              list: NewType['categoryList'],
-              {
-                node: {
-                  frontmatter: { categories },
-                },
-              }: PostType,
-            ) => {
-              categories.forEach(category => {
-                if (list[category] === undefined) list[category] = 1;
-                else list[category]++;
-              });
-    
-              list['All']++;
-    
-              return list;
+  const categoryList = useMemo(
+    () =>
+      edges.reduce(
+        (
+          list: NewType["categoryList"],
+          {
+            node: {
+              frontmatter: { categories },
             },
-            { All: 0 },
-          ),
-        [],
-      )
+          }: PostType
+        ) => {
+          categories.forEach((category) => {
+            if (list[category] === undefined) list[category] = 1;
+            else list[category]++;
+          });
+
+          list["All"]++;
+
+          return list;
+        },
+        { All: 0 }
+      ),
+    []
+  );
 
   return (
     <Template
-    title={title}
-    description={description}
-    url={siteUrl}
-    image={publicURL}>
+      title={title}
+      description={description}
+      url={siteUrl}
+      image={publicURL}
+    >
       <Introduction profileImage={gatsbyImageData} />
       <CategoryList
         selectedCategory={selectedCategory}

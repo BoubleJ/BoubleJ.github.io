@@ -13,14 +13,14 @@ const FooterWrapper = styled.footer`
   @media (max-width: 768px) {
     font-size: 13px;
   }
-
 `;
 
 const Footer: FunctionComponent = function () {
   return (
     <FooterWrapper>
       Thank You for Visiting My Blog, Have a Good Day 😆
-      <br />© 2021 Developer Hyun, Powered By Gatsby.
+      <br />
+      안녕하세요 블로그임니당
     </FooterWrapper>
   );
 };

@@ -2,6 +2,7 @@ import React, { FunctionComponent } from 'react'
 import styled from '@emotion/styled'
 import ProfileImage from 'components/Main/ProfileImage'
 import { IGatsbyImageData } from 'gatsby-plugin-image'
+import Header from 'components/Main/header'
 
 
 type IntroductionProps = {
@@ -53,12 +54,13 @@ const Introduction: FunctionComponent<IntroductionProps> = function ({
 }) {
   return (
     <Background>
+      <Header/>
       <Wrapper>
         <ProfileImage profileImage={profileImage} />
 
         <div>
           <SubTitle>Nice to Meet You,</SubTitle>
-          <Title>I'm Junior Frontend Developer Hyun.</Title>
+          <Title>프론트엔드 개발자 블로그입니다.</Title>
         </div>
       </Wrapper>
     </Background>

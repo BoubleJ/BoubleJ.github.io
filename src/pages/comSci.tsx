@@ -56,6 +56,8 @@ const InfoPage: FunctionComponent<InfoPageProps> = function ({
       <div css={TextStyle}>{title}</div>
       <Text1 disable={true}>{description}</Text1>
       <Text2 disable={true}>{author}</Text2>
+      <p>하 진짜 개열받는다 아니 params로 쓸 수없는 단어가 있나봐... 도대체 왜 라우팅이 안되는지 도무지 이해가 안간다</p>
+      <p>여긴cs 이론 작성하는 곳 http 나 이런저런 aws 나 이런거?</p>
     </div>
   );
 };
