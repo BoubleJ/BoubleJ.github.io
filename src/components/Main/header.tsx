@@ -20,8 +20,8 @@ const LinkItem = styled(Link)`
 const linkArray = [
   { title: "home", path: `/` },
   { title: "Project", path: `/project` },
-  { title: "Language", path: `/stack` },
-  { title: "ComputerScience", path: `/comSci` },
+  { title: "Language", path: `/language` },
+  { title: "ComputerScience", path: `/computerScience` },
   { title: "Tag", path: `/tag` },
   { title: "About", path: `/about` },
 ];
