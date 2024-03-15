@@ -2,7 +2,7 @@ import React, { FunctionComponent } from 'react'
 import styled from '@emotion/styled'
 import ProfileImage from 'components/Main/ProfileImage'
 import { IGatsbyImageData } from 'gatsby-plugin-image'
-import Header from 'components/Main/Header'
+import Header from 'components/Main/header'
 
 
 type IntroductionProps = {

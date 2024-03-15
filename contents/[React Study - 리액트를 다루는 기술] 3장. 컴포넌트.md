@@ -441,7 +441,7 @@ React.creatElement는 주어진 arguments를 기반으로 react element를 새�
 
   ```js
 import React from "react";
-import Header from './header'
+import Header from './Header'
   //웹팩 코드 검색 확장자가 있기 때문에 
   //파일을 import 할 때 파일 확장자를 적지않아도 됩니다. 
 
