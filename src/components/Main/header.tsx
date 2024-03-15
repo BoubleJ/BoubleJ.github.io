@@ -1,6 +1,8 @@
 import React from "react";
 import styled from "@emotion/styled";
 import { Link } from "gatsby";
+import Dropdown from 'components/Main/Dropdown'
+
 
 const LinkItemWrap = styled.div`
   width: 100%;
@@ -30,6 +32,7 @@ export default function Header() {
   return (
     <>
       <LinkItemWrap>
+      <Dropdown />
         {linkArray.map((item, idx) => {
           return (
             <LinkItem key={idx} to={item.path}>
