@@ -5,7 +5,12 @@ import MenuItem from "@mui/material/MenuItem";
 import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
 import { Link } from "gatsby";
 
-export default function MenuPopupState({ LinkArray }) {
+type ProjectLink = {
+  title: string;
+  path: string;
+};
+
+export default function MenuPopupState({ LinkArray } : {LinkArray : ProjectLink[]}) {
   return (
     <PopupState variant="popover" popupId="demo-popup-menu">
       {(popupState) => (
