@@ -7,10 +7,6 @@ categories:
     "Project",
     "Axios",
     "Feature",
-    "QueryString",
-    "Fetch",
-    "Urlparams",
-    "UsePathname",
   ]
 summary: "keyword 검색과 category 검색 시 api호출 주소가 다르다."
 thumbnail: "./image-39.png"
