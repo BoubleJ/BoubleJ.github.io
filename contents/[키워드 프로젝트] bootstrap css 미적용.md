@@ -8,7 +8,7 @@ categories:
     "React",
     "UI",
     "TroubleShooting",
-    "ReactBootStrap,
+    "ReactBootStrap",
     "CSS"
   ]
 summary: "bootstrap은 install만하면 css 스타일속성은 안가져온다."
