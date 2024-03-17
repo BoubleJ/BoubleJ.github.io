@@ -1,7 +1,7 @@
 ---
 date: "2024-02-14"
 title: "[React Study - 리액트를 다루는 기술] 9. 컴포넌트 스타일링"
-categories: ["리액트 스터디"]
+categories: ["ReactStudy", "React"]
 summary: "우리가 자주 쓰는 css 프레임워크 종류 및 장단점을 조사해봤습니다."
 thumbnail: "./test.png"
 ---

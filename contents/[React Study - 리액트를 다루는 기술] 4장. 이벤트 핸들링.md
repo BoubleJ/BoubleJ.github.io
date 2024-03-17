@@ -1,7 +1,7 @@
 ---
 date: "2024-01-24"
 title: "[React Study - 리액트를 다루는 기술] 4장. 이벤트 핸들링"
-categories: ["리액트 스터디"]
+categories: ["ReactStudy", "React"]
 summary: "4장은 리액트 이벤트 설정인데 다들 아실거라 생각되어 이벤트 핸들링의 원리를 딥다이브 해보았습니다."
 thumbnail: "./test.png"
 ---

@@ -1,7 +1,7 @@
 ---
 date: "2023-09-02"
 title: "[Gatsby 블로그 제작일지] MUI 컴포넌트를 이용한 드롭박스 구현 및 라우팅 적용"
-categories: ["Gatsby, React, Routing, MUI"]
+categories: ["Gatsby", "React", "Routing", "MUI"]
 summary: " MUI 컴포넌트를 활용해서 HEADER 드롭박스를 구현해봅시다."
 thumbnail: "./test.png"
 ---

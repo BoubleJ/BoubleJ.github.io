@@ -1,7 +1,7 @@
 ---
 date: "2024-02-28"
 title: "[React Study - 리액트를 다루는 기술] 13장. 리액트 라우터로 SPA 개발하기"
-categories: ["리액트 스터디"]
+categories: ["ReactStudy", "React"]
 summary: "다들 react router는 한번쯤 사용해보셨을텐데요. 전 주로 BrowserRouter를 사용해왔습니다."
 thumbnail: "./test.png"
 ---

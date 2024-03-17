@@ -1,7 +1,7 @@
 ---
 date: "2024-03-06"
 title: "[React Study - 리액트를 다루는 기술] 16장. 리덕스 라이브러리 이해하기"
-categories: ["리액트 스터디"]
+categories: ["ReactStudy", "React"]
 summary: "리액트에는 다양한 상태 관리 라이브러리가 있습니다. 이번에는 상태 관리 도구들의 특징들을 비교하는 시간을 갖도록 하겠습니다. "
 thumbnail: "./test.png"
 ---

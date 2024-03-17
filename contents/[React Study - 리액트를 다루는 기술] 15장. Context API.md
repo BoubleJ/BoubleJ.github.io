@@ -1,7 +1,7 @@
 ---
 date: "2024-03-06"
 title: "[React Study - 리액트를 다루는 기술] 15장. Context API"
-categories: ["리액트 스터디"]
+categories: ["ReactStudy", "React"]
 summary: "해당 단원 공부 중 Render Props 라는 생소한 용어를 맞닥뜨려 도대체 뭔지 한번 알아보았습니다."
 thumbnail: "./test.png"
 ---

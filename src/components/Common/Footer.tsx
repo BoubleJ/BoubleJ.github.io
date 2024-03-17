@@ -20,7 +20,6 @@ const Footer: FunctionComponent = function () {
     <FooterWrapper>
       Thank You for Visiting My Blog, Have a Good Day 😆
       <br />
-      안녕하세요 블로그임니당
     </FooterWrapper>
   );
 };

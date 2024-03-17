@@ -1,7 +1,7 @@
 ---
 date: "2024-02-28"
 title: "[React Study - 리액트를 다루는 기술] 14장. 외부 API를 연동하여 뉴스 뷰어 만들기"
-categories: ["리액트 스터디"]
+categories: ["ReactStudy", "React"]
 summary: "api 연동 과정을 학습하다 문득 api연동을 도와주는 도구 Fetch와 Axios의 특징 및 차이점이 궁금해져 조사해봤습니다."
 thumbnail: "./test.png"
 ---
