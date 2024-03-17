@@ -3,7 +3,7 @@ date: "2024-01-17"
 title: "[React Study - 리액트를 다루는 기술] 2장. JSX"
 categories: ["ReactStudy", "React"]
 summary: "JSX란? 자바스크립트 확장 문법(공식적인 자바스크립트 문법은 아니다.)"
-thumbnail: "./test.png"
+thumbnail: "./프리티어코드.png"
 ---
 
 

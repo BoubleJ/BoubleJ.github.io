@@ -3,7 +3,7 @@ date: "2024-02-07"
 title: "[React Study - 리액트를 다루는 기술] 8장. hooks"
 categories: ["ReactStudy", "React"]
 summary: "훅을 도대체 왜 쓰는걸까??"
-thumbnail: "./test.png"
+thumbnail: "./리액트훅.png"
 ---
 
 # 훅을 도대체 왜 쓰는걸까??

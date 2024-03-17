@@ -3,7 +3,7 @@ date: "2024-01-24"
 title: "[React Study - 리액트를 다루는 기술] 3장. 컴포넌트"
 categories: ["ReactStudy", "React"]
 summary: "React Component란? 리액트로 만들어진 앱을 이루는 최소한의 단위"
-thumbnail: "./test.png"
+thumbnail: "./네이버컴포넌트.png"
 ---
 
 

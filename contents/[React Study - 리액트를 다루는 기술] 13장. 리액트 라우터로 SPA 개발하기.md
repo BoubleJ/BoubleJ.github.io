@@ -3,7 +3,7 @@ date: "2024-02-28"
 title: "[React Study - 리액트를 다루는 기술] 13장. 리액트 라우터로 SPA 개발하기"
 categories: ["ReactStudy", "React"]
 summary: "다들 react router는 한번쯤 사용해보셨을텐데요. 전 주로 BrowserRouter를 사용해왔습니다."
-thumbnail: "./test.png"
+thumbnail: "./리액트라우터.png"
 ---
 
 다들 react router는 한번쯤 사용해보셨을텐데요. 전 주로 BrowserRouter를 사용해왔습니다.
@@ -63,7 +63,7 @@ const App = () => {
 - 배열안에 담긴 객체형태로 담아서 export합니다.
   (가장 상단의 페이지가 부모, children으로 들어오는 페이지가 자식페이지 입니다. 부모 -> 자식은 path가 이어진다고 생각하면 편합니다. )
   ex> 부모 /movie,
-  자식 /movie/detail, /movie/video ....)
+  자식 /movie/detail, /movie/video ....
 
 ## router.jsx
 

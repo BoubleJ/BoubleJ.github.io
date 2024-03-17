@@ -3,7 +3,7 @@ date: "2023-09-02"
 title: "[Gatsby 블로그 제작일지] 페이지 라우팅 방법"
 categories: ["Gatsby", "React", "Routing"]
 summary: "Gatsby 페이지 라우팅 기능을 구현하는 과정을 기록해보겠습니다."
-thumbnail: "./test.png"
+thumbnail: "./개츠비라우팅코드.png"
 ---
 
 Gatsby 페이지 라우팅 기능을 구현하는 과정을 기록해보겠습니다.
@@ -36,7 +36,7 @@ Add this component to src/pages/index.js to create a home page for your site.
 
 ```js
 src/pages/index.js
-Copysrc/pages/index.js: copy code to clipboard
+
 import * as React from "react"
 
 export default function Index() {

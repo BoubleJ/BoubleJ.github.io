@@ -3,7 +3,7 @@ date: "2024-02-21"
 title: "[React Study - 리액트를 다루는 기술] 11장. 컴포넌트 성능 최적화"
 categories: ["ReactStudy", "React"]
 summary: "오늘은 React.memo를 사용해 컴포넌트 성능 최적화 방법을 알아보겠습니다."
-thumbnail: "./test.png"
+thumbnail: "./리액트메모.jpg"
 ---
 
 오늘은 React.memo를 사용해 컴포넌트 성능 최적화 방법을 알아보겠습니다.
