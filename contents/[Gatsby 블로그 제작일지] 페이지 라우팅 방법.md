@@ -1,5 +1,5 @@
 ---
-date: "2023-09-02"
+date: "2023-11-02"
 title: "[Gatsby 블로그 제작일지] 페이지 라우팅 방법"
 categories: ["Gatsby", "React", "Routing"]
 summary: "Gatsby 페이지 라우팅 기능을 구현하는 과정을 기록해보겠습니다."
