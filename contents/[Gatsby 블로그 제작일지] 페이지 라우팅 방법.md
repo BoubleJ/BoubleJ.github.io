@@ -1,7 +1,7 @@
 ---
 date: "2023-11-02"
 title: "[Gatsby 블로그 제작일지] 페이지 라우팅 방법"
-categories: ["Gatsby", "React"]
+categories: ["Gatsby"]
 summary: "Gatsby 페이지 라우팅 기능을 구현하는 과정을 기록해보겠습니다."
 thumbnail: "./개츠비라우팅코드.png"
 ---
@@ -35,12 +35,12 @@ Add this component to src/pages/index.js to create a home page for your site.
 > 이 구성 요소를 src/pages/index.js에 추가하여 사이트의 홈 페이지를 만듭니다.
 
 ```js
-src/pages/index.js
+src / pages / index.js;
 
-import * as React from "react"
+import * as React from "react";
 
 export default function Index() {
-  return <div>Hello world</div>
+  return <div>Hello world</div>;
 }
 ```
 

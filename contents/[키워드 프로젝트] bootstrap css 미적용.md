@@ -3,13 +3,7 @@ date: "2024-02-18"
 title: "[키워드 프로젝트] bootstrap css 미적용"
 categories:
   [
-    "Keyword",
-    "Project",
-    "React",
-    "UI",
-    "TroubleShooting",
-    "ReactBootStrap",
-    "CSS"
+    "Keyword"
   ]
 summary: "bootstrap은 install만하면 css 스타일속성은 안가져온다."
 thumbnail: "./reactbootstrap.png"

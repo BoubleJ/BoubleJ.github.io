@@ -1,7 +1,7 @@
 ---
 date: "2023-01-10"
 title: "[마켓플레이스 프로젝트] FAQ 페이지 slug 대신 params 활용 (next 공식문서 참고)"
-categories: ["MarketPlace", "Project", "Next.js", "Refactoring"]
+categories: ["MarketPlace"]
 summary: "slug를 전달하던 곳 대신 가져온 url params를  props를 통해 전달해주도록하면 수정 끝!!"
 thumbnail: "./useparams.png"
 ---

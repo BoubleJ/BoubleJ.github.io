@@ -3,10 +3,7 @@ date: "2024-03-08"
 title: "달력 los 값 구하기달력 los 값 구하기"
 categories:
   [
-    "Keyword",
-    "Project",
-    "Axios",
-    "Feature",
+    "Keyword"
   ]
 summary: "keyword 검색과 category 검색 시 api호출 주소가 다르다."
 thumbnail: "./image-39.png"

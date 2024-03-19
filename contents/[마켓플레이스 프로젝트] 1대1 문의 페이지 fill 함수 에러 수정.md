@@ -2,7 +2,7 @@
 date: "2023-01-17"
 title: "[마켓플레이스 프로젝트] 1:1 문의 페이지 fill 함수 에러 수정"
 categories:
-  ["MarketPlace", "Project", "Next.js", "Refactoring", "Javascript"]
+  ["MarketPlace"]
 summary: "이럼 안되지만 챗지피티 돌려서 만든 코드라… fill() 함수가 왜 저렇게 배치되었는지 도통 알수가 없었다. 파라미터도 없는채 말이지.."
 thumbnail: "./fill함수.png"
 ---

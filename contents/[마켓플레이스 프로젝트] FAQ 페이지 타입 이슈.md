@@ -2,7 +2,7 @@
 date: "2023-01-13"
 title: "[마켓플레이스 프로젝트] FAQ 페이지 타입 이슈"
 categories:
-  ["MarketPlace", "Project", "Next.js", "Typescript", "TroubleShooting"]
+  ["MarketPlace"]
 summary: "slug를 전달하던 곳 대신 가져온 url params를  props를 통해 전달해주도록하면 수정 끝!!"
 thumbnail: "./typescript.png"
 ---

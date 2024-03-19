@@ -2,7 +2,7 @@
 date: "2024-02-20"
 title: "[키워드 프로젝트] Redux 활용 전역 객체 관리"
 categories:
-  ["Keyword", "Project", "React", "Feature", "ReduxToolkit", "Refactoring"]
+  ["Keyword"]
 summary: "redux toolkit을 활용했다."
 thumbnail: "./redux.png"
 ---

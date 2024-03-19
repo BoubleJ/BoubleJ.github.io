@@ -2,7 +2,7 @@
 date: "2023-12-28"
 title: "[마켓플레이스 프로젝트] setState props 전달 시 type error"
 categories:
-  ["MarketPlace", "Project", "Next.js", "Shadcn/ui", "Refactoring"]
+  ["MarketPlace"]
 summary: "setState를 props로 전달할 경우 타입은 void로 하면 되는 것 같다. "
 thumbnail: "./모달창안뜸.png"
 ---

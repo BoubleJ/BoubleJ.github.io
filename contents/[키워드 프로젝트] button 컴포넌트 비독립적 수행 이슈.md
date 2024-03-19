@@ -1,7 +1,7 @@
 ---
 date: "2024-02-18"
 title: "[키워드 프로젝트] button 컴포넌트 비독립적 수행 이슈"
-categories: ["Keyword", "Project", "React", "TroubleShooting"]
+categories: ["Keyword"]
 summary: "ToggleButtonGroup 컴포넌트를 각 컴포넌트에 넣고 독립적으로 동작하게 하려했는데"
 thumbnail: "./reacticon.png"
 ---

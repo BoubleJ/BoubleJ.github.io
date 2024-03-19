@@ -2,7 +2,7 @@
 date: "2024-03-07"
 title: "[키워드 프로젝트] input 값을 입력만해도 fetch함수 호출되는 issue 해결"
 categories:
-  ["Keyword", "Project", "React", "Feature", "Refactoring", "Javascript"]
+  ["Keyword"]
 summary: "input onchange 이벤트 때문에 input에 값을 입력할 때마다 state 값이 변하다보니 값을 입력하기만해도 서버에 get요청을 보내는 참사가 일어났다. "
 thumbnail: "./onchange.png"
 ---

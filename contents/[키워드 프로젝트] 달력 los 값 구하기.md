@@ -1,7 +1,7 @@
 ---
 date: "2024-03-09"
 title: "[키워드 프로젝트] 달력 los 값 구하기"
-categories: ["Keyword", "Project", "TroubleShooting", "Javascript"]
+categories: ["Keyword"]
 summary: "달력에서 날짜 선택 후 searchPage로 가져와 query string으로 전달하려했는데… 두 날짜 사이 간격을 계산 못하는 이슈가 생겼다."
 thumbnail: "./los값.png"
 ---

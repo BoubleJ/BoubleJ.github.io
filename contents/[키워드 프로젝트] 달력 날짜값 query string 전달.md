@@ -1,7 +1,7 @@
 ---
 date: "2024-03-03"
 title: "[키워드 프로젝트] 달력 날짜값 query string 전달"
-categories: ["Keyword", "Project", "Axios", "Feature"]
+categories: ["Keyword"]
 summary: "달력 날짜값을 query-string으로 전달"
 thumbnail: "./axiosicon.png"
 ---

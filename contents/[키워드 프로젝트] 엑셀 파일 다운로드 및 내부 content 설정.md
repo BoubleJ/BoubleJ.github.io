@@ -1,7 +1,7 @@
 ---
 date: "2024-03-13"
 title: "[키워드 프로젝트] 엑셀 파일 다운로드 및 내부 content 설정"
-categories: ["Keyword", "Project", "React", "Feature"]
+categories: ["Keyword"]
 summary: "엑셀 다운로드는 CSVLink라는 라이브러리를 사용했다."
 thumbnail: "./image-45.png"
 ---

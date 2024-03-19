@@ -3,13 +3,7 @@ date: "2024-02-04"
 title: "[마켓플레이스 프로젝트] modal창 화면크기 변환 해도 중앙 렌더링되도록 수정"
 categories:
   [
-    "MarketPlace",
-    "Project",
-    "Next.js",
-    "UI",
-    "TroubleShooting",
-    "Tailwind",
-    "CSS",
+    "MarketPlace"
   ]
 summary: "page 컴포넌트 p-4 속성 때문에 가운데 정렬을 시도하면 p-4만큼 공백이 생겨버렸다."
 thumbnail: "./image-31.png"

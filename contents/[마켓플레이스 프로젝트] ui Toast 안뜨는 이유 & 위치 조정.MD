@@ -1,7 +1,7 @@
 ---
 date: "2023-02-11"
 title: "[마켓플레이스 프로젝트] ui Toast 안뜨는 이유 & 위치 조정"
-categories: ["MarketPlace", "Project", "Next.js", "TroubleShooting", "Shadcn/ui"]
+categories: ["MarketPlace"]
 summary: "버튼을 클릭했는데 modal창이 안떴다."
 thumbnail: "./image-29.png"
 ---

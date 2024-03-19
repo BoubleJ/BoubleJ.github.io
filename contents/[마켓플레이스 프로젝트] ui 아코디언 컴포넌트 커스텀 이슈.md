@@ -1,7 +1,7 @@
 ---
 date: "2023-12-17"
 title: "[마켓플레이스 프로젝트] ui 아코디언 컴포넌트 커스텀 이슈"
-categories: ["MarketPlace", "Project", "Next.js", "UI", "Shadcn/ui", "TroubleShooting"]
+categories: ["MarketPlace"]
 summary: "이런 UI를 만들어야하는데.."
 thumbnail: "./faq아코디언.png"
 ---

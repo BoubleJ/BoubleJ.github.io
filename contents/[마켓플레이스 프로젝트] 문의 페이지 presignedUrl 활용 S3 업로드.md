@@ -3,13 +3,8 @@ date: "2024-02-12"
 title: "[마켓플레이스 프로젝트] 문의 페이지 presignedUrl 활용 S3 업로드"
 categories:
   [
-    "MarketPlace",
-    "Project",
-    "Next.js",
-    "Feature",
-    "PresignedURL",
-    "AWS",
-    "S3",
+    "MarketPlace"
+   
   ]
 summary: "온갖 에러가 폭주하는 작업이었다. 정말 열받네"
 thumbnail: "./image-9.png"
