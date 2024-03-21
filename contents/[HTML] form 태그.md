@@ -1,7 +1,7 @@
 ---
 date: "2024-02-20"
 title: "[HTML] form 태그"
-categories: ["Gatsby"]
+categories: ["ReactStudy", "React"]
 summary: "form태그 속성으로는 name, action, method, target이 있다."
 thumbnail: "./HTML.png"
 ---

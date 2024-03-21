@@ -1,7 +1,7 @@
 ---
 date: "2024-02-08"
 title: "[HTML] semantic Tag"
-categories: ["Gatsby"]
+categories: ["ReactStudy", "React"]
 summary: "Html 태그는 semantic한 element를 써야합니다."
 thumbnail: "./HTML.png"
 ---
