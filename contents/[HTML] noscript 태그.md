@@ -1,7 +1,7 @@
 ---
 date: "2024-03-03"
 title: "[HTML] <noscript> 태그"
-categories: ["Html"]
+categories: ["Gatsby"]
 summary: "<noscript> 태그는 클라이언트 사이드 스크립트(client-side scripts)를 사용하지 않도록 설정했거나, 스크립트를 지원하지 않는 브라우저를 위한 별도의 콘텐츠를 정의할 때 사용합니다."
 thumbnail: "./HTML.png"
 ---
