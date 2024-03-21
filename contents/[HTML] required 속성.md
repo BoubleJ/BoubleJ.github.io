@@ -1,7 +1,7 @@
 ---
 date: "2024-01-15"
 title: "[HTML] required 속성"
-categories: ["HTML"]
+categories: ["HTML", "html"]
 summary: "required는 HTML 폼 요소에서 사용되는 속성(attribute) 중 하나로, 해당 입력 필드에 데이터가 반드시 입력되어야 함을 나타내는 속성입니다."
 thumbnail: "./HTML.png"
 ---
