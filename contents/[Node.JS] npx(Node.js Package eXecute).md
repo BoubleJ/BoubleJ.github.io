@@ -3,7 +3,7 @@ date: "2023-03-21"
 title: "[Node.JS] npx(Node.js Package eXecute)"
 categories: ["Node.JS"]
 summary: "자바스크립트 패키지 관리 모듈"
-thumbnail: "./NEXT.png"
+thumbnail: "./image-55.png"
 ---
 
 
