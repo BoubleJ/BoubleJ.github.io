@@ -1,7 +1,7 @@
 ---
 date: "2024-01-27"
 title: "[HTML] role="alert" 속성"
-categories: ["HTML", "WHAT"]
+categories: ["Html"]
 summary: "role="alert"는 웹 접근성을 개선하기 위해 사용되는 ARIA (Accessible Rich Internet Applications) 속성 중 하나입니다."
 thumbnail: "./HTML.png"
 ---
