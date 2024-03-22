@@ -3,7 +3,7 @@ date: "2023-03-22"
 title: "[Programming] mapping이란"
 categories: ["Programming"]
 summary: "매핑(mapping)은 한 항목을 다른 항목에 연결하는 프로세스 또는 규칙을 의미합니다. 컴퓨터 과학 및 소프트웨어 개발에서 "매핑"은 다음과 같은 다양한 맥락에서 사용됩니다"
-thumbnail: "./image-56.png"
+thumbnail: "./자바스크립트로고.png"
 ---
 
 
