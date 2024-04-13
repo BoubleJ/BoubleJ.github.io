@@ -3,7 +3,7 @@ date: "2024-04-14"
 title: "[키워드 프로젝트] input 숫자만 입력가능하게 설정.md"
 categories: ["Keyword"]
 summary: "input 태그에 오로지 숫자만 입력 가능하도록 설정해봅시다!."
-thumbnail: "./https://velog.velcdn.com/images/dogmnil2007/post/0eb3a950-bcb8-496d-a453-9f5efc24e782/image.png"
+thumbnail: "./프로젝트input요소.png"
 ---
 
 프로젝트 내에서 상품 가격 및 개수를 조회하는 input 요소가 존재합니다.
@@ -112,3 +112,19 @@ const minPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 api호출 주소 또한 쿼리스트링으로 숫자만 넘어가야하는데 , (쉼표) 까지 넘어가서 백엔드에서 필터링 처리가 안된 것 같습니다. 아쉽지만 쉼표 처리는 제거해야할 것 같네요.
 
 ![](https://velog.velcdn.com/images/dogmnil2007/post/3d3f38cf-6810-49f4-9a2a-4dd4d6606510/image.png)
+
+
+
+<details>
+
+<summary>출처</summary>
+
+<div markdown="1">
+
+https://selinak.tistory.com/35
+
+https://mong-blog.tistory.com/entry/input%EC%97%90-%EC%9E%85%EB%A0%A5%EB%90%9C-%EC%88%AB%EC%9E%90%EC%97%90-%EC%BD%A4%EB%A7%88-%EC%B0%8D%EA%B8%B0
+
+</div>
+
+</details>
