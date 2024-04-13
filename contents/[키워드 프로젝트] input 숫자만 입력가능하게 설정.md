@@ -1,6 +1,6 @@
 ---
 date: "2024-04-14"
-title: "[키워드 프로젝트] input 숫자만 입력가능하게 설정.md"
+title: "[키워드 프로젝트] input 숫자만 입력가능하게 설정"
 categories: ["Keyword"]
 summary: "input 태그에 오로지 숫자만 입력 가능하도록 설정해봅시다!."
 thumbnail: "./프로젝트input요소.png"
