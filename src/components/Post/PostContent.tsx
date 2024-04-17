@@ -13,7 +13,7 @@ const PostContent: FunctionComponent<PostContentProps> = function ({ html }) {
 export default PostContent
 
 const MarkdownRenderer = styled.div`
-  /* // Renderer Style
+  // Renderer Style
   display: flex;
   flex-direction: column;
   width: 768px;
@@ -133,5 +133,5 @@ const MarkdownRenderer = styled.div`
     hr {
       margin: 50px 0;
     }
-  } */
+  }
 `
