@@ -1,10 +1,7 @@
 ---
 date: "2024-03-08"
-title: "달력 los 값 구하기달력 los 값 구하기"
-categories:
-  [
-    "Keyword"
-  ]
+title: "[키워드 프로젝트] keyword 검색 & category 검색 분기 구현"
+categories: ["Keyword"]
 summary: "keyword 검색과 category 검색 시 api호출 주소가 다르다."
 thumbnail: "./image-39.png"
 ---
