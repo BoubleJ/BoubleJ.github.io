@@ -1,7 +1,7 @@
 ---
-date: "2023-04-18"
+date: "2024-04-18"
 title: "[Python] html 파서 만들기"
-categories: ["Python"]
+categories: ["Python, Keyword"]
 summary: "쿠팡 카테고리 id 값을 추출하기 위해 Python으로 html 파서를 만들어보겠습니다."
 thumbnail: "./파이썬.png"
 ---
