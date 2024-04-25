@@ -53,16 +53,13 @@ html 파서 라는 것을 사용하기 위해선 파이썬을 설치해야합니
  
  잘 설치되었는지 확인해봅시다. 하단 명령어를 터미널에 입력해줍시다.
  
- <br>
 
 ```shell
  python -v
-
 ```
 
 ```
  pip -v
-
 ```
 
 ![](https://velog.velcdn.com/images/dogmnil2007/post/a45febb1-8536-430a-9ff7-242efe9331e0/image.png)

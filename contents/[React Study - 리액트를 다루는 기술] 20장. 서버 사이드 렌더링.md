@@ -83,7 +83,7 @@ app/routes/index.jsx 파일을 열어보시면 Index 라는 컴포넌트가 있�
 routes 디렉토리 내에 새로운 컴포넌트를 만들어봅시다.
 
 ```jsx
-//?app/routes/about.jsx
+//app/routes/about.jsx
 export default function About() {
   return <div>오! 리믹스! 하이~</div>;
 }
