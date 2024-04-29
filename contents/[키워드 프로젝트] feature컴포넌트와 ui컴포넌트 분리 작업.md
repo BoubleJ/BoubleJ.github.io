@@ -1,9 +1,9 @@
 ---
-date: "2024-03-27"
+date: "2024-04-29"
 title: "[키워드 프로젝트] feature컴포넌트와 ui컴포넌트 분리 작업"
 categories: ["Keyword"]
-summary: "리액트로 만드는 본 프로젝트에 스타일 컴포넌트로 폰트를 적용시켜보겠습니다."
-thumbnail: "./키워드프로젝트폰트적용.png"
+summary: "비즈니스 로직과 ui 컴포넌트 분리작업을 통해 클린코드에 조금이라도 근접해봅시다."
+thumbnail: "./reacticon.png"
 ---
 
 # 리팩토링 리스트 분석
@@ -414,6 +414,8 @@ if (typeof pathName == "string") {
 
 <br>
 <br>
+
+일단 여기까지 리팩토링하도록 하겠습니다. 아직 손봐야할 곳이 많지만 테스트코드, sentry, storybook 등 해야할 일이 산더미니 잠시 미뤄두겠습니다...
 
 <br>
 <br>
