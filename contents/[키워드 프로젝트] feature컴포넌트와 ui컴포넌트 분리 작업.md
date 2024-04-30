@@ -1,5 +1,5 @@
 ---
-date: "2024-04-29"
+date: "2024-04-28"
 title: "[키워드 프로젝트] feature컴포넌트와 ui컴포넌트 분리 작업"
 categories: ["Keyword"]
 summary: "비즈니스 로직과 ui 컴포넌트 분리작업을 통해 클린코드에 조금이라도 근접해봅시다."
@@ -322,8 +322,6 @@ const startDate = value[0]?.toISOString().split("T")[0]
   const differenceMs = CalculateDateGap(value[0], value[1])
 
   const los = Math.ceil(differenceMs / (1000 * 60 * 60 * 24));
-console.log('startDate', startDate)
-  console.log('los', los)
 
       dispatch(
         dateFetch({
