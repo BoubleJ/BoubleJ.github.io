@@ -1,9 +1,9 @@
 ---
 date: "2024-04-14"
-title: "[키워드 프로젝트] input 숫자만 입력가능하게 설정"
-categories: ["HTML"]
-summary: "input 태그에 오로지 숫자만 입력 가능하도록 설정해봅시다."
-thumbnail: "./프로젝트input요소.png"
+title: "[키워드 프로젝트] input"
+categories: ["Keyword"]
+summary: "lodash의 debounce 기능을 활용해 input value 입력 시 불필요한 "
+thumbnail: "./lodash.jpeg"
 ---
 
 프로젝트 내에서 상품 가격 및 개수를 조회하는 input 요소가 존재합니다.
@@ -26,7 +26,7 @@ const minPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   setMinPrice(inputValue);
 };
 
-//생략
+//생략r
 
 <Input
   type="text"
