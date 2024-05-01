@@ -1,7 +1,7 @@
 ---
 date: "2024-04-18"
 title: "[Python] html 파서 만들기"
-categories: ["Python, Keyword"]
+categories: ["Python", "Keyword"]
 summary: "쿠팡 카테고리 id 값을 추출하기 위해 Python으로 html 파서를 만들어보겠습니다."
 thumbnail: "./파이썬.png"
 ---
@@ -52,7 +52,7 @@ html 파서 라는 것을 사용하기 위해선 파이썬을 설치해야합니
  <br>
  
  잘 설치되었는지 확인해봅시다. 하단 명령어를 터미널에 입력해줍시다.
- 
+
 
 ```shell
  python -v
