@@ -1,6 +1,6 @@
 ---
 date: "2024-05-01"
-title: "[Programming] Blocking & non-Blocking,  동기 & 비동기"
+title: "[Oracle] 오라클 설치 과정"
 categories: ["Oracle"]
 summary: "오라클 설치 과정 중 에러가 발생했습니다."
 thumbnail: "./오라클설치에러.png"
