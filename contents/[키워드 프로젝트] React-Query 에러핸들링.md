@@ -1,5 +1,5 @@
 ---
-date: "2024-05-01"
+date: "2024-05-04"
 title: "[키워드 프로젝트] React-Query 에러핸들링"
 categories: ["Keyword"]
 summary: "react-error-boundary 라이브러리를 활용해 에러처리를 구현하겠습니다."
