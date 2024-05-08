@@ -110,7 +110,6 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      throwOnError: true,
       retry: 0,
     },
   },
@@ -119,7 +118,6 @@ const queryClient = new QueryClient({
 
 다음과 같은 속성을 추가해줍니다.
 
-`throwOnError: true,` 는 오류가 발생했을 때 ErrorBoundary 컴포넌트가 감지할 수 있도록 하는 속성이고,
 `retry: 0,`는 react-query는 api 호출 시 에러가 발생하면 보통 3번 재호출을 시도합니다. 굳이 필요없으니 재호출 횟수를 0으로 만들어줍시다.
 
 이제 에러가 발생하도록 서버를 종료한 후 호출을 시도해봅시다
@@ -143,6 +141,14 @@ const queryClient = new QueryClient({
 위 사진처럼 컴포넌트 내에서 에러를 명시하고 나머지부분은 그대로 남겨두는 것이 사용자경험 측면에서 효율적인 방안일 것입니다.
 
 <br>
+
+<details>
+
+<summary>ErrorBoundary가 아닌 다른 방법으로 구현</summary>
+
+<div markdown="1">
+
+
 
 ## Result 컴포넌트만 에러 처리
 
@@ -237,15 +243,106 @@ export default function Result({
 
 또 다른 문제점은 에러 발생 후처리가 없다는 것입니다. 에러가 발생했지만 사용자입장에선 '음... 그래서 뭐 어떻게 하라고?' 라는 의문이 들 수도 있습니다. 사용자 경험 저하로 이어질 수 있겠죠.
 
-
-
 때문에 `ErrorBoundary` 와 `QueryErrorResetBoundary` 컴포넌트를 활용해 <FallbackUI /> 컴포넌트 내에 버튼을 만들고 버튼을 클릭하면 에러를 처리하고 이전 상태로 돌아가게 만드는 기능을 구현하려했습니다.
 
-`ErrorBoundary` 와 `QueryErrorResetBoundary` 컴포넌트를 이용하면 위 코드처럼 명령형 프로그래밍이 아닌 선언형 프로그래밍을 구현할 수 있어 코드가독성이 높고 api호출 상태별 관리를 컴포넌트 별로 독립적으로 운영할 수 있습니다. 
+`ErrorBoundary` 와 `QueryErrorResetBoundary` 컴포넌트를 이용하면 위 코드처럼 명령형 프로그래밍이 아닌 선언형 프로그래밍을 구현할 수 있어 코드가독성이 높고 api호출 상태별 관리를 컴포넌트 별로 독립적으로 운영할 수 있습니다.
 
 <br>
 <br>
 
 하지만 구현에 실패했습니다... 정말 열심히 이것저것 시도하고 찾아봤는데 안되더군요. 오늘도 억까당했습니다. 남들 다 된다는데 왜 저만 안될까요?ㅎㅎ
 
+찾아보니 react query에서 발생한 에러는 가장 가까운 ErrorBoundary로 throw 된다고 합니다. 즉 react query를 포함하는 컴포넌트가 ErrorBoundary에 감싸진 형태여야한단느 뜻이죠. 하지만 제 프로젝트는 react query로 비동기함수를 호출해 받아온 data를 Result 컴포넌트가 props로 전달받는 방식이기때문에 문제가 생긴 듯 합니다. 문제를 해결하려면 react query를 직접 참조하는 MainPage.tsx 를 ErrorBoundary를 감싸줘야합니다. 하지만 이런 구조는 제가 원하는 구조가 아닙니다..
+
+![에러바운더리에러처리](에러바운더리에러처리.gif)
+
+다른 분 블로그에서 가져온 이미지인데 이런식으로 비동기함수 호출하는 컴포넌트와 렌더링되는 컴포넌트를 별도로 분리해서 운영하는 것이 목표입니다..
+
 일단 차선책으로 ui만 띄우고 나중에 구현해보도록 하겠습니다. 너무 스트레스받았어요ㅠㅠㅠ
+
+</div>
+
+</details>
+
+
+<br>
+<br>
+
+## ErrorBoundary와 QueryErrorResetBoundary를 활용한 에러 핸들링
+
+
+`ErrorBoundary`는 컴포넌트 근처에 발생한 throw된 에러를 받아 처리하는 역할을 합니다. 
+즉 `ErrorBoundary`의 하위 컴포넌트에서 에러가 발생하면 `ErrorBoundary`가 에러를 받아 처리한다는 의미입니다.
+
+그리고 `ErrorBoundary` 컴포넌트 하위 컴포넌트에서만 에러 핸들링을 하기 때문에 위에 언급했던 것처럼 모든 페이지가 중단되는 것이 아닌 해당 컴포넌트만 `fallback ui`를 띄워주고 나머지 컴포넌트는 사용자가 정상적으로 이용할 수 있습니다. 
+
+`QueryErrorResetBoundary`는 에러가 발생했을 때 에러를 초기화시켜주는 역할을 합니다. `QueryErrorResetBoundary` 컴포넌트의 `reset` 과 `resetErrorBoundary`를 활용하면 에러를 초기화시키고 이전 ui로 되돌리거나 refetch를 하는 등 다양한 동작을 실행할 수 있습니다. 
+
+구현한 코드는 다음과 같습니다. 
+
+```tsx
+    <QueryErrorResetBoundary>
+          {({ reset }) => (
+            <ErrorBoundary
+              onReset={() => {
+                reset();
+              }}
+              FallbackComponent={({ resetErrorBoundary }) => (
+                <div>
+                  <ErrorField resetErrorBoundary={resetErrorBoundary} />
+                </div>
+              )}
+            >
+              <Result
+                isError={isError}
+                searchData={searchData}
+                isFetching={isFetching}
+                error={error}
+              />
+            </ErrorBoundary>
+          )}
+        </QueryErrorResetBoundary>
+
+```
+
+`ErrorField`는 별도로 만든 fallback컴포넌트입니다. 
+
+<br>
+<br>
+
+```tsx
+
+
+//ErrorField.tsx
+const ErrorField = ({
+  resetErrorBoundary,
+  setResultVisible,
+}: {
+  resetErrorBoundary: () => void;
+  setResultVisible: (visible: boolean) => void;
+}) => {
+  return (
+    <div>
+      <p>에러가 발생했어요</p>
+      <button
+        onClick={() => {
+          resetErrorBoundary();
+          setResultVisible(false);
+        }}
+      >
+        돌아가기 버튼
+      </button>
+    </div>
+  );
+};
+
+export default ErrorField;
+
+
+```
+
+버튼을 클릭하면 에러를 초기화하고 `setResultVisible(false)`를 통해 초기화면으로 돌아가도록 했습니다.
+
+![에러바운더리에러핸들링성공](에러바운더리에러핸들링성공.gif)
+
+정상적으로 에러핸들링이 되는 것을 확인할 수 있습니다!!
