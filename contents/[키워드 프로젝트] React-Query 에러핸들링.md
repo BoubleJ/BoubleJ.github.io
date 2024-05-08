@@ -148,8 +148,6 @@ const queryClient = new QueryClient({
 
 <div markdown="1">
 
-
-
 ## Result 컴포넌트만 에러 처리
 
 본 프로젝트에서 서버 데이터를 받아오는 컴포넌트는 Result 컴포넌트뿐입니다. 즉 Result 컴포넌트에서만 에러핸들링이 이루어지고 나머지 컴포넌트들은 독립적으로 화면에 띄워지도록 하면 됩니다.
@@ -264,55 +262,79 @@ export default function Result({
 
 </details>
 
-
 <br>
 <br>
 
-## ErrorBoundary와 QueryErrorResetBoundary를 활용한 에러 핸들링
+# ErrorBoundary와 QueryErrorResetBoundary를 활용한 에러 핸들링
 
-
-`ErrorBoundary`는 컴포넌트 근처에 발생한 throw된 에러를 받아 처리하는 역할을 합니다. 
+`ErrorBoundary`는 컴포넌트 근처에 발생한 throw된 에러를 받아 처리하는 역할을 합니다.
 즉 `ErrorBoundary`의 하위 컴포넌트에서 에러가 발생하면 `ErrorBoundary`가 에러를 받아 처리한다는 의미입니다.
 
-그리고 `ErrorBoundary` 컴포넌트 하위 컴포넌트에서만 에러 핸들링을 하기 때문에 위에 언급했던 것처럼 모든 페이지가 중단되는 것이 아닌 해당 컴포넌트만 `fallback ui`를 띄워주고 나머지 컴포넌트는 사용자가 정상적으로 이용할 수 있습니다. 
+그리고 `ErrorBoundary` 컴포넌트 하위 컴포넌트에서만 에러 핸들링을 하기 때문에 위에 언급했던 것처럼 모든 페이지가 중단되는 것이 아닌 해당 컴포넌트만 `fallback ui`를 띄워주고 나머지 컴포넌트는 사용자가 정상적으로 이용할 수 있습니다.
 
-`QueryErrorResetBoundary`는 에러가 발생했을 때 에러를 초기화시켜주는 역할을 합니다. `QueryErrorResetBoundary` 컴포넌트의 `reset` 과 `resetErrorBoundary`를 활용하면 에러를 초기화시키고 이전 ui로 되돌리거나 refetch를 하는 등 다양한 동작을 실행할 수 있습니다. 
+`QueryErrorResetBoundary`는 에러가 발생했을 때 에러를 초기화시켜주는 역할을 합니다. `QueryErrorResetBoundary` 컴포넌트의 `reset` 과 `resetErrorBoundary`를 활용하면 에러를 초기화시키고 이전 ui로 되돌리거나 refetch를 하는 등 다양한 동작을 실행할 수 있습니다.
 
-구현한 코드는 다음과 같습니다. 
+<br>
+
+구현한 코드는 다음과 같습니다.
 
 ```tsx
-    <QueryErrorResetBoundary>
-          {({ reset }) => (
-            <ErrorBoundary
-              onReset={() => {
-                reset();
-              }}
-              FallbackComponent={({ resetErrorBoundary }) => (
-                <div>
-                  <ErrorField resetErrorBoundary={resetErrorBoundary} />
-                </div>
-              )}
-            >
-              <Result
-                isError={isError}
-                searchData={searchData}
-                isFetching={isFetching}
-                error={error}
-              />
-            </ErrorBoundary>
-          )}
-        </QueryErrorResetBoundary>
-
+<QueryErrorResetBoundary>
+  {({ reset }) => (
+    <ErrorBoundary
+      onReset={() => {
+        reset();
+      }}
+      FallbackComponent={({ resetErrorBoundary }) => (
+        <div>
+          <ErrorField resetErrorBoundary={resetErrorBoundary} />
+        </div>
+      )}
+    >
+      <Result
+        isError={isError}
+        searchData={searchData}
+        isFetching={isFetching}
+        error={error}
+      />
+    </ErrorBoundary>
+  )}
+</QueryErrorResetBoundary>
 ```
 
-`ErrorField`는 별도로 만든 fallback컴포넌트입니다. 
+`ErrorField`는 별도로 만든 fallback컴포넌트입니다.
+
+```tsx
+
+
+//Result.tsx
+
+export default function Result({
+  searchData,
+  isFetching,
+  isError,
+  error,
+}: ResultProps) {
+  if (isFetching) return <SkeletonContainer></SkeletonContainer>;
+
+  if (isError) {
+    throw error;
+  }
+  return (
+    <>
+      <ExcelDownloader searchData={searchData} />
+      <ResultTable searchData={searchData} />
+    </>
+  );
+}
+```
+데이터값을 렌더링하는 `Result` 컴포넌트에서 props로 에러객체를 받아와 에러를 던지도록 만들고 던진 에러를 `ErrorBoundary`가 받아서 처리하도록 만들었습니다.
+
 
 <br>
 <br>
 
 ```tsx
-
-
 //ErrorField.tsx
 const ErrorField = ({
   resetErrorBoundary,
@@ -337,8 +359,6 @@ const ErrorField = ({
 };
 
 export default ErrorField;
-
-
 ```
 
 버튼을 클릭하면 에러를 초기화하고 `setResultVisible(false)`를 통해 초기화면으로 돌아가도록 했습니다.
