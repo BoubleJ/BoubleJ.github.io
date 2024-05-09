@@ -54,6 +54,6 @@ declare module "*.svg?react" {
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/custom.d.ts"]
 }
 ```
-TypeScript에 \*.svg?react 패턴과 일치하는 import 과정을 React 컴포넌트로 처리하도록 지시하는 설정입니다. 
+TypeScript에 \*.svg?react 패턴과 일치하는 파일을 React 컴포넌트로 처리하도록 지시하는 설정입니다. 
 
 위와 같이 세팅하면 에러가 사라진 것을 확인할 수 있습니다. 
