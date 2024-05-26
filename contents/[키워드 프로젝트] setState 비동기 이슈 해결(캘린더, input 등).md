@@ -1,5 +1,5 @@
 ---
-date: "2024-04-26"
+date: "2024-05-12"
 title: "[키워드 프로젝트] setState 비동기 이슈 해결(캘린더, input 등)"
 categories: ["Keyword"]
 summary: "프로젝트 내 달력에서 날짜를 선택 후 선택한 값을 출력해보면 선택한 값이 제대로 출력되지 않는 이슈가 발생하였습니다."
@@ -88,7 +88,6 @@ console을 자세히 보시면 value값보다 stateDate 와 los 값이 먼저 �
 
 setState 함수의 비동기 이슈를 해결하기 위해선 대표적으로 useEffect 훅을 활용하는 방법이 있습니다.
 
-
 ```tsx
 
 
@@ -127,13 +126,13 @@ export default function CustomCalendar() {
   }, [value]);
 
   return (
-   
+
      //생략
 
       <StlyedDateRangePicker
         onChange={onChange}
         value={value}
-      
+
   //생략
 
       />
@@ -158,7 +157,6 @@ export default function CustomCalendar() {
 <summary>참고</summary>
 
 <div markdown="1">
-
 
 https://velog.io/@nimoh/React-setState-%EB%B9%84%EB%8F%99%EA%B8%B0-%ED%95%B4%EA%B2%B0%ED%95%98%EA%B8%B0
 
