@@ -87,7 +87,7 @@ export default App;
 
 `<Route path="/categories" element={<CategoryList />}>` 라우팅 설정에 의해
 
-<Outlet /> 위치에 <CategoryList /> 가 렌더링되게 됩니다.
+`<Outlet />` 위치에 `<CategoryList />` 가 렌더링되게 됩니다.
 
 즉 리다이렉트는 되지만 렌더링 되는 페이지는
 
