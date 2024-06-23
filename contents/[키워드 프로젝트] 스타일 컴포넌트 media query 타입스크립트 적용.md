@@ -8,59 +8,54 @@ thumbnail: "./타입스크립트아이콘.png"
 
 반응형 웹 구현을 위해 `media query` 기능을 접목시켜보겠습니다.
 
-
 # 스타일 컴포넌트 media query 구현
 
 ```js
 // media.js
 
-import { css } from 'styled-components'
+import { css } from "styled-components";
 
 const sizes = {
   mobile: 376,
   tablet: 1025,
-}
+};
 
 const media = Object.keys(sizes).reduce((acc, label) => {
-	acc[label] = (...args) => css`
-		@media (min-width: ${sizes[label] / 16}em) {
-			${css(...args)};
-		}
-	`
-
-	return acc
-}, {})
-
-export default media
-
-```
-
-미디어 쿼리를 구현하는 것은 크게 어렵지 않습니다.`media.js` 라는 파일을 만들고 위 코드를 작성하면 됩니다. 
-
-```js
-const sizes = {
-  mobile: 376,
-  tablet: 1025,
-}
-
-```
- sizes 객체에는 각 레이블(mobile, tablet)과 해당 레이블의 최대 너비(픽셀 단위 376, 1025)가 키-값 쌍으로 저장되어 있습니다. 
-
-
-```js
-
-const media = Object.keys(sizes).reduce((acc, label) => {
-	acc[label] = (...args) => css`
-		 @media screen and (max-width: ${sizes[label]}px) {
+  acc[label] = (...args) => css`
+    @media (min-width: ${sizes[label] / 16}em) {
       ${css(...args)};
-		}
-	`
+    }
+  `;
 
-	return acc
-}, {})
+  return acc;
+}, {});
 
-export default media
+export default media;
+```
 
+미디어 쿼리를 구현하는 것은 크게 어렵지 않습니다.`media.js` 라는 파일을 만들고 위 코드를 작성하면 됩니다.
+
+```js
+const sizes = {
+  mobile: 376,
+  tablet: 1025,
+};
+```
+
+sizes 객체에는 각 레이블(mobile, tablet)과 해당 레이블의 최대 너비(픽셀 단위 376, 1025)가 키-값 쌍으로 저장되어 있습니다.
+
+```js
+const media = Object.keys(sizes).reduce((acc, label) => {
+  acc[label] = (...args) => css`
+    @media screen and (max-width: ${sizes[label]}px) {
+      ${css(...args)};
+    }
+  `;
+
+  return acc;
+}, {});
+
+export default media;
 ```
 
 media객체는 Object.keys(sizes).reduce() 함수를 사용하여 sizes 객체의 각 키값에 대해 반복 작업을 수행합니다.
@@ -81,7 +76,6 @@ Object.keys(sizes)는 sizes 객체의 모든 키를 포함하는 문자열 배�
 ## 적용
 
 ```tsx
-
 //SearchMethodTab.tsx
 
 import media from "styles/media";
@@ -90,7 +84,7 @@ import media from "styles/media";
 
 const Title = styled.p`
   color: var(--Orange500);
-  text-decoration-line : none;
+  text-decoration-line: none;
   text-shadow: 2px 4px 6px rgba(37, 36, 62, 0.15);
   font-size: var(--font-size-medium);
   font-style: normal;
@@ -100,15 +94,13 @@ const Title = styled.p`
   font-family: PaytoneOne;
   margin-right: 1rem;
   margin-bottom: 0.7rem;
-${media.mobile`
+  ${media.mobile`
   font-size: var(--font-size-title);
    color : var(--Gray700);
   `}
 `;
 
 //생략
-
-
 ```
 
 위 코드처럼 정의한 media 객체를 import 한 후 사용하면 됩니다.
@@ -118,17 +110,17 @@ ${media.mobile`
 
 ### 자바스크립트를 타입스크립트 파일에 import 하면?
 
-하지만 호락호락하게 넘어갈 우리의 타입스크립트가 아닙니다. 
+하지만 호락호락하게 넘어갈 우리의 타입스크립트가 아닙니다.
 
 잘 아시겠지만 js파일을 ts에서 import 하면 에러가 납니다. js는 타입처리가 하나도 안되어있기 때문이죠.
 
-![js파일타입에러](js파일타입에러.png)
+![js파일타입에러](js파일타입에러.PNG)
 
 `Could not find a declaration file for module 'styles/media'. 'c:/Users/dogmn/develop/Keyword_Searcher_Project/src/styles/media.js' implicitly has an 'any' type.`
 
-대충 타입스크립트는 타입지정안된 자바스크립트 파일은 취급안하겠다는 뜻입니다. 
+대충 타입스크립트는 타입지정안된 자바스크립트 파일은 취급안하겠다는 뜻입니다.
 
-`media`파일에 타입을 지정해 해결해주도록 합시다. 
+`media`파일에 타입을 지정해 해결해주도록 합시다.
 
 <br>
 <br>
@@ -136,14 +128,13 @@ ${media.mobile`
 ### media 파일 타입지정
 
 ```ts
-
 //media.ts
 
 import { css } from "styled-components";
 
 type sizesType = {
-  [index: string]: number
-}
+  [index: string]: number;
+};
 
 const sizes: sizesType = {
   mobile: 376,
@@ -152,7 +143,10 @@ const sizes: sizesType = {
 
 interface Media {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: (literals: TemplateStringsArray, ...placeholders: any[]) => ReturnType<typeof css>;
+  [key: string]: (
+    literals: TemplateStringsArray,
+    ...placeholders: any[]
+  ) => ReturnType<typeof css>;
 }
 
 const media = Object.keys(sizes).reduce<Media>((acc, label) => {
@@ -174,8 +168,7 @@ export default media;
 TypeScript에서 사용하는 인터페이스 정의 방식입니다. 이 인터페이스는 Media 객체가 문자열 키를 사용하여 접근할 수 있고, 각 키에 대응하는 값은 특정 함수 형태를 가져야 함을 명시합니다.
 
 2. `[key: string]`
-Media 객체가 어떤 문자열 키로도 접근될 수 있음을 의미합니다. 예를 들어, media['mobile'] 또는 media['tablet'] 처럼 접근할 수 있습니다.
-
+   Media 객체가 어떤 문자열 키로도 접근될 수 있음을 의미합니다. 예를 들어, media['mobile'] 또는 media['tablet'] 처럼 접근할 수 있습니다.
 
 3. `(literals: TemplateStringsArray, ...placeholders: any[]) => ReturnType<typeof css>`
 
@@ -195,7 +188,7 @@ Media 객체가 어떤 문자열 키로도 접근될 수 있음을 의미합니�
 
 # 적용
 
-![스타일컴포넌트미디어쿼리타입설정](스타일컴포넌트미디어쿼리타입설정.png)
+![스타일컴포넌트미디어쿼리타입설정](스타일컴포넌트미디어쿼리타입설정.PNG)
 
 에러가 사라졌습니다!
 
@@ -246,7 +239,7 @@ export default function SearchMethodTab() {
 
 ```
 
-![미디어쿼리적용](미디어쿼리적용.png)
+![미디어쿼리적용](미디어쿼리적용.PNG)
 
 일단 실험용으로 코드를 작성해봤는데 잘 동작하는군요.!!
 
@@ -261,8 +254,6 @@ export default function SearchMethodTab() {
 <div markdown="1">
 
 https://tyhopp.com/notes/styled-components-media-queries
-
-
 
 </div>
 
