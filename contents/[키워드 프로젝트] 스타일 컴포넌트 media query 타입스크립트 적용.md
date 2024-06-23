@@ -114,7 +114,7 @@ const Title = styled.p`
 
 잘 아시겠지만 js파일을 ts에서 import 하면 에러가 납니다. js는 타입처리가 하나도 안되어있기 때문이죠.
 
-![js파일타입에러](js파일타입에러.PNG)
+![js파일타입에러](js파일타입에러.png)
 
 `Could not find a declaration file for module 'styles/media'. 'c:/Users/dogmn/develop/Keyword_Searcher_Project/src/styles/media.js' implicitly has an 'any' type.`
 
@@ -188,7 +188,7 @@ TypeScript에서 사용하는 인터페이스 정의 방식입니다. 이 인터
 
 # 적용
 
-![스타일컴포넌트미디어쿼리타입설정](스타일컴포넌트미디어쿼리타입설정.PNG)
+![스타일컴포넌트미디어쿼리타입설정](스타일컴포넌트미디어쿼리타입설정.png)
 
 에러가 사라졌습니다!
 
@@ -239,7 +239,7 @@ export default function SearchMethodTab() {
 
 ```
 
-![미디어쿼리적용](미디어쿼리적용.PNG)
+![미디어쿼리적용](미디어쿼리적용.png)
 
 일단 실험용으로 코드를 작성해봤는데 잘 동작하는군요.!!
 

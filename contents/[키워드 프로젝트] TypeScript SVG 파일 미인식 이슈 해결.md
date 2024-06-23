@@ -22,7 +22,7 @@ svg파일을 import해서 사용하는 컴포넌트에서 다음과 같은 에�
 import Arrow_Forward from "assets/icons/arrow_forward.svg?react";
 ```
 
-![화살표잘나옴](화살표잘나옴.PNG)
+![화살표잘나옴](화살표잘나옴.png)
 
 화살표 아이콘이 렌더링되는걸보니 사용하긴 하는군요...
 

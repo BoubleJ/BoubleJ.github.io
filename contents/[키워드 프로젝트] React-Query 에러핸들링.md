@@ -124,7 +124,7 @@ const queryClient = new QueryClient({
 
 ![alt text](image-64.png)
 
-![에러바운더리페이지](에러바운더리페이지.PNG)
+![에러바운더리페이지](에러바운더리페이지.png)
 
 정상적으로 에러 페이지가 띄워집니다.
 
@@ -227,7 +227,7 @@ export default function Result({
 
 총 3가지 상태로 분기처리 후 각각 상태에 맞춰 렌더링 되도록 했습니다.
 
-![에러ui구현](에러ui구현.PNG)
+![에러ui구현](에러ui구현.png)
 
 잘 렌더링됩니다 다행이네요...
 
