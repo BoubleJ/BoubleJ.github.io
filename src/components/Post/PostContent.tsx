@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from 'react'
 import styled from '@emotion/styled'
 
+
 interface PostContentProps {
   html: string
 }
@@ -95,6 +96,7 @@ const MarkdownRenderer = styled.div`
     margin: 30px 0;
     padding: 15px;
     font-size: 15px;
+    background-color: #F8F8F8;
 
 
     ::-webkit-scrollbar-thumb {
