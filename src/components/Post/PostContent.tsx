@@ -1,17 +1,15 @@
-import React, { FunctionComponent } from 'react'
-import styled from '@emotion/styled'
-
+import React, { FunctionComponent } from "react";
+import styled from "@emotion/styled";
 
 interface PostContentProps {
-  html: string
+  html: string;
 }
-
 
 const PostContent: FunctionComponent<PostContentProps> = function ({ html }) {
-  return <MarkdownRenderer dangerouslySetInnerHTML={{ __html: html }} />
-}
+  return <MarkdownRenderer dangerouslySetInnerHTML={{ __html: html }} />;
+};
 
-export default PostContent
+export default PostContent;
 
 const MarkdownRenderer = styled.div`
   // Renderer Style
@@ -92,12 +90,11 @@ const MarkdownRenderer = styled.div`
   }
 
   // Adjust Code Style
-  pre[class*='language-'] {
+  pre[class*="language-"] {
     margin: 30px 0;
     padding: 15px;
     font-size: 15px;
-    background-color: #F8F8F8;
-
+    background-color: #f8f8f8;
 
     ::-webkit-scrollbar-thumb {
       background: rgba(255, 255, 255, 0.5);
@@ -105,12 +102,12 @@ const MarkdownRenderer = styled.div`
     }
   }
 
-  code[class*='language-'],
-  pre[class*='language-'] {
+  code[class*="language-"],
+  pre[class*="language-"] {
     tab-size: 2;
   }
-   // Markdown Responsive Design
-   @media (max-width: 768px) {
+  // Markdown Responsive Design
+  @media (max-width: 768px) {
     width: 100%;
     padding: 80px 20px;
     line-height: 1.6;
@@ -136,4 +133,4 @@ const MarkdownRenderer = styled.div`
       margin: 50px 0;
     }
   }
-`
+`;
