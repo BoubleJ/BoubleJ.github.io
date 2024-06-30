@@ -104,11 +104,10 @@ children 요소를 이용해 중첩 라우팅을 구현할 수 있습니다. `/t
 
 ### Outlet
 
-BrowserRouter와 동일하게 `<Outlet/>` 컴포넌트를 사용할 수 있습니다. 위 코드에서는 `<Team />` 컴포넌트가  `<Outlet/>` 역할을 하겠죠?
+BrowserRouter와 동일하게 `<Outlet/>` 컴포넌트를 사용할 수 있습니다. 위 코드에서는 `<Team />` 컴포넌트가 `<Outlet/>` 역할을 하겠죠?
 
 <br>
 <br>
-
 
 # 왜 좋은걸까요?
 
@@ -229,7 +228,244 @@ loader를 사용하면 서버 사이드 렌더링 시에도 데이터를 미리 
 
 이러한 장점들이 있다고 합니다. 나름 채신 문법이고 공식문서에서 앵간해선 좋다고 하니 적용하는 것이 mz스럽고 좋아보입니다.
 
+<br>
+<br>
+<br>
 
+# 실제 적용
+
+이제 실제로 적용해봐야겠죠??
+
+```tsx
+//App.tsx
+
+import "bootstrap/dist/css/bootstrap.min.css";
+import { Routes, Route, Navigate } from "react-router-dom";
+import KeywordInput from "components/feature/filter/KeywordInput";
+import NotFound from "components/pages/NotFound";
+import SearchPage from "components/pages/SearchPage";
+import Layout from "Layout";
+import CategoryList from "components/feature/filter/CategoryList";
+
+function App() {
+  return (
+    <>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Navigate replace to="/categories" />} />
+          <Route path="/" element={<SearchPage />}>
+            <Route path="keyword" element={<KeywordInput />} />
+            <Route path="categories" element={<CategoryList />}>
+              <Route path=":categoryId" element={<></>} />
+            </Route>
+          </Route>
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Layout>
+    </>
+  );
+}
+
+export default App;
+```
+
+<br>
+
+```tsx
+//main.tsx
+
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "App.tsx";
+import { Provider } from "react-redux";
+import store from "store/store.js";
+import { BrowserRouter } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { GlobalStyles } from "styles/GlobalStyle";
+export type RootState = ReturnType<typeof store.getState>;
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      gcTime: 0,
+      retry: 0,
+    },
+  },
+});
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <GlobalStyles />
+        <Provider store={store}>
+          <App />
+        </Provider>
+      </BrowserRouter>
+    </QueryClientProvider>
+  </React.StrictMode>
+);
+```
+
+BrowserRouter로 라우팅 구성한 제 프로젝트입니다.
+
+라우팅 방식을 createBrowserRouter로 변경하면 다음과 같이 작성해야합니다.
+
+```tsx
+//App.tsx
+
+import "bootstrap/dist/css/bootstrap.min.css";
+import {
+  createBrowserRouter,
+  redirect,
+  RouterProvider,
+} from "react-router-dom";
+import KeywordInput from "components/feature/filter/KeywordInput";
+import SearchPage from "components/pages/SearchPage";
+import Layout from "Layout";
+import CategoryList from "components/feature/filter/CategoryList";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: (
+      <Layout>
+        <SearchPage />
+      </Layout>
+    ),
+    errorElement: <NotFound />,
+    children: [
+      {
+        index: true,
+        loader: async () => redirect("/categories"),
+      },
+      {
+        path: "categories",
+        element: <CategoryList />,
+        children: [
+          {
+            path: ":categoryId",
+            element: <></>,
+          },
+        ],
+      },
+      {
+        path: "keyword",
+        element: <KeywordInput />,
+      },
+    ],
+  },
+]);
+
+function App() {
+  return (
+    <>
+      <RouterProvider router={router} />
+    </>
+  );
+}
+
+export default App;
+```
+
+```tsx
+//main.tsx
+
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "App.tsx";
+import { Provider } from "react-redux";
+import store from "store/store.js";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { GlobalStyles } from "styles/GlobalStyle";
+export type RootState = ReturnType<typeof store.getState>;
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 3000,
+      gcTime: 0,
+      retry: 0,
+    },
+  },
+});
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <GlobalStyles />
+      <Provider store={store}>
+        <App />
+      </Provider>
+    </QueryClientProvider>
+  </React.StrictMode>
+);
+```
+
+<br>
+
+변화된 점은 다음과 같습니다.
+
+### 1. main.tsx 파일 내 BrowserRouter 제거
+
+이제 App.tsx 파일에서 라우팅을 설게하기 때문에 `BrowserRouter`를 제거했습니다.
+
+<br>
+
+### 2. App.tsx 파일 createBrowserRouter 적용
+
+위에 작성한 예제 코드를 기반으로 제 프로젝트에 `createBrowserRouter`를 적용해보았습니다.
+
+<br>
+
+### 3. Layout컴포넌트 children 구현
+
+Layout컴포넌트는 children 요소를 가지고 있기 때문에
+
+```tsx
+ <Layout>
+      <SearchPage />
+    </Layout>,
+```
+
+다음과 같이 컴포넌트 구조를 작성해줬습니다.
+
+<br>
+
+### 4. redirect 메서드 적용
+
+홈페이지 접속하면 자동으로 `/categories` 경로로 리다이렉트 시키기 위해 `redirect` 메서드를 사용하였습니다.
+
+```tsx
+ {
+    path: "/",
+    element: <Layout>
+      <SearchPage />
+    </Layout>,
+    children: [
+      {
+        index: true,
+        loader: async () => redirect('/categories'),
+    },
+
+```
+
+<br>
+
+### 5. 404 페이지 적용
+
+```tsx
+{
+    path: "/",
+    element: <Layout>
+      <SearchPage />
+    </Layout>,
+    errorElement: <NotFound />,
+    }
+
+```
+
+errorElement 속성을 이용해 404 페이지도 정상적으로 구현했습니다.
 
 <br>
 <br>
@@ -246,6 +482,7 @@ https://velog.io/@adultlee/createBrowserRouter%EB%A5%BC-%ED%86%B5%ED%95%9C-Route
 https://reactrouter.com/en/main/routers/create-browser-router
 
 https://velog.io/@dolfin/react-react-router-v6.4-createBrowserRouter-outlet
+
 </div>
 
 </details>
