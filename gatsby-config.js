@@ -5,7 +5,7 @@
 module.exports = {
   siteMetadata: {
     title: `프론트엔드 개발자 꿈나무의 개발 블로그`,
-    siteUrl: `https://d7zyusgbyb73k.cloudfront.net/`,
+    siteUrl: `https://www.epik-blog.com/`,
     description: `누구나 쉽게 이해할 수 있는 블로그가 되기를 지향합니다.`,
     author: `Epik`,
   },
@@ -15,7 +15,7 @@ module.exports = {
     "gatsby-plugin-gatsby-cloud",
     "gatsby-plugin-image",
     "gatsby-plugin-sharp",
-    'gatsby-plugin-sitemap',
+    "gatsby-plugin-sitemap",
     `gatsby-transformer-sharp`,
     `gatsby-plugin-resolve-src`,
     `gatsby-plugin-react-helmet`,
@@ -23,22 +23,22 @@ module.exports = {
       resolve: `gatsby-plugin-sharp`,
       options: {
         defaults: {
-          formats: ['auto', 'webp'],
+          formats: ["auto", "webp"],
           quality: 100,
-          placeholder: 'blurred',
-        }
-      }
-    },
-    {
-      resolve: 'gatsby-plugin-robots-txt',
-      options: {
-        policy: [{ userAgent: '*', allow: '/' }],
+          placeholder: "blurred",
+        },
       },
     },
     {
-      resolve: 'gatsby-plugin-canonical-urls',
+      resolve: "gatsby-plugin-robots-txt",
       options: {
-        siteUrl: 'https://d7zyusgbyb73k.cloudfront.net/',
+        policy: [{ userAgent: "*", allow: "/" }],
+      },
+    },
+    {
+      resolve: "gatsby-plugin-canonical-urls",
+      options: {
+        siteUrl: "https://d7zyusgbyb73k.cloudfront.net/",
         stripQueryString: true,
       },
     },
