@@ -61,13 +61,21 @@ const MarkdownRenderer = styled.div`
   h3 {
     font-size: 20px;
   }
-
+  strong {
+    font-weight: 900;
+    font-size: 18px;
+  }
   // Adjust Quotation Element Style
   blockquote {
     margin: 30px 0;
     padding: 5px 15px;
     border-left: 2px solid #000000;
     font-weight: 800;
+    background-color: #f8f8f8;
+  }
+  table, tr, th, td {
+    border-collapse: collapse;
+    border: 1px solid #000000;
   }
 
   // Adjust List Element Style
@@ -105,6 +113,9 @@ const MarkdownRenderer = styled.div`
   code[class*="language-"],
   pre[class*="language-"] {
     tab-size: 2;
+    background-color: #F2F1F1;
+    padding: 5px;
+    border-radius: 5px;
   }
   // Markdown Responsive Design
   @media (max-width: 768px) {
