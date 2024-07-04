@@ -1,11 +1,19 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useEffect } from "react";
 import styled from "@emotion/styled";
+import hljs from "highlight.js";
+import "highlight.js/styles/github.css";
 
 interface PostContentProps {
   html: string;
 }
 
 const PostContent: FunctionComponent<PostContentProps> = function ({ html }) {
+
+  useEffect(() => {
+    document.querySelectorAll("pre code").forEach((block) => {
+      hljs.highlightBlock(block as HTMLElement);
+    });
+  }, [html]);
   return <MarkdownRenderer dangerouslySetInnerHTML={{ __html: html }} />;
 };
 
