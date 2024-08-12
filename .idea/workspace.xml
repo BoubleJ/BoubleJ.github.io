@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="ac4dec17-612c-4968-8db8-c899fa8dfa59" name="Changes" comment="" />
+    <list default="true" id="ac4dec17-612c-4968-8db8-c899fa8dfa59" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/contents/[Network] 망분리란.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contents/[React] useState 동작원리.md" beforeDir="false" afterPath="$PROJECT_DIR$/contents/[React] useState 동작원리.md" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -10,9 +17,12 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 3
-}]]></component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="QODANA_PROBLEMS_VIEW_TAB" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 3
+}</component>
   <component name="ProjectId" id="2frYWfMbLkQlqU8jWOnbjARjxB8" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -23,7 +33,13 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "master",
     "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/dogmn/develop/TechBlog",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -44,7 +60,19 @@
       <option name="presentableId" value="Default" />
       <updated>1714560705255</updated>
       <workItem from="1714560705260" duration="23000" />
+      <workItem from="1723307426631" duration="448000" />
+      <workItem from="1723307927221" duration="39000" />
+      <workItem from="1723394635870" duration="66000" />
+      <workItem from="1723456826404" duration="198000" />
+      <workItem from="1723457056803" duration="95000" />
+      <workItem from="1723457171820" duration="66000" />
+      <workItem from="1723457261487" duration="441000" />
+      <workItem from="1723468594972" duration="837000" />
+      <workItem from="1723474719534" duration="1757000" />
     </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
 </project>
