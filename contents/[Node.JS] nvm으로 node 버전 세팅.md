@@ -16,7 +16,7 @@ npm run start
 
 ![노드에러.png](노드에러.png)
 
-내 역시나 뭐하나 얌전히 되는 꼴을 못봅니다.
+네...역시나 뭐하나 얌전히 되는 꼴을 못봅니다.
 
 검색해보니 node 버전이 달라서 생긴 오류라는군요.
 
@@ -33,6 +33,8 @@ npm run start
 https://github.com/coreybutler/nvm-windows
 
 위 링크로 접속한 후 다운로드 받으시면 됩니다.
+
+<br>
 
 nvm이 잘 다운받아졌는지 확인해봅시다. 설치된 nvm 버전을 알려주는 명령어입니다.
 
