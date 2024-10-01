@@ -1,7 +1,7 @@
 ---
-date: "2024-10--01"
+date: "2024-10-01"
 title: "[Node.JS] package.json 작은 따옴표 사용 이슈"
-categories: ["Node.JS", "package.json","JSON"]
+categories: ["Node.JS", "package.json", "JSON"]
 summary: "npm run dev 명령어가 실행되지 않은 이유를 알아봅시다."
 thumbnail: "./패키지제이슨.png"
 ---
@@ -46,11 +46,11 @@ thumbnail: "./패키지제이슨.png"
 
 https://developer.mozilla.org/ko/docs/Learn/JavaScript/Objects/JSON
 
-공식문서에 
+공식문서에
 
 **JSON은 문자열과 프로퍼티의 이름 작성시 큰 따옴표만을 사용해야 합니다. 작은 따옴표는 사용불가합니다.**
 
-라는 문구가 있더군요. 
+라는 문구가 있더군요.
 
 제 package.json 파일을 보니
 
@@ -58,6 +58,7 @@ https://developer.mozilla.org/ko/docs/Learn/JavaScript/Objects/JSON
   "dev": "concurrently --kill-others npm run dev:server 'npm run dev:ui'",
 
 ```
+
 야레야레 못말리는 json 씨... 작은 따옴표가 야물딱지게 위치해있네요.
 
 ```json
@@ -73,8 +74,8 @@ https://developer.mozilla.org/ko/docs/Learn/JavaScript/Objects/JSON
 
 ng on their current behavior and syntax as those might change in a future version of Node.js.
 [0] (Use `node --trace-warnings ...` to show where the warning was created)
-[0] (node:540) ExperimentalWarning: Importing JSON modules is an experimental feature and might change at any time    
-[1] 
+[0] (node:540) ExperimentalWarning: Importing JSON modules is an experimental feature and might change at any time
+[1]
 [1]   VITE v4.4.4  ready in 9440 ms
 [1]
 [1]   ➜  Local:   http://localhost:5173/
