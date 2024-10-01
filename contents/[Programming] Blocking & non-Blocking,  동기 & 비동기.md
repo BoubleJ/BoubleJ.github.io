@@ -2,7 +2,7 @@
 date: "2024-04-11"
 title: "[Programming] Blocking & non-Blocking,  동기 & 비동기"
 categories: ["Programming"]
-summary: " Blocking & Non-Blocking / 동기 & 비동기"
+summary: "Blocking & Non-Blocking / 동기 & 비동기"
 thumbnail: "./블로킹,동기조합.png"
 ---
 
