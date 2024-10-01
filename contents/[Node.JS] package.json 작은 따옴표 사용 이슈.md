@@ -61,10 +61,7 @@ https://developer.mozilla.org/ko/docs/Learn/JavaScript/Objects/JSON
 
 야레야레 못말리는 json 씨... 작은 따옴표가 야물딱지게 위치해있네요.
 
-```json
-"dev": "concurrently --kill-others \"npm run dev:server\" \"npm run dev:ui\"",
-
-```
+**"dev": "concurrently --kill-others \"npm run dev:server\" \"npm run dev:ui\"",**
 
 바로 큰따옴표로 바꿔주고 다시 실행하니 정상적으로 동작합니다!!
 
