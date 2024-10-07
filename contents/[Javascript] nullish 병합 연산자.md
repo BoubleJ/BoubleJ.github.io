@@ -1,7 +1,8 @@
 ---
 date: "2024-09-28"
 title: "[Javascript] nullish 병합 연산자"
-categories: ["Javascript", "??", "nullish", "병합 연산자", "truthy", "ES6"]
+categories:
+  ["Javascript", "??연산자", "nullish", "병합 연산자", "truthy", "ES6"]
 summary: "nullish 병합 연산자 ?? 문법을 알아봅시다."
 thumbnail: "./병합연산자.png"
 ---
