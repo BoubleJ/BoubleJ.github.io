@@ -10,13 +10,13 @@ thumbnail: "./reacticon.png"
 ## useReducer
 
 - 철수가 은행에 만원을 출금하면 은행은 철수에게 만원을 준 뒤 철수의 은행계좌를 업데이트한다.
-- 철수가 은행에서 하고싶은 일 (요구) : dispatch(본 예시에선 출금행위) → state를 업데이트하는 역할
+- 철수가 은행에서 하고싶은 일 (요구) : Dispatch(본 예시에선 출금행위) → state를 업데이트하는 역할
 철수가 은행에 만원을 출금해달라 요청하는 행위 : action → 요구의 내용
-은행 : reducer → state 업데이트를 위한 요구
+은행 : Reducer → state 업데이트를 위한 요구
 철수의 은행 계좌 : state
-- **즉 철수의 요구(dispatch)에 만원을 출금해달라는 요청(action)넣으면 은행(reducer)는 계좌내역(state)를 변경시켜준다. 
-dispatch에 action을 담는 구조**
-- **usereducer함수는 state값을 업데이트 해주는 함수이다.**
+- **즉 철수의 요구(Dispatch)에 만원을 출금해달라는 요청(Action)넣으면 은행(Reducer)는 계좌내역(state)를 변경시켜준다. 
+Dispatch에 Action을 담는 구조**
+- **useReducer함수는 state값을 업데이트 해주는 함수이다.**
 
 예시
 
