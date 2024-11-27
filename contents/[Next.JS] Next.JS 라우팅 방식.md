@@ -73,7 +73,7 @@ app.get('/', (req, res) =>{
 })
 ```
 
-/ path값으로 요청을 보내면 응답으로 'homepage~~' 이라는 json 타입이 반환되죠.
+/path값으로 요청을 보내면 응답으로 'homepage~~' 이라는 json 타입이 반환되죠.
 
 
 
