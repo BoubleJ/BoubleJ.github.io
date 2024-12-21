@@ -40,7 +40,6 @@ const IndexPage: FunctionComponent<IndexPageProps> = function ({
     },
     allMarkdownRemark: { edges },
     file: {
-      childImageSharp: { gatsbyImageData },
       publicURL,
     },
   },
@@ -85,7 +84,7 @@ const IndexPage: FunctionComponent<IndexPageProps> = function ({
       url={siteUrl}
       image={publicURL}
     >
-      <Introduction profileImage={gatsbyImageData} />
+      <Introduction />
       <CategoryList
         selectedCategory={selectedCategory}
         categoryList={categoryList}

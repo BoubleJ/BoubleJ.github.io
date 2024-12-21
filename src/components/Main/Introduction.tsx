@@ -1,19 +1,11 @@
-import React, { FunctionComponent } from 'react'
-import styled from '@emotion/styled'
-import ProfileImage from 'components/Main/ProfileImage'
-import { IGatsbyImageData } from 'gatsby-plugin-image'
-// import Header from 'components/Main/Header'
-
-
-type IntroductionProps = {
-  profileImage: IGatsbyImageData
-}
+import React, { FunctionComponent } from "react";
+import styled from "@emotion/styled";
 
 const Background = styled.div`
   width: 100%;
   background-image: linear-gradient(60deg, #29323c 0%, #485563 100%);
   color: #ffffff;
-`
+`;
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -28,7 +20,7 @@ const Wrapper = styled.div`
     height: 300px;
     padding: 0 20px;
   }
-`
+`;
 
 const SubTitle = styled.div`
   font-size: 20px;
@@ -37,7 +29,7 @@ const SubTitle = styled.div`
   @media (max-width: 768px) {
     font-size: 15px;
   }
-`
+`;
 
 const Title = styled.div`
   margin-top: 5px;
@@ -47,24 +39,19 @@ const Title = styled.div`
   @media (max-width: 768px) {
     font-size: 25px;
   }
-`
+`;
 
-const Introduction: FunctionComponent<IntroductionProps> = function ({
-  profileImage,
-}) {
+const Introduction: FunctionComponent = function () {
   return (
     <Background>
-      {/* <Header/> */}
       <Wrapper>
-        {/* <ProfileImage profileImage={profileImage} /> */}
-
         <div>
           <SubTitle>Nice to Meet You</SubTitle>
           <Title>프론트엔드 주니어 개발자 변재정의 블로그입니다.</Title>
         </div>
       </Wrapper>
     </Background>
-  )
-}
+  );
+};
 
-export default Introduction
+export default Introduction;
