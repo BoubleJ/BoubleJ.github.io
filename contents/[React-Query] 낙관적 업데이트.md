@@ -1,7 +1,7 @@
 ---
 date: "2024-11-11"
 title: "[React-Query] 낙관적 업데이트"
-categories: ["ReactStudy", "React-Query"]
+categories: ["React-Query"]
 summary: " 낙관적 업데이트(Optimistic Update)에 대해 알아봅시다."
 thumbnail: "./낙관적업데이트.png"
 ---
