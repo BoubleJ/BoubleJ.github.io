@@ -65,6 +65,19 @@ export default function Modal() {
 ```
 
 
+### props 혹은 객체 값에 따라 조건부 클래스 적용
+
+```js
+const MyComponent = ({ highlighted, theme }) => (
+  <div className={classNames('MyComponent', { highlighted }, theme)}>Hello</div>
+);
+```
+
+위 컴포넌트의 경우 클래스의 highlighted 값이 true이면 highlighted 클래스가 적용되고, false이면 적용되지 않습니다. \
+
+추가로 theme으로 전달받는 문자열은 내용 그대로 클래스에 적용됩니다.
+
+
 ## className 미사용과 비교
 
 ### 쌩 css 적용
@@ -116,6 +129,21 @@ export default function Modal() {
 ```
 
 템플릿 리터럴을 안쓰니 가독성이 훨씬 좋아졌습니다.
+
+
+또한 상술한 클래스객체 존재 유무에 따른 조건문도 복잡해집니다.\
+
+```js
+const MyComponent = ({ highlighted, theme }) => (
+  <div className={`MyComponent ${theme} ${highlighted ? 'highlighted' : ''}`}>
+    Hello
+  </div>
+);
+```
+
+확실히 className 라이브러리를 사용했을 때가 가독성이 좋습니다.
+
+
 
 ### bind() 함수로 감싸지 않고 사용 시
 
@@ -171,7 +199,9 @@ export default function Modal() {
 
 <div markdown="1">
 
-안녕
+https://velog.io/@dooreplay/classNamesCSS-Modules
+
+
 
 </div>
 
