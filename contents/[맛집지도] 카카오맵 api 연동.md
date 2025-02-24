@@ -3,7 +3,7 @@ date: "2025-11-12"
 title: "[맛집지도] 카카오맵 api 연동"
 categories: ["Web", "OpenApi"]
 summary: "카카오맵 api를 연동해봅시다."
-thumbnail: "./웹사진.png"
+thumbnail: "./classname.png"
 ---
 
 저만의 맛집지도를 만들기 위해 카카오맵 api를 연동해보겠습니다.

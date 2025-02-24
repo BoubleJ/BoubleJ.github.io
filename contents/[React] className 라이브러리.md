@@ -74,7 +74,7 @@ const MyComponent = ({ highlighted, theme }) => (
 );
 ```
 
-위 컴포넌트의 경우 클래스의 highlighted 값이 true이면 highlighted 클래스가 적용되고, false이면 적용되지 않습니다. \
+위 컴포넌트의 경우 클래스의 highlighted 값이 true이면 highlighted 클래스가 적용되고, false이면 적용되지 않습니다.
 
 추가로 theme으로 전달받는 문자열은 내용 그대로 클래스에 적용됩니다.
 
