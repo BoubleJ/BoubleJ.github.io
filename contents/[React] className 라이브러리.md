@@ -18,6 +18,8 @@ npm install classnames --save
 
 설치해줍니다.
 
+<br>
+
 만약, 타입스크립트를 사용한다면
 
 ```shell
@@ -64,12 +66,11 @@ export default function Modal() {
 }
 ```
 
-
 ### props 혹은 객체 값에 따라 조건부 클래스 적용
 
 ```js
 const MyComponent = ({ highlighted, theme }) => (
-  <div className={classNames('MyComponent', { highlighted }, theme)}>Hello</div>
+  <div className={classNames("MyComponent", { highlighted }, theme)}>Hello</div>
 );
 ```
 
@@ -77,11 +78,9 @@ const MyComponent = ({ highlighted, theme }) => (
 
 추가로 theme으로 전달받는 문자열은 내용 그대로 클래스에 적용됩니다.
 
-
 ## className 미사용과 비교
 
 ### 쌩 css 적용
-
 
 ```js
 import st from "./Modal.module.scss";
@@ -99,20 +98,18 @@ export default function Modal() {
 }
 ```
 
-가장 일반적인 css 적용 방법입니다. 조건문, 혹은 여러 선택자 적용시 템플릿 리터럴을 활용해줘야합니다. 
+가장 일반적인 css 적용 방법입니다. 조건문, 혹은 여러 선택자 적용시 템플릿 리터럴을 활용해줘야합니다.
 
-위 예시야 간단하기 때문에 가독성에 문제가 없지만... 
+위 예시야 간단하기 때문에 가독성에 문제가 없지만...
 
 복잡한 조건문, 여러 클래스 적용 시 가독성이 급격히 떨어집니다.
 
 ```html
-<img
-   className={`${css.pannelTriangle} 
-   ${isOpen && path.length !== 3? css.pannelOpen: css.pannelClose} 
-   ${path.length === 3 && css[`pannelArrow`]}
-   ${!title && css[`imgNotFound`]} } />
-
+<img className={`${css.pannelTriangle} ${isOpen && path.length !== 3?
+css.pannelOpen: css.pannelClose} ${path.length === 3 && css[`pannelArrow`]}
+${!title && css[`imgNotFound`]} } />
 ```
+
 네.. 코드가 매우 더러워졌군요.
 
 <br>
@@ -120,30 +117,26 @@ export default function Modal() {
 **라이브러리 사용 시**
 
 ```html
-<img
-  className={cn(
-  "pannelTriangle",
-  isOpen && path.length !== 3 ? "pannelOpen" : "pannelClose",
-  path.length === 3 && "pannelArrow",
-  !title && "imgNotFound" )} />
+<img className={cn( "pannelTriangle", isOpen && path.length !== 3 ? "pannelOpen"
+: "pannelClose", path.length === 3 && "pannelArrow", !title && "imgNotFound" )}
+/>
 ```
 
 템플릿 리터럴을 안쓰니 가독성이 훨씬 좋아졌습니다.
 
+<br>
 
-또한 상술한 클래스객체 존재 유무에 따른 조건문도 복잡해집니다.\
+또한 상술한 클래스객체 존재 유무에 따른 조건문도 복잡해집니다.
 
 ```js
 const MyComponent = ({ highlighted, theme }) => (
-  <div className={`MyComponent ${theme} ${highlighted ? 'highlighted' : ''}`}>
+  <div className={`MyComponent ${theme} ${highlighted ? "highlighted" : ""}`}>
     Hello
   </div>
 );
 ```
 
 확실히 className 라이브러리를 사용했을 때가 가독성이 좋습니다.
-
-
 
 ### bind() 함수로 감싸지 않고 사용 시
 
@@ -201,7 +194,7 @@ export default function Modal() {
 
 https://velog.io/@dooreplay/classNamesCSS-Modules
 
-
+https://velog.io/@jinhengxi/React-classnames
 
 </div>
 
