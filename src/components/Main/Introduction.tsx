@@ -6,13 +6,18 @@ const Background = styled.div`
   background-image: linear-gradient(60deg, #29323c 0%, #485563 100%);
   color: #ffffff;
 `;
+
+const NavTab = styled.nav`
+  display: flex;
+  justify-content: space-between;
+`;
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  width: 768px;
-  height: 400px;
+  width: 1050px;
+  height: 80px;
   margin: 0 auto;
 
   @media (max-width: 768px) {
@@ -22,33 +27,23 @@ const Wrapper = styled.div`
   }
 `;
 
-const SubTitle = styled.div`
+const Tab = styled.a`
   font-size: 20px;
-  font-weight: 400;
-
-  @media (max-width: 768px) {
-    font-size: 15px;
-  }
-`;
-
-const Title = styled.div`
-  margin-top: 5px;
-  font-size: 35px;
-  font-weight: 700;
-
-  @media (max-width: 768px) {
-    font-size: 25px;
-  }
 `;
 
 const Introduction: FunctionComponent = function () {
+  const tab = ["Home", "About", "Skills", "Projects", "Contact"];
+
   return (
     <Background>
       <Wrapper>
-        <div>
-          <SubTitle>Nice to Meet You</SubTitle>
-          <Title>프론트엔드 주니어 개발자 변재정의 블로그입니다.</Title>
-        </div>
+        <NavTab>
+          {tab.map((item, index) => (
+            <Tab key={`${index} + ${item}`} href="/">
+              {item}
+            </Tab>
+          ))}
+        </NavTab>
       </Wrapper>
     </Background>
   );
