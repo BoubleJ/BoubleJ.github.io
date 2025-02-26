@@ -2,7 +2,8 @@ import React, { FunctionComponent } from "react";
 import styled from "@emotion/styled";
 
 const Background = styled.div`
-  width: 100%;
+  max-width: 1140px;
+  height: 76px;
   background-image: linear-gradient(60deg, #29323c 0%, #485563 100%);
   color: #ffffff;
 `;
@@ -32,19 +33,9 @@ const Tab = styled.a`
 `;
 
 const Introduction: FunctionComponent = function () {
-  const tab = ["Home", "About", "Skills", "Projects", "Contact"];
-
   return (
     <Background>
-      <Wrapper>
-        <NavTab>
-          {tab.map((item, index) => (
-            <Tab key={`${index} + ${item}`} href="/">
-              {item}
-            </Tab>
-          ))}
-        </NavTab>
-      </Wrapper>
+      <Wrapper></Wrapper>
     </Background>
   );
 };

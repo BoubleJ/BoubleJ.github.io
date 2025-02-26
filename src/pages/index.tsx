@@ -7,6 +7,7 @@ import { graphql } from "gatsby";
 import { PostListItemType } from "types/PostItem.types";
 import { IGatsbyImageData } from "gatsby-plugin-image";
 import queryString, { ParsedQuery } from "query-string";
+import Sidebar from "components/Main/Sidebar";
 
 type IndexPageProps = {
   location: {
@@ -85,6 +86,7 @@ const IndexPage: FunctionComponent<IndexPageProps> = function ({
       image={publicURL}
     >
       <Introduction />
+      <Sidebar/>
       <CategoryList
         selectedCategory={selectedCategory}
         categoryList={categoryList}

@@ -1,5 +1,5 @@
 ---
-date: "2025-11-12"
+date: "2025-02-12"
 title: "[맛집지도] 카카오맵 api 연동"
 categories: ["Web", "OpenApi"]
 summary: "카카오맵 api를 연동해봅시다."
