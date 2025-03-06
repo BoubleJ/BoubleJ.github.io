@@ -10,7 +10,7 @@ thumbnail: "./하이드레이션에러.png"
 
 새로운 프로젝트를 만들기 위해 next.js 를 설치했는데 설치하자마자 `hydration` 에러가 발생했습니다.
 
-![하이드레이션에러2](하이드레이션에러2.png)
+![하이드레이션에러2](../images/하이드레이션에러2.png)
 
 당황스럽군요... 일단 당황하지않고 에러를 살펴봅시다.
 
@@ -38,7 +38,7 @@ https://github.com/vercel/next.js/discussions/72035
 
 해당 깃허브링크에서 찾을 수 있었습니다.
 
-> `I discovered that the cz-shortcut-listen="true" attribute, added by the Colorzilla browser extension, was causing the issue.` <br> Colorzilla 브라우저 확장 프로그램에 추가된 cz-shortcut-listen="true" 속성이 문제를 일으키고 있다는 것을 발견했습니다.
+> I discovered that the cz-shortcut-listen="true" attribute, added by the Colorzilla browser extension, was causing the issue. <br> <br> Colorzilla 브라우저 확장 프로그램에 추가된 cz-shortcut-listen="true" 속성이 문제를 일으키고 있다는 것을 발견했습니다.
 
 Colorzilla 크롬 확장프로그램은 colorzilla extension/add-on라는 기능을 통해 body 태그에 `cz-shortcut-listen="true"` 속성을 주입한다고 합니다.
 
@@ -57,6 +57,7 @@ Colorzilla 크롬 확장프로그램은 colorzilla extension/add-on라는 기능
 ![next정상](next정상.png)
 
 정상적으로 동작합니다!!
+
 
 <br>
 <br>

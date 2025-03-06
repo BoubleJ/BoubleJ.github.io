@@ -20,4 +20,12 @@ const MarkdownRenderer = styled.div`
   margin: 0 auto;
   padding: 100px 0;
   word-break: break-all;
+
+  blockquote {
+    margin-top: 10px;
+    padding: 15px;
+    border-left: 3px solid #D2D7DF;
+    background-color: #F6F8FA;
+    color : #72757B
+  }
 `;
