@@ -9,5 +9,42 @@ const Wrap = styled.div`
 `;
 
 export default function Sidebar() {
-  return <Wrap>Sidebar</Wrap>;
+  const categories = [
+    {
+      title: "Language",
+      path: "/language",
+    },
+    {
+      title: "Style Sheet",
+      path: "/style",
+    },
+    {
+      title: "Framework / Library",
+      path: "/library",
+    },
+    {
+      title: "Platform",
+      path: "/platform",
+    },
+    {
+      title: "Computer Science",
+      path: "/cs",
+    },
+    {
+      title: "Programming",
+      path: "/prgramming",
+    },
+  ];
+
+  return (
+    <Wrap>
+      {categories.map((category, index) => {
+        return (
+          <div key={index}>
+            <a href={category.path}>{category.title}</a>
+          </div>
+        );
+      })}
+    </Wrap>
+  );
 }
