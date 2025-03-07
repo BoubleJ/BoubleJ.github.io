@@ -17,7 +17,8 @@
     "clean": "gatsby clean",
     "prepare": "husky",
     "scan": "gatsby develop & npx react-scan@latest localhost:8000",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "lint": "eslint --fix ."
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
@@ -77,6 +78,7 @@
   },
   "devDependencies": {
     "babel-plugin-styled-components": "^2.1.4",
+    "eslint": "^7.32.0",
     "gatsby-plugin-postcss": "^6.12.0",
     "gatsby-post-gen": "^1.0.0",
     "husky": "^9.1.7",
