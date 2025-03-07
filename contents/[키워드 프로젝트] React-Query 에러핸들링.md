@@ -98,7 +98,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         </BrowserRouter>
       </QueryErrorBoundary>
     </QueryClientProvider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
 ```
 
@@ -305,8 +305,6 @@ export default function Result({
 `ErrorField`는 별도로 만든 fallback컴포넌트입니다.
 
 ```tsx
-
-
 //Result.tsx
 
 export default function Result({
@@ -328,8 +326,8 @@ export default function Result({
   );
 }
 ```
-데이터값을 렌더링하는 `Result` 컴포넌트에서 props로 에러객체를 받아와 에러를 던지도록 만들고 던진 에러를 `ErrorBoundary`가 받아서 처리하도록 만들었습니다.
 
+데이터값을 렌더링하는 `Result` 컴포넌트에서 props로 에러객체를 받아와 에러를 던지도록 만들고 던진 에러를 `ErrorBoundary`가 받아서 처리하도록 만들었습니다.
 
 <br>
 <br>

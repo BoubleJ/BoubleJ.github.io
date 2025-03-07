@@ -6,7 +6,6 @@ summary: "리액트jsx 반복문을 통해 렌더링할 경우 props로 key를 �
 thumbnail: "./reacticon.png"
 ---
 
-
 ### 리액트 list key
 
 - 리액트jsx 반복문을 통해 렌더링할 경우 props로 key를 넣어줘야한다.
@@ -14,8 +13,8 @@ thumbnail: "./reacticon.png"
 
 ```jsx
 <ul>
-        {toDos.map((item, index) => (
-          <li key={index}>{item}</li>
-        ))}
-      </ul>
+  {toDos.map((item, index) => (
+    <li key={index}>{item}</li>
+  ))}
+</ul>
 ```

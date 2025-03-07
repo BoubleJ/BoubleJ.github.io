@@ -122,7 +122,6 @@ export default function KeywordInput() {
 
 ![useRef적용후](useRef적용후.gif)
 
-
 성공적으로 적용됐습니다!!
 
 <br>

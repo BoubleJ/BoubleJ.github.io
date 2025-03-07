@@ -37,11 +37,11 @@ export default function SearchPage() {
   const [errorMessage, setErrorMessage] = useState("");
 
   const { startDate, los } = useSelector(
-    (state: RootState) => state.queryString.date
+    (state: RootState) => state.queryString.date,
   );
 
   const keywordInputValue = useSelector(
-    (state: RootState) => state.queryString.pathName
+    (state: RootState) => state.queryString.pathName,
   );
 
   const { pathname } = useLocation();
@@ -81,7 +81,7 @@ export default function SearchPage() {
         if (Number(maxPrice) < 10000) {
           setShowModal(true);
           setErrorMessage(
-            "최소가격 미 입력 시\n최대가격이 10000보다 커야합니다."
+            "최소가격 미 입력 시\n최대가격이 10000보다 커야합니다.",
           );
         }
       } else {
@@ -104,7 +104,7 @@ export default function SearchPage() {
           if (Number(maxPrice) < 10000) {
             setShowModal(true);
             setErrorMessage(
-              "최소가격 미 입력 시\n최대가격이 10000보다 커야합니다."
+              "최소가격 미 입력 시\n최대가격이 10000보다 커야합니다.",
             );
           }
         } else {

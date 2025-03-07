@@ -1,11 +1,7 @@
 ---
 date: "2024-02-12"
 title: "[마켓플레이스 프로젝트] 문의 페이지 presignedUrl 활용 S3 업로드"
-categories:
-  [
-    "MarketPlace"
-   
-  ]
+categories: ["MarketPlace"]
 summary: "온갖 에러가 폭주하는 작업이었다. 정말 열받네"
 thumbnail: "./image-9.png"
 ---
@@ -75,7 +71,7 @@ export default function page() {
                   let file = e.target.files[0];
                   let filename = encodeURIComponent(file.name);
                   let res = await fetch(
-                    `${baseURL}/api/reviews/generate-presigned-url?fileName=${filename}&contentType=image/jpeg`
+                    `${baseURL}/api/reviews/generate-presigned-url?fileName=${filename}&contentType=image/jpeg`,
                   );
                   res = await res.json();
                   console.log(res);
@@ -85,7 +81,7 @@ export default function page() {
                   Object.entries({ ...res.fields, file }).forEach(
                     ([key, value]) => {
                       formData.append(key, value);
-                    }
+                    },
                   );
                   let 업로드결과 = await fetch(res.msg, {
                     method: "POST",
@@ -414,7 +410,7 @@ export default function page() {
       }) => {
         let filename = encodeURIComponent(fileName.name);
         let res = await fetch(
-          `${baseURL}/reviews/generate-presigned-url?fileName=${filename}&contentType=image/jpg`
+          `${baseURL}/reviews/generate-presigned-url?fileName=${filename}&contentType=image/jpg`,
         );
         res = await res.json();
         console.log(res);
@@ -449,7 +445,7 @@ export default function page() {
   const removeImage = (index: number) => {
     setValue(
       "images",
-      images.filter((_: any, i: number) => i !== index)
+      images.filter((_: any, i: number) => i !== index),
     );
     setImagePreviews(imagePreviews.filter((_: any, i: number) => i !== index));
   };
@@ -720,7 +716,6 @@ presignedURL을 성공적으로 불러왔다!!
 S3에 실제로 업로드 되었는지 확인해보자
 
 ![alt text](image-26.png)
-
 
 잘 작동한다!!
 

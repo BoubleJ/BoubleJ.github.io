@@ -7,13 +7,13 @@ thumbnail: "./reacticon.png"
 ---
 
 ```jsx
-setToDos(*currentArray* => []) 
+setToDos(*currentArray* => [])
 
 setToDos(function(*currentArray){
 return []}
 
 //둘은 상응하는 표현
-//둘다 currentArray를 매개변수로 가지고 []을 반환한다.* 
+//둘다 currentArray를 매개변수로 가지고 []을 반환한다.*
 ```
 
 ```jsx

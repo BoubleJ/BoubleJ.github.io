@@ -1,12 +1,10 @@
 ---
 date: "2023-01-13"
 title: "[마켓플레이스 프로젝트] FAQ 페이지 타입 이슈"
-categories:
-  ["MarketPlace"]
+categories: ["MarketPlace"]
 summary: "slug를 전달하던 곳 대신 가져온 url params를  props를 통해 전달해주도록하면 수정 끝!!"
 thumbnail: "./typescript.png"
 ---
-
 
 ```jsx
 import React from 'react'
@@ -21,7 +19,7 @@ export default function FAQItemList({ list, slug }: { list: List; slug: string }
   return (
     <>
       **{body.map**((item: Body) => {
-//'body' is possibly 'undefined'. 라는 타입 에러가 떳다, 
+//'body' is possibly 'undefined'. 라는 타입 에러가 떳다,
         return (
           <Accordion type="single" collapsible className="w-full" key={item.Id}>
             <AccordionItem value="item-1">
@@ -44,9 +42,9 @@ export default function FAQItemList({ list, slug }: { list: List; slug: string }
 
 ```
 
-body값이 존재 하지 않을 수도 있다는 뜻이므로 자바스크립트 문법인 옵셔널 체이닝 연산자를 사용해야한다. 
+body값이 존재 하지 않을 수도 있다는 뜻이므로 자바스크립트 문법인 옵셔널 체이닝 연산자를 사용해야한다.
 
-타 컴포넌트 result도 마찬가지로 적용해줬다. 
+타 컴포넌트 result도 마찬가지로 적용해줬다.
 
 ```jsx
 **{body?.map**((item: Body) => {
@@ -66,7 +64,7 @@ export default function FAQItemList({ list, slug }: { list: List; slug: string }
   const result = list.find((item: ListProps) => item.title == slug)
   **const body = result?.body
 //Property 'body' does not exist on type 'ListProps'.
-//다음과 같은 타입 에러가 떴다.** 
+//다음과 같은 타입 에러가 떴다.**
 
   return (
     <>

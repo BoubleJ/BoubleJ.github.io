@@ -1,10 +1,9 @@
 {
-    "compilerOptions": {
-      "baseUrl": "./src",   
-      "paths": {
-        "components": ["components/*"],
-        "blog": ["blog/*"]
-       
-      }
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "components": ["components/*"],
+      "blog": ["blog/*"]
     }
   }
+}

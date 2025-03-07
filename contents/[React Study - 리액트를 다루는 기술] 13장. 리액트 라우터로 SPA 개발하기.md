@@ -28,7 +28,7 @@ root.render(
     {" "}
     // 최상단 root에서 BrowserRouter로 감싸기
     <App />
-  </BrowserRouter>
+  </BrowserRouter>,
 );
 ```
 
@@ -167,7 +167,7 @@ import { RouterProvider } from "react-router-dom";
 import { router } from "./Router";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <RouterProvider router={router} />
+  <RouterProvider router={router} />,
 );
 ```
 

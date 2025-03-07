@@ -6,7 +6,6 @@ summary: "vite로 만든 react에 tailwind 적용이 안될 경우 해결방법"
 thumbnail: "./테일윈드.png"
 ---
 
-
 vite로 react 프로젝트 생성 후 tailwind를 적용하려했습니다.
 
 근데 안되더라구요..
@@ -24,9 +23,7 @@ vite로 react 프로젝트 생성 후 tailwind를 적용하려했습니다.
 
 ## React — Tailwind CSS Is Not Working In Vite + React Solution (2024 updated)
 
-
 원인은 정확하게 모르겠지만 vite에 tailwind를 적용하려면 `vite.config.ts`에 별도 css 설정을 해줘야합니다.
-
 
 ```ts
 import { defineConfig } from "vite";
@@ -41,19 +38,15 @@ export default defineConfig({
       plugins: [tailwindcss()],
     },
   },
-
 });
 ```
 
 다음과 같이 세팅하면 됩니다.
 
-
 <br>
-공식문서에도 설명이 없어서 해결하는데 애 좀 먹었습니다... 
+공식문서에도 설명이 없어서 해결하는데 애 좀 먹었습니다...
 
 > 업데이트 좀 빨리해주세요 tailwind씨..
-
-
 
 <br>
 <br>

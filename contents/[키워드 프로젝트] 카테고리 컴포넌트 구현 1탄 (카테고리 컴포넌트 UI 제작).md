@@ -10,7 +10,6 @@ thumbnail: "./카테고리컴포넌트UI기초.png"
 
 레퍼런스는 쿠팡을 참고했습니다.
 
-
 ![쿠팡카테고리이미지](쿠팡카테고리이미지.png)
 
 위 사진처럼 카테고리에 hover 시 1차 카테고리 분류 박스 렌더링
@@ -30,7 +29,6 @@ thumbnail: "./카테고리컴포넌트UI기초.png"
 간략한 코드 구조입니다.
 
 ```tsx
-
 //CategoryList.tsx
 
 import styled from "styled-components";
@@ -48,7 +46,6 @@ const CategoriesContainer = styled.div`
   border-right: ${(props) => props.borderRight};
   padding: 12px 0px 12px 12px;
   position: absolute;
-
 `;
 
 const CategoriesListBox = styled.div`
@@ -74,19 +71,16 @@ const CategoryTitle = styled.p`
 `;
 
 export default function CategoryList() {
-
   const List1 = ["aa", "aa", "aa", "aa", "aa", "aa", "aa", "aa"];
   const List2 = ["bb", "bb", "bb", "bb", "bb", "bb", "bb", "bb"];
   const List3 = ["cc", "cc", "cc", "cc", "cc", "cc", "cc", "cc"];
   return (
     <>
- 
       <CategoriesContainer
         backgroundColor="var(--Orange500);"
         borderRadius="10px 0px 0px 10px"
         borderRight="none"
         left="216px"
-     
       >
         <CategoriesListBox>
           {List1.map((item, idx) => {
@@ -103,7 +97,6 @@ export default function CategoryList() {
         borderRadius="0px"
         borderRight="2px solid var(--Gray700)"
         left="432px"
-    
       >
         {" "}
         <CategoriesListBox>
@@ -121,7 +114,6 @@ export default function CategoryList() {
         borderRight="none"
         borderRadius="0px 10px 10px 0px"
         left="648px"
-  
       >
         {" "}
         <CategoriesListBox>
@@ -137,7 +129,6 @@ export default function CategoryList() {
     </>
   );
 }
-
 ```
 
 ```tsx
@@ -147,7 +138,6 @@ import Button from "components/common/Button";
 import CategoryList from "./CategoryList";
 
 export default function CategoryContainer() {
-
   return (
     <>
       <Button
@@ -156,11 +146,10 @@ export default function CategoryContainer() {
         color="white"
         borderColor="var(--Orange500)"
       />
-      <CategoryList/>
+      <CategoryList />
     </>
   );
 }
-
 ```
 
 # 1. 카테고리버튼 hover 시 1차 카테고리list 렌더링
@@ -172,10 +161,10 @@ export default function CategoryContainer() {
 왜 느닷없이 버튼을 만들었냐 물으신다면 카테고리 컴포넌트에 onmouseenter 함수가 동작하지 않았기 때문입니다… 일단 이 문제는 차치하고 카테고리 목록 컴포넌트를 만든 후 해결하도록 하겠습니다.
 
 ```tsx
-  
-  
+
+
   //CategoryList.tsx
-  
+
   const CategoriesContainer = styled.div`
   width: 216px;
   margin-top: 5px;
@@ -187,19 +176,19 @@ export default function CategoryContainer() {
   border-right: ${(props) => props.borderRight};
   padding: 12px 0px 12px 12px;
   position: absolute;
-  
+
   visibility: ${(props) => (props.isVisible ? "visible" : "hidden")};
   opacity: ${(props) => (props.isVisible ? "1" : "0")};
   transition: visibility 0.3s ease, opacity 0.3s ease;
-  //onmouseenter 속성으로 컴포넌트의 렌더링 비렌더링을 분기해줬습니다. 
-  
+  //onmouseenter 속성으로 컴포넌트의 렌더링 비렌더링을 분기해줬습니다.
+
 `;
 
-  
+
 export default function CategoryList() {
   const [isHovered, setIsHovered] = useState(false);
-  //hover 유무를 판단하는 state 입니다. 
-  
+  //hover 유무를 판단하는 state 입니다.
+
   const List1 = ["aa", "aa", "aa", "aa", "aa", "aa", "aa", "aa"];
   const List2 = ["bb", "bb", "bb", "bb", "bb", "bb", "bb", "bb"];
   const List3 = ["cc", "cc", "cc", "cc", "cc", "cc", "cc", "cc"];
@@ -230,7 +219,7 @@ export default function CategoryList() {
           })}
         </CategoriesListBox>
       </CategoriesContainer>
-  
+
 
 ```
 
@@ -269,9 +258,9 @@ export default function CategoryList() {
         left="216px"
         isVisible={firstIsHovered}
         onMouseEnter={() => setSecondIsHovered(true)}
-        
+
         {/*  1차컴포넌트 hover 시 2차 컴포넌트 렌더링  */}
-        
+
       >
         <CategoriesListBox>
           {List1.map((item, idx) => {
@@ -309,7 +298,7 @@ export default function CategoryList() {
         borderRadius="0px 10px 10px 0px"
         left="648px"
         isVisible={thirdIsHovered}
-  
+
       >
         {" "}
         <CategoriesListBox>
@@ -326,8 +315,6 @@ export default function CategoryList() {
   );
 }
 ```
-
- 
 
 ![2,3차컴포넌트렌더링](2,3차컴포넌트렌더링.gif)
 

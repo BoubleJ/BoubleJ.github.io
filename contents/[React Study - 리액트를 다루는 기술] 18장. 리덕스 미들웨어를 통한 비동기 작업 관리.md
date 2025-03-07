@@ -8,9 +8,6 @@ thumbnail: "./image-57.png"
 
 이번 포스팅은 리덕스 미들웨어를 통한 비동기 작업 관리에 대해 알아보겠습니다. 이번 챕터도 마찬가지로 '미들웨어'라는 생소한 내용이 나왔기에 서적 내용을 공부해보도록하겠습니다.
 
-
-
-
 먼저 리덕스를 위한 코드를 준비해줍니다.
 
 ```js
@@ -31,7 +28,7 @@ const counter = handleActions(
     [INCREASE]: (state) => state + 1,
     [DECREASE]: (state) => state - 1,
   },
-  initialState
+  initialState,
 );
 
 export default counter;
@@ -71,7 +68,7 @@ root.render(
     <Provider store={store}>
       <App />
     </Provider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
 
 reportWebVitals();
@@ -119,7 +116,7 @@ export default connect(
   {
     increase,
     decrease,
-  }
+  },
 )(CounterContainer);
 ```
 
@@ -195,7 +192,7 @@ root.render(
     <Provider store={store}>
       <App />
     </Provider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
 
 reportWebVitals();
@@ -230,7 +227,7 @@ root.render(
     <Provider store={store}>
       <App />
     </Provider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
 
 reportWebVitals();
@@ -293,7 +290,7 @@ const counter = handleActions(
     [INCREASE]: (state) => state + 1,
     [DECREASE]: (state) => state - 1,
   },
-  initialState
+  initialState,
 );
 
 export default counter;
@@ -326,7 +323,7 @@ export default connect(
   {
     increaseAsync,
     decreaseAsync,
-  }
+  },
 )(CounterContainer);
 ```
 
@@ -463,7 +460,7 @@ const sample = handleActions(
       users: action.payload,
     }),
   },
-  initialState
+  initialState,
 );
 
 export default sample;
@@ -570,7 +567,7 @@ export default connect(
   {
     getPost,
     getUsers,
-  }
+  },
 )(SampleContainer);
 ```
 
@@ -680,12 +677,12 @@ const FINISH_LOADING = "loading/FINISH_LOADING";
 
 export const startLoading = createAction(
   START_LOADING,
-  (requestType) => requestType
+  (requestType) => requestType,
 );
 
 export const finishLoading = createAction(
   FINISH_LOADING,
-  (requestType) => requestType
+  (requestType) => requestType,
 );
 
 const initialState = {};
@@ -701,7 +698,7 @@ const loading = handleActions(
       [action.payload]: false,
     }),
   },
-  initialState
+  initialState,
 );
 
 export default loading;
@@ -833,7 +830,7 @@ export default connect(
   {
     getPost,
     getUsers,
-  }
+  },
 )(SampleContainer);
 ```
 
@@ -876,7 +873,7 @@ const sample = handleActions(
       users: action.payload,
     }),
   },
-  initialState
+  initialState,
 );
 
 export default sample;
@@ -936,7 +933,7 @@ export default connect(
   {
     getPost,
     getUsers,
-  }
+  },
 )(SampleContainer);
 ```
 
@@ -1043,7 +1040,7 @@ const counter = handleActions(
     [INCREASE]: (state) => state + 1,
     [DECREASE]: (state) => state - 1,
   },
-  initialState
+  initialState,
 );
 
 export default counter;
@@ -1093,7 +1090,7 @@ const sagaMiddleware = createSagaMiddleware();
 const logger = createLogger();
 const store = createStore(
   rootReducer,
-  applyMiddleware(logger, thunk, sagaMiddleware)
+  applyMiddleware(logger, thunk, sagaMiddleware),
 );
 
 sagaMiddleware.run(rootSaga);
@@ -1104,7 +1101,7 @@ root.render(
     <Provider store={store}>
       <App />
     </Provider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
 
 reportWebVitals();
@@ -1132,7 +1129,7 @@ const sagaMiddleware = createSagaMiddleware();
 const logger = createLogger();
 const store = createStore(
   rootReducer,
-  composeWithDevTools(applyMiddleware(logger, thunk, sagaMiddleware))
+  composeWithDevTools(applyMiddleware(logger, thunk, sagaMiddleware)),
 );
 
 sagaMiddleware.run(rootSaga);
@@ -1143,7 +1140,7 @@ root.render(
     <Provider store={store}>
       <App />
     </Provider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
 
 reportWebVitals();
@@ -1259,7 +1256,7 @@ const sample = handleActions(
       users: action.payload,
     }),
   },
-  initialState
+  initialState,
 );
 
 export default sample;

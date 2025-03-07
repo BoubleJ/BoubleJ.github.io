@@ -1,16 +1,16 @@
-import React, { FunctionComponent, ReactNode } from "react";
+import React, { ReactNode } from "react";
 import styled from "@emotion/styled";
 import GlobalStyle from "components/Common/GlobalStyle";
 import Footer from "components/Common/Footer";
 import { Helmet } from "react-helmet";
 
-type TemplateProps = {
+interface TemplateProps {
   title: string;
   description: string;
   url: string;
   image: string;
   children: ReactNode;
-};
+}
 
 const Container = styled.main`
   display: flex;
@@ -18,13 +18,7 @@ const Container = styled.main`
   height: 100%;
 `;
 
-const Template: FunctionComponent<TemplateProps> = function ({
-  title,
-  description,
-  url,
-  image,
-  children,
-}) {
+function Template({ title, description, url, image, children }: TemplateProps) {
   return (
     <Container>
       <Helmet>
@@ -56,6 +50,6 @@ const Template: FunctionComponent<TemplateProps> = function ({
       <Footer />
     </Container>
   );
-};
+}
 
 export default Template;

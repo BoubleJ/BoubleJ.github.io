@@ -101,6 +101,7 @@ class ErrorBoundary extends React.Component {
   }
 }
 ```
+
 <BR>
 
 ### 1. 생성자 (Constructor)
@@ -113,7 +114,7 @@ constructor(props) {
 ```
 
 - constructor는 컴포넌트의 초기 상태를 설정합니다.
-- 여기서는 hasError 상태를 false로 초기화합니다. 아직 에러를 포착하지 않은 상태입니다. 
+- 여기서는 hasError 상태를 false로 초기화합니다. 아직 에러를 포착하지 않은 상태입니다.
 
 <BR>
 
@@ -126,13 +127,12 @@ constructor(props) {
 ```
 
 - 이 정적 메서드는 컴포넌트가 오류를 포착했을 때 호출됩니다.
-- 반환된 객체는 컴포넌트의 상태를 업데이트합니다. 
+- 반환된 객체는 컴포넌트의 상태를 업데이트합니다.
 - 여기서는 hasError를 true로 설정(에러를 포착)하여 다음 렌더링에서 오류 UI를 표시하도록 합니다.
 
 <BR>
 
 ### 3. componentDidCatch
-
 
 ```jsx
  componentDidCatch(error, info) {
@@ -173,12 +173,11 @@ ErrorBoundary와 Suspense는 동일한 생명주기를 가지고 있습니다. �
 1. Suspense는 하위 컴포넌트의 비동기상태 따라 fallback UI 혹은 children을 띄워줍니다.
 2. 하위컴포넌트는 promise를 throw 하고, Suspense는 그 promise를 catch 한다.
 3. promise(비동기요청은)는 pending, error, success 3가지 상태를 갖는다
-   a. 로딩 :  pending 상태이면 ⇒ Suspense return
-   b. 성공 :  settled(Fullfilled) 상태이면 ⇒ 하위컴포넌트(children) return
-   c. 실패 :  settled(Rejected) 상태이면 ⇒ Error Boundary return
+   a. 로딩 : pending 상태이면 ⇒ Suspense return
+   b. 성공 : settled(Fullfilled) 상태이면 ⇒ 하위컴포넌트(children) return
+   c. 실패 : settled(Rejected) 상태이면 ⇒ Error Boundary return
 
-Suspenses는 프로미스를 catch하고 ErrorBoundary는 에러를 catch 한다는 점에서 동작 원리가 유사한 것 같습니다. 
-
+Suspenses는 프로미스를 catch하고 ErrorBoundary는 에러를 catch 한다는 점에서 동작 원리가 유사한 것 같습니다.
 
 ## ErrorBoundary의 장점
 
@@ -186,16 +185,16 @@ Suspenses는 프로미스를 catch하고 ErrorBoundary는 에러를 catch 한다
 
 react-error-boundary는 오류 처리를 간단하고 직관적으로 구현할 수 있게 해줍니다.
 
-또한 선언적 에러 처리를 통해 코드 가독성을 높이고 외부 요인에 의한 코드 오염을 막아줍니다. 
+또한 선언적 에러 처리를 통해 코드 가독성을 높이고 외부 요인에 의한 코드 오염을 막아줍니다.
 
 2. 사용자 경험 개선
 
-오류가 발생했을 때 어떠한 안내없이 흰 화면만 보여준다면 사용자는 불쾌감을 느끼고 더 이상 해당 서비스를 이용하고 싶지 않겠죠. 
+오류가 발생했을 때 어떠한 안내없이 흰 화면만 보여준다면 사용자는 불쾌감을 느끼고 더 이상 해당 서비스를 이용하고 싶지 않겠죠.
 
 사용자에게 오류가 났다는 메시지를 전달하고 복구 옵션을 제시해 사용자 경험을 개선할 수 있습니다.
 
 3. 재사용성
-ErrorBoundary 컴포넌트를 여러 곳에서 재사용할 수 있어 코드의 중복을 줄이고 유지보수성을 높일 수 있습니다.
+   ErrorBoundary 컴포넌트를 여러 곳에서 재사용할 수 있어 코드의 중복을 줄이고 유지보수성을 높일 수 있습니다.
 
 <br>
 <br>

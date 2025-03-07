@@ -51,7 +51,7 @@ export default function PriceRange({
           onKeyUp={(e) =>
             (e.currentTarget.value = e.currentTarget.value.replace(
               /[^0-9]/g,
-              ""
+              "",
             ))
           }
         ></Input>
@@ -61,7 +61,7 @@ export default function PriceRange({
           onKeyUp={(e) =>
             (e.currentTarget.value = e.currentTarget.value.replace(
               /[^0-9]/g,
-              ""
+              "",
             ))
           }
           name="maxPrice"
@@ -177,7 +177,7 @@ const b: number = watch("b");
 
 ![리액트훅폼구현1](리액트훅폼구현1.gif)
 
-정상적으로 동작하는 것을 확인할 수 있습니다. 
+정상적으로 동작하는 것을 확인할 수 있습니다.
 <br>
 <br>
 <br>
@@ -224,7 +224,7 @@ export default function PriceRange({
           onKeyUp={(e) => {
             e.currentTarget.value = e.currentTarget.value.replace(
               /[^0-9]/g,
-              ""
+              "",
             );
             setMinPrice(a);
           }}
@@ -239,7 +239,7 @@ export default function PriceRange({
           onKeyUp={(e) => {
             e.currentTarget.value = e.currentTarget.value.replace(
               /[^0-9]/g,
-              ""
+              "",
             );
             setMaxPrice(b);
           }}
@@ -259,4 +259,4 @@ export default function PriceRange({
 }
 ```
 
-위 코드는 완성된 코드입니다. 
+위 코드는 완성된 코드입니다.

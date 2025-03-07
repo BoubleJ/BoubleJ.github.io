@@ -303,7 +303,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         </Provider>
       </BrowserRouter>
     </QueryClientProvider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
 ```
 
@@ -398,7 +398,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <App />
       </Provider>
     </QueryClientProvider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
 ```
 

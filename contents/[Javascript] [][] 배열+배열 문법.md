@@ -14,3 +14,4 @@ thumbnail: "./자바스크립트로고.png"
 즉 [ <div>내용0</div>, <div>내용1</div>, <div>내용2</div> ][0]
 
 → <div>내용0</div> 가 선택된다.
+```

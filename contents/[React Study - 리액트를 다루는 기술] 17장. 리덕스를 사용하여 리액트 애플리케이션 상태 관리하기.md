@@ -257,7 +257,7 @@ function todos(state = initialState, action) {
       return {
         ...state,
         todos: state.todos.map((todo) =>
-          todo.id === action.id ? { ...todo, done: !todo.done } : todo
+          todo.id === action.id ? { ...todo, done: !todo.done } : todo,
         ),
       };
     case REMOVE:
@@ -343,7 +343,7 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <App />
-  </React.StrictMode>
+  </React.StrictMode>,
 );
 
 reportWebVitals();
@@ -373,7 +373,7 @@ root.render(
       //살포시 감싸줍니다.
       <App />
     </Provider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
 
 reportWebVitals();
@@ -491,7 +491,7 @@ export default connect(
     insert,
     toggle,
     remove,
-  }
+  },
 )(TodosContainer);
 ```
 
@@ -584,7 +584,7 @@ const counter = handleActions(
     [INCREASE]: (state, action) => ({ number: state.number + 1 }),
     [DECREASE]: (state, action) => ({ number: state.number - 1 }),
   },
-  initialState
+  initialState,
 );
 
 export default counter;
@@ -650,7 +650,7 @@ function todos(state = initialState, action) {
       return {
         ...state,
         todos: state.todos.map((todo) =>
-          todo.id === action.id ? { ...todo, done: !todo.done } : todo
+          todo.id === action.id ? { ...todo, done: !todo.done } : todo,
         ),
       };
     case REMOVE:
@@ -719,7 +719,7 @@ const todos = handleActions(
     [TOGGLE]: (state, action) => ({
       ...state,
       todos: state.todos.map((todo) =>
-        todo.id === action.payload ? { ...todo, done: !todo.done } : todo
+        todo.id === action.payload ? { ...todo, done: !todo.done } : todo,
       ),
     }),
 
@@ -728,7 +728,7 @@ const todos = handleActions(
       todos: state.todos.filter((todo) => todo.id !== action.payload),
     }),
   },
-  initialState
+  initialState,
 );
 
 export default todos;
@@ -749,7 +749,7 @@ const todos = handleActions(
     [TOGGLE]: (state, { payload: id }) => ({
       ...state,
       todos: state.todos.map((todo) =>
-        todo.id === id ? { ...todo, done: !todo.done } : todo
+        todo.id === id ? { ...todo, done: !todo.done } : todo,
       ),
     }),
 
@@ -758,7 +758,7 @@ const todos = handleActions(
       todos: state.todos.filter((todo) => todo.id !== id),
     }),
   },
-  initialState
+  initialState,
 );
 
 export default todos;
@@ -792,7 +792,7 @@ const todos = handleActions(
         draft.todos.splice(index, 1);
       }),
   },
-  initialState
+  initialState,
 );
 ```
 
@@ -845,7 +845,7 @@ export default function useActions(actions, deps) {
       }
       return bindActionCreators(actions, dispatch);
     },
-    deps ? [dispatch, ...deps] : deps
+    deps ? [dispatch, ...deps] : deps,
   );
 }
 ```
@@ -875,7 +875,7 @@ const TodosContainer = () => {
 
   const [onChangeInput, onInsert, onToggle, onRemove] = useActions(
     [changeInput, insert, toggle, remove],
-    []
+    [],
   );
 
   return (

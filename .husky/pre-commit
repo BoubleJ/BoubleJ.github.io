@@ -1,5 +1,5 @@
-# npm run format
-# git add .
+npm run format
+git add .
 
-# npx prettier --cache --write .
-# npx tsc -p tsconfig.json --noEmit
+npx prettier --cache --write .
+npx tsc -p tsconfig.json --noEmit

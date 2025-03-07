@@ -6,7 +6,6 @@ summary: "express와 react를 연동해봅시다."
 thumbnail: "./reacticon.png"
 ---
 
-
 ```jsx
 //<express> 서버
 
@@ -59,7 +58,6 @@ app.listen(4000, () => {
 ```
 
 ```jsx
-
 //<리액트>
 
 import { useEffect, useState } from "react";
@@ -69,8 +67,8 @@ function App() {
   const fetchData = () => {
     fetch("http://localhost:4000/api/todo")
       .then((response) => response.json())
-      //데이터를 json형식으로 정제 후 response의 data를 넣음.  
-//http 요청방식 아무것도 안적으면 get
+      //데이터를 json형식으로 정제 후 response의 data를 넣음.
+      //http 요청방식 아무것도 안적으면 get
       .then((data) => setTodoList(data));
     //받아온 데이터를 어떻게 처리할지
   };
@@ -86,7 +84,7 @@ function App() {
     const done = e.target.done.checked;
     //done 은 checkbox 이므로 checked를 사용 -> 체크하면 true, 안하면 false 출력
     fetch("http://localhost:4000/api/todo", {
-//post 요청에서 데이터를 넣는 곳은 두번 째 인자
+      //post 요청에서 데이터를 넣는 곳은 두번 째 인자
       method: "POST",
       headers: {
         "Content-Type": "application/json",

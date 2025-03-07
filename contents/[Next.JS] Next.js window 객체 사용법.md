@@ -11,7 +11,7 @@ thumbnail: "./NEXT.png"
 ## 1. typeof를 사용.
 
 ```jsx
-if(window){...} 
+if(window){...}
 // window is not definde 에러발생
 
 if(typeof window !== undefined) {...}
@@ -23,9 +23,9 @@ if(typeof window !== undefined) {...}
 ## 2. useEffect를 사용.
 
 ```jsx
-useEffect(()=>{
-	// 안에서 window 객체를 사용
-},[])
+useEffect(() => {
+  // 안에서 window 객체를 사용
+}, []);
 ```
 
 useEffect는 DOM형성 후에 실행이 되는 hook입니다. 고로 브라우저가아닌 서버에서 window를 체크를 하지 않는 다는 것이죠. react를 사용하면서 가장 편하게 사용할 수 있는 방법이 아닐까 싶습니다.
@@ -33,22 +33,22 @@ useEffect는 DOM형성 후에 실행이 되는 hook입니다. 고로 브라우�
 ## 3. dynamic을 사용
 
 ```tsx
-import dynamic from 'next/dynamic'
+import dynamic from "next/dynamic";
 
-const ComponentsWithNoSSR = dynamic<{props:type;}>( // typescript에서 props를 전달할때 interface를 정의해줍니다.
-  () => import('./components/Component'), // Component로 사용할 항목을 import합니다.
-  { ssr: false } // ssr옵션을 false로 설정해줍니다.
+const ComponentsWithNoSSR = dynamic<{ props: type }>( // typescript에서 props를 전달할때 interface를 정의해줍니다.
+  () => import("./components/Component"), // Component로 사용할 항목을 import합니다.
+  { ssr: false }, // ssr옵션을 false로 설정해줍니다.
 );
 
 const App = () => {
-  return(
+  return (
     <div>
-    	<Components/>
-{/*   해당 컴포넌트는 SSR로 불러올 수 있습니다. */}
-    	<ComponentsWithNoSSR/> 
-{/*   해당 컴포넌트는 ssr:false이기 때문에 서버사이드 렌더를 하지않습니다.  */}
+      <Components />
+      {/*   해당 컴포넌트는 SSR로 불러올 수 있습니다. */}
+      <ComponentsWithNoSSR />
+      {/*   해당 컴포넌트는 ssr:false이기 때문에 서버사이드 렌더를 하지않습니다.  */}
     </div>
-  )
+  );
 };
 ```
 

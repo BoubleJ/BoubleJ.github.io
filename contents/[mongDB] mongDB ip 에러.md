@@ -10,7 +10,6 @@ thumbnail: "./ip가달라요.png"
 
 node 서버를 실행시키니 느닷없이 에러가 났습니다.
 
-
 ```shell
 
 http://localhost:8080 에서 서버 실행중
@@ -18,7 +17,7 @@ http://localhost:8080 에서 서버 실행중
 [nodemon] starting `node server.js`
 (node:11468) [MONGODB DRIVER] Warning: useNewUrlParser is a deprecated option: useNewUrlParser has no effect since Node.js Driver version 4.0.0 and will be removed in the next major version
 (Use `node --trace-warnings ...` to show where the warning was created)
-(node:11468) [MONGODB DRIVER] Warning: useUnifiedTopology is a deprecated option: useUnifiedTopology has no effect since Node.js Driver version 4.0.0 and will be removed in the next major versionhttp://localhost:8080 에서 서버 실행 
+(node:11468) [MONGODB DRIVER] Warning: useUnifiedTopology is a deprecated option: useUnifiedTopology has no effect since Node.js Driver version 4.0.0 and will be removed in the next major versionhttp://localhost:8080 에서 서버 실행
 중
 MongoServerSelectionError: BC3B0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:c:\ws\deps\openssl\openssl\ssl\record\rec_layer_s3.c:1605:SSL alert number 80
 
@@ -70,7 +69,6 @@ MongoServerSelectionError: BC3B0000:error:0A000438:SSL routines:ssl3_read_bytes:
 
 흠 뭘까요... 일단 db에 연결이 안된 것 같으니 확인해봅시다.
 
-
 ```js
 console.log("DB 상태:", db); // 추가해서 확인
 
@@ -81,15 +79,13 @@ console.log("DB 상태:", db); // 추가해서 확인
 
 # 범인은 IP
 
-
 구글링 결과
 
 핵심은 여기였습니다.
 
-
 ```shell
-MongoServerSelectionError: 8085020601000000:error:0A000438:SSL 
-routines:ssl3_read_bytes:tlsv1 alert internal 
+MongoServerSelectionError: 8085020601000000:error:0A000438:SSL
+routines:ssl3_read_bytes:tlsv1 alert internal
 error:ssl/record/rec_layer_s3.c:861:SSL alert number 80
 ```
 
@@ -97,22 +93,19 @@ error:ssl/record/rec_layer_s3.c:861:SSL alert number 80
 
 내가 새로운 곳에서 개발하고 있지는 않는지 생각해보라는군요.
 
-
 ## mongoDB IP 확인
 
 몽고DB > Network Access 탭을 들어가보면
 
 ![ip가달라요](ip가달라요.png)
 
-새로운 ip가 발견되었다고 친절하게 설명해줍니다. 
+새로운 ip가 발견되었다고 친절하게 설명해줍니다.
 
 ![ip추가](ip추가.png)
 
 추가해줍시다.
 
-
 ![디비연결성공](디비연결성공.png)
-
 
 연결성공!!
 

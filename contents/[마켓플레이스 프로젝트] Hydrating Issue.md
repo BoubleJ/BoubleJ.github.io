@@ -1,8 +1,7 @@
 ---
 date: "2023-12-30"
 title: "[마켓플레이스 프로젝트] Hydrating Issue"
-categories:
-  ["MarketPlace"]
+categories: ["MarketPlace"]
 summary: "Error: Hydration failed because the initial UI does not match what was rendered on the server."
 thumbnail: "./image-7.png"
 ---

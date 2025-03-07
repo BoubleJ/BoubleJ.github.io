@@ -1,13 +1,13 @@
-import React, { FunctionComponent } from "react";
+import React from "react";
 import styled from "@emotion/styled";
 
 interface PostContentProps {
   html: string;
 }
 
-const PostContent: FunctionComponent<PostContentProps> = function ({ html }) {
+function PostContent({ html }: PostContentProps) {
   return <MarkdownRenderer dangerouslySetInnerHTML={{ __html: html }} />;
-};
+}
 
 export default PostContent;
 
@@ -21,7 +21,7 @@ const MarkdownRenderer = styled.div`
   word-break: break-all;
 
   h1 {
-    margin-top: 60px ;
+    margin-top: 60px;
     margin-bottom: 30px;
   }
   h2 {

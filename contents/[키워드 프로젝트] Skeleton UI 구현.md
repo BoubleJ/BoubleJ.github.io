@@ -87,9 +87,7 @@ export default function SkeletonContainer() {
 
 ![스켈레톤ui구현영상](스켈레톤ui구현영상.gif)
 
- 나름 아까보단 생동감 있는 ui가 된 것 같습니다..ㅎㅎ
-
-
+나름 아까보단 생동감 있는 ui가 된 것 같습니다..ㅎㅎ
 
 <br>
 <br>

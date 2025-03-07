@@ -31,26 +31,21 @@ exports.onCreateNode = ({ node, getNode, actions }) => {
 exports.createPages = async ({ actions, graphql, reporter }) => {
   const { createPage } = actions;
 
-  const queryAllMarkdownData = await graphql(
-    `
-      {
-        allMarkdownRemark(
-          sort: {
-            order: DESC
-            fields: [frontmatter___date, frontmatter___title]
-          }
-        ) {
-          edges {
-            node {
-              fields {
-                slug
-              }
+  const queryAllMarkdownData = await graphql(`
+    {
+      allMarkdownRemark(
+        sort: { order: DESC, fields: [frontmatter___date, frontmatter___title] }
+      ) {
+        edges {
+          node {
+            fields {
+              slug
             }
           }
         }
       }
-    `
-  );
+    }
+  `);
 
   // Handling GraphQL Query Error
   if (queryAllMarkdownData.errors) {
@@ -61,7 +56,7 @@ exports.createPages = async ({ actions, graphql, reporter }) => {
   // Import Post Template Component
   const PostTemplateComponent = path.resolve(
     __dirname,
-    "src/templates/post_template.tsx"
+    "src/templates/post_template.tsx",
   );
 
   // Page Generating Function

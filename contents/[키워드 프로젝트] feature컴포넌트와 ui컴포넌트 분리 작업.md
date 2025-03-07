@@ -96,7 +96,7 @@ export default function SearchPage() {
   let pathName: string | number = "";
 
   const keywordInputValue = useSelector(
-    (state: RootState) => state.queryString.pathName
+    (state: RootState) => state.queryString.pathName,
   );
 
   const { pathname } = useLocation();
@@ -385,7 +385,7 @@ redux 전역 객체의 값이 바뀜에 따라 타입과 초기값도 수정해�
 //생략...
 
 const { startDate, los } = useSelector(
-  (state: RootState) => state.queryString.date
+  (state: RootState) => state.queryString.date,
 );
 
 //생략...

@@ -24,27 +24,26 @@ class는 #
 
 같은 클래스는 더 밑에 있는 코드에 적용된다. 링크 태그도 마찬가지
 
-ex. 
+ex.
 
 ```html
-<link rel="stylesheet" href="bootstrap.css">
+<link rel="stylesheet" href="bootstrap.css" />
 
-    <link rel="stylesheet" href="bootstrap2.css">
-
+<link rel="stylesheet" href="bootstrap2.css" />
 ```
 
-이런구조면 겹치는 클래스가 있는 경우 bootstrap2.css 파일에 적용된다. 
+이런구조면 겹치는 클래스가 있는 경우 bootstrap2.css 파일에 적용된다.
 
 specificity 점수 높이면 우선순위가 높아진다.
 
 ```css
-.size .black{
-    width: 500px;
-    height: 500px;
+.size .black {
+  width: 500px;
+  height: 500px;
 }
 
 .black {
-    width: 300px;
+  width: 300px;
 }
 ```
 

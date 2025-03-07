@@ -21,7 +21,7 @@ import { useLocation, Outlet, useNavigate } from "react-router-dom";
 
   //생략..
 
-  
+
   const commonURL = `${pathName}${startDate ? `&startDate=${startDate}` : ""}&${
     los ? `&los=${los}` : ""
   }${minPrice ? `&minPrice=${minPrice}` : ""}${
@@ -51,7 +51,7 @@ import { useLocation, Outlet, useNavigate } from "react-router-dom";
   };
 
 
-return 
+return
 
 
 //생략..
@@ -70,12 +70,10 @@ return
 
 ```
 
-queryURL 이라는 변수를 만들어 navigate 함수로 전달해 url에 쿼리스트링값이 나오도록 구현했습니다. 
+queryURL 이라는 변수를 만들어 navigate 함수로 전달해 url에 쿼리스트링값이 나오도록 구현했습니다.
 
 ![alt text](image-60.png)
 
 잘 동작하는것을 확인할 수 있습니다!!
 
-> url 분기처리하는 코드를 컴포넌트와 분리해서 독립적으로 관리하려했는데 의존성이 너무 높아서 포기했습니다... 차후 리팩토링 과정 때 다시 고민해봐야겠습니다... 
-
-
+> url 분기처리하는 코드를 컴포넌트와 분리해서 독립적으로 관리하려했는데 의존성이 너무 높아서 포기했습니다... 차후 리팩토링 과정 때 다시 고민해봐야겠습니다...

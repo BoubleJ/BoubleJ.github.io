@@ -92,11 +92,10 @@ Vite 자체는 Vitest에 대해 아무것도 알지 못하니 에러가 나는�
 ```ts
 //vite.config.ts
 
-import { defineConfig } from 'vitest/config';
-
+import { defineConfig } from "vitest/config";
 ```
 
-다음과 같이 수정해주면 에러가 사라집니다. 
+다음과 같이 수정해주면 에러가 사라집니다.
 
 <br>
 <br>

@@ -1,13 +1,13 @@
-import React, { FunctionComponent } from "react";
+import React from "react";
 import styled from "@emotion/styled";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
-export type PostHeadInfoProps = {
+export interface PostHeadInfoProps {
   title: string;
   date: string;
   categories: string[];
-};
+}
 
 const Title = styled.div`
   display: -webkit-box;
@@ -76,11 +76,7 @@ const PrevPageIcon = styled.div`
   }
 `;
 
-const PostHeadInfo: FunctionComponent<PostHeadInfoProps> = function ({
-  title,
-  date,
-  categories,
-}) {
+function PostHeadInfo({ title, date, categories }: PostHeadInfoProps) {
   const goBackPage = () => window.history.back();
 
   return (
@@ -95,6 +91,6 @@ const PostHeadInfo: FunctionComponent<PostHeadInfoProps> = function ({
       </PostData>
     </PostHeadInfoWrapper>
   );
-};
+}
 
 export default PostHeadInfo;

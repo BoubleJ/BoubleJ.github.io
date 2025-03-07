@@ -1,25 +1,24 @@
-import { IGatsbyImageData } from 'gatsby-plugin-image'
+import { IGatsbyImageData } from "gatsby-plugin-image";
 
-
-export type PostFrontmatterType = {
-  title: string
-  date: string
-  categories: string[]
-  summary: string
+export interface PostFrontmatterType {
+  title: string;
+  date: string;
+  categories: string[];
+  summary: string;
   thumbnail: {
     childImageSharp: {
-      gatsbyImageData: IGatsbyImageData
-    }
-    publicURL: string
-  }
+      gatsbyImageData: IGatsbyImageData;
+    };
+    publicURL: string;
+  };
 }
 
-export type PostListItemType = {
+export interface PostListItemType {
   node: {
-    id: string
+    id: string;
     fields: {
-      slug: string
-    }
-    frontmatter: PostFrontmatterType
-  }
+      slug: string;
+    };
+    frontmatter: PostFrontmatterType;
+  };
 }

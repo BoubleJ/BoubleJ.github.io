@@ -206,31 +206,34 @@ DeleteAccount 함수가 리턴하는 `엘리먼트 트리`안에는 `dom 트리�
 
 ```js
 const DeleteAccount = () => ({
-  type: 'div',
+  type: "div",
   props: {
-    children: [{
-      type: 'p',
-      props: {
-        children: 'Are you sure?'
-      }
-    }, {
-      type: DangerButton,
-      props: {
-        children: 'Yep'
-      }
-    }, {
-      type: Button,
-      props: {
-        color: 'blue',
-        children: 'Cancel'
-      }
-   }]
-}});
+    children: [
+      {
+        type: "p",
+        props: {
+          children: "Are you sure?",
+        },
+      },
+      {
+        type: DangerButton,
+        props: {
+          children: "Yep",
+        },
+      },
+      {
+        type: Button,
+        props: {
+          color: "blue",
+          children: "Cancel",
+        },
+      },
+    ],
+  },
+});
 ```
 
 위와 같은 React는 DeleteAccount(리액트 컴포넌트)가 있다고 가정해봅시다. 리액트는 해당 컴포넌트를 읽으면서 컴포넌트에게 어떤 엘리먼트를 줄지 물어봅니다.
-
-
 
 ```js
 {
@@ -257,7 +260,7 @@ const DeleteAccount = () => ({
 
 ```
 
-리액트 컴포넌트는 리액트에게 위 엘리먼트 정보를 전달해줍니다. 
+리액트 컴포넌트는 리액트에게 위 엘리먼트 정보를 전달해줍니다.
 
 <br>
 
@@ -341,7 +344,7 @@ ReactDOM.render(
       buttonText: "OK!",
     },
   },
-  document.getElementById("root")
+  document.getElementById("root"),
 );
 ```
 

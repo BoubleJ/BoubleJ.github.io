@@ -105,9 +105,25 @@ export default function Modal() {
 복잡한 조건문, 여러 클래스 적용 시 가독성이 급격히 떨어집니다.
 
 ```html
-<img className={`${css.pannelTriangle} ${isOpen && path.length !== 3?
-css.pannelOpen: css.pannelClose} ${path.length === 3 && css[`pannelArrow`]}
-${!title && css[`imgNotFound`]} } />
+<img
+  className="{`${css.pannelTriangle}"
+  ${isOpen
+  &&
+  path.length
+  !=""
+  ="3?"
+  css.pannelOpen:
+  css.pannelClose}
+  ${path.length=""
+  =""
+  ="3"
+  &&
+  css[`pannelArrow`]}
+  ${!title
+  &&
+  css[`imgNotFound`]}
+  }
+/>
 ```
 
 네.. 코드가 매우 더러워졌군요.

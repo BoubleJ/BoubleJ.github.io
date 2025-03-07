@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import React from "react";
 import { graphql } from "gatsby";
 import { PostFrontmatterType } from "types/PostItem.types"; // 바로 아래에서 정의할 것입니다
 import Template from "components/Common/Template";
@@ -6,7 +6,7 @@ import PostHead from "components/Post/PostHead";
 import PostContent from "components/Post/PostContent";
 import CommentWidget from "components/Post/CommentWidget";
 
-type PostTemplateProps = {
+interface PostTemplateProps {
   data: {
     allMarkdownRemark: {
       edges: PostPageItemType[];
@@ -15,20 +15,21 @@ type PostTemplateProps = {
   location: {
     href: string;
   };
-};
+}
 
-export type PostPageItemType = {
+export interface PostPageItemType {
   node: {
     html: string;
     frontmatter: PostFrontmatterType;
   };
-};
-const PostTemplate: FunctionComponent<PostTemplateProps> = function ({
+}
+
+function PostTemplate({
   data: {
     allMarkdownRemark: { edges },
   },
   location: { href },
-}) {
+}: PostTemplateProps) {
   const {
     node: {
       html,
@@ -44,7 +45,7 @@ const PostTemplate: FunctionComponent<PostTemplateProps> = function ({
       },
     },
   } = edges[0];
-ㄹㅇㄴㄹㅇㄴㅁㄹㄴㅁ
+
   return (
     <Template title={title} description={summary} url={href} image={publicURL}>
       <PostHead
@@ -57,7 +58,7 @@ const PostTemplate: FunctionComponent<PostTemplateProps> = function ({
       <CommentWidget />
     </Template>
   );
-};
+}
 
 export default PostTemplate;
 

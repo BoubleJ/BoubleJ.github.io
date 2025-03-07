@@ -1,5 +1,5 @@
-import React, { createRef, FunctionComponent, useEffect } from "react";
-import styled from '@emotion/styled'
+import React, { createRef, useEffect } from "react";
+import styled from "@emotion/styled";
 
 const UtterancesWrapper = styled.div`
   @media (max-width: 768px) {
@@ -10,7 +10,7 @@ const UtterancesWrapper = styled.div`
 const src = "https://utteranc.es/client.js";
 const repo = "BoubleJ/BoubleJ.github.io"; // 자신 계정의 레포지토리로 설정
 
-type UtterancesAttributesType = {
+interface UtterancesAttributesType {
   src: string;
   repo: string;
   "issue-term": string;
@@ -18,9 +18,9 @@ type UtterancesAttributesType = {
   theme: string;
   crossorigin: string;
   async: string;
-};
+}
 
-const CommentWidget: FunctionComponent = function () {
+function CommentWidget() {
   const element = createRef<HTMLDivElement>();
 
   useEffect(() => {
@@ -45,7 +45,7 @@ const CommentWidget: FunctionComponent = function () {
     element.current.appendChild(utterances);
   }, []);
 
-  return  <UtterancesWrapper ref={element} />
-};
+  return <UtterancesWrapper ref={element} />;
+}
 
 export default CommentWidget;

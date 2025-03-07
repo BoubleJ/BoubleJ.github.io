@@ -1,14 +1,10 @@
 ---
 date: "2024-02-20"
 title: "[키워드 프로젝트] Redux 활용 전역 객체 관리"
-categories:
-  ["Keyword"]
+categories: ["Keyword"]
 summary: "redux toolkit을 활용했다."
 thumbnail: "./redux.png"
 ---
-
-
-
 
 redux toolkit을 활용했다.
 
@@ -195,11 +191,9 @@ export default function KeywordInput() {
     </div>
   );
 }
-
 ```
 
 ```jsx
-
 //store.tsx
 
 import { configureStore } from "@reduxjs/toolkit";
@@ -207,13 +201,12 @@ import FetchSlice from "components/feature/FetchSlice";
 
 export default configureStore({
   reducer: {
-    queryString: FetchSlice
-}});
-
+    queryString: FetchSlice,
+  },
+});
 ```
 
 ```jsx
-
 //FetchSlice.tsx
 
 import { createSlice } from "@reduxjs/toolkit";
@@ -233,5 +226,4 @@ export const FetchSlice = createSlice({
 export const { pathNameFetch } = FetchSlice.actions;
 
 export default FetchSlice.reducer;
-
 ```
