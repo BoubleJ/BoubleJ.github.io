@@ -10,7 +10,7 @@ thumbnail: "./하이드레이션에러.png"
 
 새로운 프로젝트를 만들기 위해 next.js 를 설치했는데 설치하자마자 `hydration` 에러가 발생했습니다.
 
-![하이드레이션에러2](../images/하이드레이션에러2.png)
+![하이드레이션에러2](하이드레이션에러2.png)
 
 당황스럽군요... 일단 당황하지않고 에러를 살펴봅시다.
 
@@ -57,7 +57,6 @@ Colorzilla 크롬 확장프로그램은 colorzilla extension/add-on라는 기능
 ![next정상](next정상.png)
 
 정상적으로 동작합니다!!
-
 
 <br>
 <br>

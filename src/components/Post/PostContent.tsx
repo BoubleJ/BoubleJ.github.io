@@ -1,7 +1,6 @@
 import React, { FunctionComponent } from "react";
 import styled from "@emotion/styled";
 
-
 interface PostContentProps {
   html: string;
 }
@@ -21,11 +20,39 @@ const MarkdownRenderer = styled.div`
   padding: 100px 0;
   word-break: break-all;
 
-  blockquote {
+  h1 {
+    margin-top: 60px ;
+    margin-bottom: 30px;
+  }
+  h2 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+  h3 {
     margin-top: 10px;
+    margin-bottom: 5px;
+  }
+
+  p {
+    margin: 3px 0;
+    line-height: 1.4;
+  }
+
+  blockquote {
+    margin: 10px 0px;
     padding: 15px;
-    border-left: 3px solid #D2D7DF;
-    background-color: #F6F8FA;
-    color : #72757B
+    border-left: 3px solid #d2d7df;
+    background-color: #f6f8fa;
+    color: #72757b;
+  }
+
+  ol,
+  ul {
+    margin-left: 20px;
+    padding: 5px 0;
+  }
+
+  li {
+    padding: 6px 0;
   }
 `;

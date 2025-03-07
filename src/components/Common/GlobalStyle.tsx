@@ -15,10 +15,12 @@ const defaultStyle = css`
     height: 100%;
   }
 
-  a,
-  a:hover {
-    color: inherit;
+  a {
+    color : black;
     text-decoration: none;
+  }
+  a:hover {
+    color: #0969D9;
     cursor: pointer;
   }
 `;
