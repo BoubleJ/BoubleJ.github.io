@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useMemo } from "react";
+import React, { useMemo } from "react";
 import CategoryList, { CategoryListProps } from "components/Main/CategoryList";
 import Introduction from "components/Main/Introduction";
 import PostList, { PostType } from "components/Main/PostList";
@@ -9,7 +9,7 @@ import { IGatsbyImageData } from "gatsby-plugin-image";
 import queryString, { ParsedQuery } from "query-string";
 import Sidebar from "components/Main/Sidebar";
 
-type IndexPageProps = {
+interface PageProps {
   location: {
     search: string;
   };
@@ -31,20 +31,18 @@ type IndexPageProps = {
       publicURL: string;
     };
   };
-};
+}
 
-const IndexPage: FunctionComponent<IndexPageProps> = function ({
+function Page({
   location: { search },
   data: {
     site: {
       siteMetadata: { title, description, siteUrl },
     },
     allMarkdownRemark: { edges },
-    file: {
-      publicURL,
-    },
+    file: { publicURL },
   },
-}) {
+}: PageProps) {
   const parsed: ParsedQuery<string> = queryString.parse(search);
   const selectedCategory: string =
     typeof parsed.category !== "string" || !parsed.category
@@ -86,7 +84,7 @@ const IndexPage: FunctionComponent<IndexPageProps> = function ({
       image={publicURL}
     >
       <Introduction />
-      <Sidebar/>
+      <Sidebar />
       <CategoryList
         selectedCategory={selectedCategory}
         categoryList={categoryList}
@@ -94,9 +92,9 @@ const IndexPage: FunctionComponent<IndexPageProps> = function ({
       <PostList selectedCategory={selectedCategory} posts={edges} />
     </Template>
   );
-};
+}
 
-export default IndexPage;
+export default Page;
 
 export const getPostList = graphql`
   query getPostList {

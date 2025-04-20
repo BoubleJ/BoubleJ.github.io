@@ -92,7 +92,7 @@ const PostHeadInfo: FunctionComponent<PostHeadInfoProps> = function ({
       <PostData>
         <div>{categories.join(" / ")}</div>
         <div>{date}</div>
-      </PostData>
+      </PostData> m
     </PostHeadInfoWrapper>
   );
 };

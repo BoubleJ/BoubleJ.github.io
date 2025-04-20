@@ -4,7 +4,7 @@
 
 module.exports = {
   siteMetadata: {
-    title: `프론트엔드 개발자 꿈나무의 개발 블로그`,
+    title: `주니어 프론트엔드 개발자의 블로그`,
     siteUrl: `https://www.epik-blog.com/`,
     description: `누구나 쉽게 이해할 수 있는 블로그가 되기를 지향합니다.`,
     author: `Epik`,
