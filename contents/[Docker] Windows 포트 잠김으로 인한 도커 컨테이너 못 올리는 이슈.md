@@ -1,6 +1,6 @@
 ---
 date: "2025-05-01"
-title: "Windows 포트 잠김으로 인한 도커 컨테이너 못 올리는 이슈"
+title: "[Docker] Windows 포트 잠김으로 인한 도커 컨테이너 못 올리는 이슈"
 categories: ["Docker"]
 summary: "도커 컨테이너를 올리려는데 사용할 수 없는 포트라는 에러가 떴습니다."
 thumbnail: "./도커아이콘.png"
@@ -42,7 +42,7 @@ Error response from daemon: Ports are not available: exposing port TCP 0.0.0.0:6
  ELIFECYCLE  Command failed with exit code 1
 ```
 
-음... 해당 포트를 사용할 수 없다는군요. 전 포트를 사용한 적이 없는데..
+음...6379 포트를 사용할 수 없다는군요. 전 6379 포트를 사용한 적이 없는데..
 
 실제로 아래 명령어를 통해 시스템에 의해 점유된 포트 번호들을 조회해도 제가 사용할 포트번호는 보이지 않았습니다.
 
@@ -53,7 +53,7 @@ netsh interface ipv4 show excludedportrange protocol=tcp
 
 <br>
 
- 왜 또 심술일까요. 역시 저만 안되는 환경세팅입니다. 
+왜 또 심술일까요. 역시 저만 안되는 환경세팅입니다. 
 
 # 해결
 
