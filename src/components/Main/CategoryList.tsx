@@ -1,13 +1,13 @@
-import React, { FunctionComponent, ReactNode } from "react";
+import React, { ReactNode } from "react";
 import styled from "@emotion/styled";
 import { Link } from "gatsby";
 
-export type CategoryListProps = {
+export interface CategoryListProps {
   selectedCategory: string;
   categoryList: {
     [key: string]: number;
   };
-};
+}
 
 type CategoryItemProps = {
   active: boolean;
@@ -49,10 +49,7 @@ const CategoryItem = styled(({ active, ...props }: GatsbyLinkProps) => (
   }
 `;
 
-const CategoryList: FunctionComponent<CategoryListProps> = function ({
-  selectedCategory,
-  categoryList,
-}) {
+function CategoryList({ selectedCategory, categoryList }: CategoryListProps) {
   return (
     <CategoryListWrapper>
       {Object.entries(categoryList).map(([name, count]) => (
@@ -66,6 +63,6 @@ const CategoryList: FunctionComponent<CategoryListProps> = function ({
       ))}
     </CategoryListWrapper>
   );
-};
+}
 
 export default CategoryList;

@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import React from "react";
 import styled from "@emotion/styled";
 
 const FooterWrapper = styled.footer`
@@ -15,13 +15,13 @@ const FooterWrapper = styled.footer`
   }
 `;
 
-const Footer: FunctionComponent = function () {
+function Footer() {
   return (
     <FooterWrapper>
       Thank You for Visiting My Blog, Have a Good Day 😆
       <br />
     </FooterWrapper>
   );
-};
+}
 
 export default Footer;

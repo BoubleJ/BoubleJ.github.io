@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import React from "react";
 import styled from "@emotion/styled";
 
 const Background = styled.div`
@@ -8,10 +8,6 @@ const Background = styled.div`
   color: #ffffff;
 `;
 
-const NavTab = styled.nav`
-  display: flex;
-  justify-content: space-between;
-`;
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -28,16 +24,12 @@ const Wrapper = styled.div`
   }
 `;
 
-const Tab = styled.a`
-  font-size: 20px;
-`;
-
-const Introduction: FunctionComponent = function () {
+function Introduction() {
   return (
     <Background>
       <Wrapper></Wrapper>
     </Background>
   );
-};
+}
 
 export default Introduction;

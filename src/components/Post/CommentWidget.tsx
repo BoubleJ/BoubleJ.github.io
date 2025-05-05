@@ -1,5 +1,5 @@
-import React, { createRef, FunctionComponent, useEffect } from "react";
-import styled from '@emotion/styled'
+import React, { createRef, useEffect } from "react";
+import styled from "@emotion/styled";
 
 const UtterancesWrapper = styled.div`
   @media (max-width: 768px) {
@@ -20,7 +20,7 @@ type UtterancesAttributesType = {
   async: string;
 };
 
-const CommentWidget: FunctionComponent = function () {
+function CommentWidget() {
   const element = createRef<HTMLDivElement>();
 
   useEffect(() => {
@@ -45,7 +45,7 @@ const CommentWidget: FunctionComponent = function () {
     element.current.appendChild(utterances);
   }, []);
 
-  return  <UtterancesWrapper ref={element} />
-};
+  return <UtterancesWrapper ref={element} />;
+}
 
 export default CommentWidget;
