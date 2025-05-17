@@ -73,6 +73,8 @@ wsl: WSL 설치가 손상된 것 같습니다(오류 코드: Wsl/CallMsi/Install
 이 프롬프트는 60초 후 시간이 초과됩니다.
 ```
 
+<br>
+
 빠르게 gpt 한테 물어봅니다. 
 
 powershell에서 아래 명령어를 실행하라는군요.
@@ -108,6 +110,7 @@ dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux 
 
 </details>
 
+<br>
 
 wsl 설치 후 wsl -intall 하니 정상적으로 설치가 진행됩니다.
 
