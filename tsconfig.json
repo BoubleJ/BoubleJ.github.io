@@ -117,7 +117,6 @@
       "utils/*": ["./utils/*"],
       "hooks/*": ["./hooks/*"]
     },
-    "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true
   },
   "include": ["src/**/*.tsx"],
