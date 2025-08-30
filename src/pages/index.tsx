@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import CategoryList, { CategoryListProps } from "components/Main/CategoryList";
 import Introduction from "components/Main/Introduction";
 import PostList, { PostType } from "components/Main/PostList";
@@ -7,7 +7,6 @@ import { graphql } from "gatsby";
 import { PostListItemType } from "types/PostItem.types";
 import { IGatsbyImageData } from "gatsby-plugin-image";
 import queryString, { ParsedQuery } from "query-string";
-import Sidebar from "components/Main/Sidebar";
 
 interface PageProps {
   location: {
@@ -84,7 +83,6 @@ function Page({
       image={publicURL}
     >
       <Introduction />
-      <Sidebar />
       <CategoryList
         selectedCategory={selectedCategory}
         categoryList={categoryList}

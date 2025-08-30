@@ -8,7 +8,6 @@
     "gatsby"
   ],
   "scripts": {
-    "deploy": "gatsby build && gh-pages -d public -b gh-pages",
     "develop": "gatsby develop",
     "start": "gatsby develop",
     "build": "gatsby build",
@@ -16,7 +15,8 @@
     "serve": "gatsby serve",
     "clean": "gatsby clean",
     "prepare": "husky",
-    "scan": "gatsby develop & npx react-scan@latest localhost:8000"
+    "scan": "gatsby develop & npx react-scan@latest localhost:8000",
+    "deploy": "gatsby build && gh-pages -d public -b master"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
@@ -51,6 +51,7 @@
     "gatsby-source-filesystem": "^5.13.0",
     "gatsby-transformer-remark": "^6.14.0",
     "gatsby-transformer-sharp": "^5.13.1",
+    "gh-pages": "^6.3.0",
     "prismjs": "^1.29.0",
     "query-string": "^9.0.0",
     "react": "^18.2.0",
