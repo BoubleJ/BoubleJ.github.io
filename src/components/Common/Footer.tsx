@@ -1,4 +1,3 @@
-import React from "react";
 import styled from "@emotion/styled";
 
 const FooterWrapper = styled.footer`
@@ -16,6 +15,7 @@ const FooterWrapper = styled.footer`
 `;
 
 function Footer() {
+  console.log("하이");
   return (
     <FooterWrapper>
       Thank You for Visiting My Blog, Have a Good Day 😆
