@@ -1,4 +1,3 @@
-import React from "react";
 import PostHeadInfo, { PostHeadInfoProps } from "components/Post/PostHeadInfo";
 import * as styles from "./PostHead.css";
 

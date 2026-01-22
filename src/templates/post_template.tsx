@@ -1,4 +1,3 @@
-import React from "react";
 import { graphql } from "gatsby";
 import { PostFrontmatterType } from "types/PostItem.types"; // 바로 아래에서 정의할 것입니다
 import Template from "components/Common/Template";
