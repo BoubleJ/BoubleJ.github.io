@@ -77,6 +77,24 @@ module.exports = {
             },
           },
           {
+            resolve: "gatsby-remark-classes",
+            options: {
+              classMap: {
+                h1: "markdown-h1",
+                h2: "markdown-h2",
+                h3: "markdown-h3",
+                p: "markdown-p",
+                blockquote: "markdown-blockquote",
+                ul: "markdown-ul",
+                ol: "markdown-ol",
+                li: "markdown-li",
+                a: "markdown-a",
+                code: "markdown-code",
+                pre: "markdown-pre",
+              },
+            },
+          },
+          {
             resolve: "gatsby-remark-images",
             options: {
               maxWidth: 768,
@@ -115,6 +133,30 @@ module.exports = {
             resolve: "gatsby-remark-smartypants",
             options: {
               dashes: "oldschool",
+            },
+          },
+          {
+            resolve: "gatsby-remark-prismjs",
+            options: {
+              classPrefix: "language-",
+            },
+          },
+          {
+            resolve: "gatsby-remark-classes",
+            options: {
+              classMap: {
+                h1: "markdown-h1",
+                h2: "markdown-h2",
+                h3: "markdown-h3",
+                p: "markdown-p",
+                blockquote: "markdown-blockquote",
+                ul: "markdown-ul",
+                ol: "markdown-ol",
+                li: "markdown-li",
+                a: "markdown-a",
+                code: "markdown-code",
+                pre: "markdown-pre",
+              },
             },
           },
         ],
