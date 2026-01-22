@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import { Link } from "gatsby";
+import { Link, graphql } from "gatsby";
 import GlobalStyle from "components/Common/GlobalStyle";
 import * as styles from "./404.css";
 
@@ -20,3 +20,13 @@ const NotFoundPage: FunctionComponent = function () {
 };
 
 export default NotFoundPage;
+
+export const query = graphql`
+  query {
+    site {
+      siteMetadata {
+        title
+      }
+    }
+  }
+`;
