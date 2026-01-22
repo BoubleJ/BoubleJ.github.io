@@ -1,6 +1,3 @@
-import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import * as styles from "./PostHeadInfo.css";
 
 export type PostHeadInfoProps = {
@@ -15,7 +12,6 @@ function PostHeadInfo({ title, date, categories }: PostHeadInfoProps) {
   return (
     <div className={styles.postHeadInfoWrapper}>
       <div className={styles.prevPageIcon} onClick={goBackPage}>
-        <FontAwesomeIcon icon={faArrowLeft} />
       </div>
       <div className={styles.title}>{title}</div>
       <div className={styles.postData}>
