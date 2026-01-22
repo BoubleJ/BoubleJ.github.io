@@ -1,3 +1,4 @@
+import React from "react";
 import { useMemo } from "react";
 import CategoryList, { CategoryListProps } from "components/Main/CategoryList";
 import Introduction from "components/Main/Introduction";
@@ -80,7 +81,7 @@ function Page({
         },
         { All: 0 }
       ),
-    []
+    [edges]
   );
 
   return (
