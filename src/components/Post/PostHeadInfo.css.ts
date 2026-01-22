@@ -38,14 +38,14 @@ export const postData = style({
 export const postHeadInfoWrapper = style({
   display: "flex",
   flexDirection: "column",
-  width: "768px",
+  maxWidth: "1200px",
+  width: "100%",
   height: "100%",
   margin: "0 auto",
-  padding: "60px 0",
+  padding: "60px 24px",
   color: "#ffffff",
   "@media": {
     "(max-width: 768px)": {
-      width: "100%",
       padding: "40px 20px",
     },
   },

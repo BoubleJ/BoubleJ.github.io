@@ -3,10 +3,16 @@ import { style, globalStyle } from "@vanilla-extract/css";
 export const markdownRenderer = style({
   display: "flex",
   flexDirection: "column",
-  width: "768px",
+  maxWidth: "1200px",
+  width: "100%",
   margin: "0 auto",
-  padding: "100px 0",
+  padding: "100px 24px",
   wordBreak: "break-all",
+  "@media": {
+    "(max-width: 768px)": {
+      padding: "100px 20px",
+    },
+  },
 });
 
 globalStyle(`${markdownRenderer} h1`, {

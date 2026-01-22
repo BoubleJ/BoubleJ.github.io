@@ -2,11 +2,12 @@ import { style } from "@vanilla-extract/css";
 
 export const searchBoxWrapper = style({
   display: "flex",
-  width: "768px",
+  maxWidth: "1200px",
+  width: "100%",
   margin: "50px auto 0",
+  padding: "0 24px",
   "@media": {
     "(max-width: 768px)": {
-      width: "100%",
       padding: "0 20px",
     },
   },

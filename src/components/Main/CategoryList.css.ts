@@ -3,11 +3,12 @@ import { style } from "@vanilla-extract/css";
 export const categoryListWrapper = style({
   display: "flex",
   flexWrap: "wrap",
-  width: "768px",
+  maxWidth: "1200px",
+  width: "100%",
   margin: "100px auto 0",
+  padding: "0 24px",
   "@media": {
     "(max-width: 768px)": {
-      width: "100%",
       marginTop: "50px",
       padding: "0 20px",
     },

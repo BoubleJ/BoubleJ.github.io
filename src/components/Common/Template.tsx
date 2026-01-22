@@ -1,5 +1,6 @@
 import React, { ReactNode } from "react";
 import GlobalStyle from "components/Common/GlobalStyle";
+import Header from "components/Common/Header";
 import Footer from "components/Common/Footer";
 import { Helmet } from "react-helmet";
 import * as styles from "./Template.css";
@@ -40,6 +41,7 @@ function Template({ title, description, url, image, children }: TemplateProps) {
       </Helmet>
 
       <GlobalStyle />
+      <Header />
       {children}
       <Footer />
     </main>
