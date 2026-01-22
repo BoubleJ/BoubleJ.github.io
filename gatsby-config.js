@@ -10,9 +10,6 @@ module.exports = {
     author: `Epik`,
   },
   plugins: [
-    `gatsby-plugin-emotion`,
-    "gatsby-plugin-postcss",
-    "gatsby-plugin-gatsby-cloud",
     "gatsby-plugin-image",
     "gatsby-plugin-sharp",
     "gatsby-plugin-sitemap",
