@@ -1,12 +1,5 @@
-import styled from "@emotion/styled";
 import React from "react";
-
-const Wrap = styled.div`
-  width: 270px;
-  height: 100%;
-  background-image: linear-gradient(60deg, #29323c 0%, #485563 100%);
-  color: #ffffff;
-`;
+import * as styles from "./Sidebar.css";
 
 export default function Sidebar() {
   const categories = [
@@ -37,7 +30,7 @@ export default function Sidebar() {
   ];
 
   return (
-    <Wrap>
+    <div className={styles.wrap}>
       {categories.map((category, index) => {
         return (
           <div key={index}>
@@ -45,6 +38,6 @@ export default function Sidebar() {
           </div>
         );
       })}
-    </Wrap>
+    </div>
   );
 }

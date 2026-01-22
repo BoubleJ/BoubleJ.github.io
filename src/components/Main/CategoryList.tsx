@@ -1,6 +1,6 @@
-import React, { ReactNode } from "react";
-import styled from "@emotion/styled";
+import React from "react";
 import { Link } from "gatsby";
+import * as styles from "./CategoryList.css";
 
 export interface CategoryListProps {
   selectedCategory: string;
@@ -9,59 +9,21 @@ export interface CategoryListProps {
   };
 }
 
-type CategoryItemProps = {
-  active: boolean;
-};
-
-type GatsbyLinkProps = {
-  children: ReactNode;
-  className?: string;
-  to: string;
-} & CategoryItemProps;
-
-const CategoryListWrapper = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  width: 768px;
-  margin: 100px auto 0;
-
-  @media (max-width: 768px) {
-    width: 100%;
-    margin-top: 50px;
-    padding: 0 20px;
-  }
-`;
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const CategoryItem = styled(({ active, ...props }: GatsbyLinkProps) => (
-  <Link {...props} />
-))<CategoryItemProps>`
-  margin-right: 20px;
-  padding: 5px 0;
-  font-size: 18px;
-  font-weight: ${({ active }) => (active ? "800" : "400")};
-  cursor: pointer;
-
-  &:last-of-type {
-    margin-right: 0;
-  }
-  @media (max-width: 768px) {
-    font-size: 15px;
-  }
-`;
-
 function CategoryList({ selectedCategory, categoryList }: CategoryListProps) {
   return (
-    <CategoryListWrapper>
+    <div className={styles.categoryListWrapper}>
       {Object.entries(categoryList).map(([name, count]) => (
-        <CategoryItem
+        <Link
           to={`/?category=${name}`}
-          active={name === selectedCategory}
+          className={`${styles.categoryItem} ${
+            name === selectedCategory ? styles.categoryItemActive : ""
+          }`}
           key={name}
         >
           #{name}({count})
-        </CategoryItem>
+        </Link>
       ))}
-    </CategoryListWrapper>
+    </div>
   );
 }
 

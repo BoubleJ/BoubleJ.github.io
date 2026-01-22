@@ -1,8 +1,9 @@
 const path = require("path");
 const { createFilePath } = require(`gatsby-source-filesystem`);
+const { VanillaExtractPlugin } = require("@vanilla-extract/webpack-plugin");
 
-// Setup Import Alias
-exports.onCreateWebpackConfig = ({ getConfig, actions }) => {
+// Setup Import Alias and Vanilla Extract
+exports.onCreateWebpackConfig = ({ getConfig, actions, stage }) => {
   const output = getConfig().output || {};
 
   actions.setWebpackConfig({
@@ -14,6 +15,11 @@ exports.onCreateWebpackConfig = ({ getConfig, actions }) => {
         hooks: path.resolve(__dirname, "src/hooks"),
       },
     },
+    plugins: [
+      new VanillaExtractPlugin({
+        identifiers: stage === "develop" ? "debug" : "short",
+      }),
+    ],
   });
 };
 

@@ -1,8 +1,8 @@
 import React, { ReactNode } from "react";
-import styled from "@emotion/styled";
 import GlobalStyle from "components/Common/GlobalStyle";
 import Footer from "components/Common/Footer";
 import { Helmet } from "react-helmet";
+import * as styles from "./Template.css";
 
 type TemplateProps = {
   title: string;
@@ -12,15 +12,9 @@ type TemplateProps = {
   children: ReactNode;
 };
 
-const Container = styled.main`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-`;
-
 function Template({ title, description, url, image, children }: TemplateProps) {
   return (
-    <Container>
+    <main className={styles.container}>
       <Helmet>
         <title>{title}</title>
 
@@ -48,7 +42,7 @@ function Template({ title, description, url, image, children }: TemplateProps) {
       <GlobalStyle />
       {children}
       <Footer />
-    </Container>
+    </main>
   );
 }
 
