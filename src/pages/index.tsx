@@ -24,6 +24,9 @@ interface PageProps {
     allMarkdownRemark: {
       edges: PostListItemType[];
     };
+    allMdx: {
+      edges: PostListItemType[];
+    };
     file: {
       childImageSharp: {
         gatsbyImageData: IGatsbyImageData;
@@ -39,10 +42,12 @@ function Page({
     site: {
       siteMetadata: { title, description, siteUrl },
     },
-    allMarkdownRemark: { edges },
+    allMarkdownRemark: { edges: markdownEdges },
+    allMdx: { edges: mdxEdges },
     file: { publicURL },
   },
 }: PageProps) {
+  const edges = [...markdownEdges, ...mdxEdges];
   const parsed: ParsedQuery<string> = queryString.parse(search);
   const selectedCategory: string =
     typeof parsed.category !== "string" || !parsed.category
@@ -112,6 +117,29 @@ export const getPostList = graphql`
       }
     }
     allMarkdownRemark(
+      sort: { order: DESC, fields: [frontmatter___date, frontmatter___title] }
+    ) {
+      edges {
+        node {
+          id
+          fields {
+            slug
+          }
+          frontmatter {
+            title
+            summary
+            date(formatString: "YYYY.MM.DD.")
+            categories
+            thumbnail {
+              childImageSharp {
+                gatsbyImageData(width: 768, height: 400)
+              }
+            }
+          }
+        }
+      }
+    }
+    allMdx(
       sort: { order: DESC, fields: [frontmatter___date, frontmatter___title] }
     ) {
       edges {

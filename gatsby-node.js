@@ -27,7 +27,7 @@ exports.onCreateWebpackConfig = ({ getConfig, actions, stage }) => {
 exports.onCreateNode = ({ node, getNode, actions }) => {
   const { createNodeField } = actions;
 
-  if (node.internal.type === `MarkdownRemark`) {
+  if (node.internal.type === `MarkdownRemark` || node.internal.type === `Mdx`) {
     const slug = createFilePath({ node, getNode });
 
     createNodeField({ node, name: "slug", value: slug });
@@ -41,6 +41,20 @@ exports.createPages = async ({ actions, graphql, reporter }) => {
     `
       {
         allMarkdownRemark(
+          sort: {
+            order: DESC
+            fields: [frontmatter___date, frontmatter___title]
+          }
+        ) {
+          edges {
+            node {
+              fields {
+                slug
+              }
+            }
+          }
+        }
+        allMdx(
           sort: {
             order: DESC
             fields: [frontmatter___date, frontmatter___title]
@@ -87,4 +101,5 @@ exports.createPages = async ({ actions, graphql, reporter }) => {
 
   // Generate Post Page And Passing Slug Props for Query
   queryAllMarkdownData.data.allMarkdownRemark.edges.forEach(generatePostPage);
+  queryAllMarkdownData.data.allMdx.edges.forEach(generatePostPage);
 };

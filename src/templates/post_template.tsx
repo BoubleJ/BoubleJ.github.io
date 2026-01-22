@@ -11,6 +11,9 @@ interface PostTemplateProps {
     allMarkdownRemark: {
       edges: PostPageItemType[];
     };
+    allMdx: {
+      edges: PostPageItemType[];
+    };
   };
   location: {
     href: string;
@@ -19,19 +22,23 @@ interface PostTemplateProps {
 
 export type PostPageItemType = {
   node: {
-    html: string;
+    html?: string;
+    body?: string;
     frontmatter: PostFrontmatterType;
   };
 };
 function PostTemplate({
   data: {
-    allMarkdownRemark: { edges },
+    allMarkdownRemark: { edges: markdownEdges },
+    allMdx: { edges: mdxEdges },
   },
   location: { href },
 }: PostTemplateProps) {
+  const edges = [...markdownEdges, ...mdxEdges];
   const {
     node: {
       html,
+      body,
       frontmatter: {
         title,
         summary,
@@ -53,7 +60,7 @@ function PostTemplate({
         categories={categories}
         thumbnail={gatsbyImageData}
       />
-      <PostContent html={html} />
+      <PostContent html={html} body={body} />
       <CommentWidget />
     </Template>
   );
@@ -67,6 +74,25 @@ export const queryMarkdownDataBySlug = graphql`
       edges {
         node {
           html
+          frontmatter {
+            title
+            summary
+            date(formatString: "YYYY.MM.DD.")
+            categories
+            thumbnail {
+              childImageSharp {
+                gatsbyImageData
+              }
+              publicURL
+            }
+          }
+        }
+      }
+    }
+    allMdx(filter: { fields: { slug: { eq: $slug } } }) {
+      edges {
+        node {
+          body
           frontmatter {
             title
             summary
