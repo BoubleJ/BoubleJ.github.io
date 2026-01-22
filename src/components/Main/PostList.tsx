@@ -23,6 +23,7 @@ export interface PostType {
 
 type PostListProps = {
   selectedCategory: string;
+  searchTerm?: string;
   posts: PostListItemType[];
 };
 
@@ -40,11 +41,43 @@ const PostListWrapper = styled.div`
     padding: 50px 20px;
   }
 `;
-function PostList({ selectedCategory, posts }: PostListProps) {
+
+const EmptyMessage = styled.div`
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 80px 20px;
+  color: #666;
+  font-size: 18px;
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+    padding: 60px 20px;
+  }
+`;
+function PostList({
+  selectedCategory,
+  searchTerm = "",
+  posts,
+}: PostListProps) {
   const { containerRef, postList }: useInfiniteScrollType = useInfiniteScroll(
     selectedCategory,
+    searchTerm,
     posts
   );
+  if (postList.length === 0) {
+    return (
+      <PostListWrapper>
+        <EmptyMessage>
+          {searchTerm
+            ? `"${searchTerm}"에 대한 검색 결과가 없습니다.`
+            : selectedCategory !== "All"
+            ? `"${selectedCategory}" 카테고리에 포스트가 없습니다.`
+            : "포스트가 없습니다."}
+        </EmptyMessage>
+      </PostListWrapper>
+    );
+  }
+
   return (
     <PostListWrapper ref={containerRef}>
       {postList.map(

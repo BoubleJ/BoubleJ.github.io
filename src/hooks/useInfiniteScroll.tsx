@@ -10,6 +10,7 @@ const NUMBER_OF_ITEMS_PER_PAGE = 10
 
 const useInfiniteScroll = function (
   selectedCategory: string,
+  searchTerm: string = "",
   posts: PostListItemType[],
 ): useInfiniteScrollType {
   const containerRef: MutableRefObject<HTMLDivElement | null> =
@@ -19,18 +20,42 @@ const useInfiniteScroll = function (
   const [count, setCount] = useState<number>(1)
 
   const postListByCategory = useMemo<PostListItemType[]>(
-    () =>
-      posts.filter(
-        ({
-          node: {
-            frontmatter: { categories },
+    () => {
+      let filtered = posts;
+
+      // 카테고리 필터링
+      if (selectedCategory !== 'All') {
+        filtered = filtered.filter(
+          ({
+            node: {
+              frontmatter: { categories },
+            },
+          }: PostListItemType) => categories.includes(selectedCategory),
+        );
+      }
+
+      // 검색어 필터링
+      if (searchTerm.trim()) {
+        const lowerSearchTerm = searchTerm.toLowerCase();
+        filtered = filtered.filter(
+          ({
+            node: {
+              frontmatter: { title, summary },
+            },
+          }: PostListItemType) => {
+            const lowerTitle = title.toLowerCase();
+            const lowerSummary = summary?.toLowerCase() || '';
+            return (
+              lowerTitle.includes(lowerSearchTerm) ||
+              lowerSummary.includes(lowerSearchTerm)
+            );
           },
-        }: PostListItemType) =>
-          selectedCategory !== 'All'
-            ? categories.includes(selectedCategory)
-            : true,
-      ),
-    [selectedCategory],
+        );
+      }
+
+      return filtered;
+    },
+    [selectedCategory, searchTerm, posts],
   )
 
   useEffect(() => {
@@ -42,7 +67,7 @@ const useInfiniteScroll = function (
     })
   }, [])
 
-  useEffect(() => setCount(1), [selectedCategory])
+  useEffect(() => setCount(1), [selectedCategory, searchTerm])
 
   useEffect(() => {
     if (
@@ -56,7 +81,7 @@ const useInfiniteScroll = function (
     observer.current.observe(
       containerRef.current.children[containerRef.current.children.length - 1],
     )
-  }, [count, selectedCategory])
+  }, [count, selectedCategory, searchTerm, postListByCategory.length])
 
   return {
     containerRef,

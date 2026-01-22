@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import CategoryList, { CategoryListProps } from "components/Main/CategoryList";
 import Introduction from "components/Main/Introduction";
 import PostList, { PostType } from "components/Main/PostList";
+import SearchBox from "components/Main/SearchBox";
 import Template from "components/Common/Template";
 import { graphql } from "gatsby";
 import { PostListItemType } from "types/PostItem.types";
@@ -47,6 +48,8 @@ function Page({
     typeof parsed.category !== "string" || !parsed.category
       ? "All"
       : parsed.category;
+  const searchTerm: string =
+    typeof parsed.search === "string" ? parsed.search : "";
 
   type NewType = CategoryListProps;
 
@@ -83,11 +86,16 @@ function Page({
       image={publicURL}
     >
       <Introduction />
+      <SearchBox initialValue={searchTerm} />
       <CategoryList
         selectedCategory={selectedCategory}
         categoryList={categoryList}
       />
-      <PostList selectedCategory={selectedCategory} posts={edges} />
+      <PostList
+        selectedCategory={selectedCategory}
+        searchTerm={searchTerm}
+        posts={edges}
+      />
     </Template>
   );
 }
