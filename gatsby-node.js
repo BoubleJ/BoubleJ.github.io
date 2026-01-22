@@ -2,6 +2,16 @@ const path = require("path");
 const { createFilePath } = require(`gatsby-source-filesystem`);
 const { VanillaExtractPlugin } = require("@vanilla-extract/webpack-plugin");
 
+// Enable new JSX Transform (React 17+)
+exports.onCreateBabelConfig = ({ actions }) => {
+  actions.setBabelPlugin({
+    name: "@babel/plugin-transform-react-jsx",
+    options: {
+      runtime: "automatic",
+    },
+  });
+};
+
 // Setup Import Alias and Vanilla Extract
 exports.onCreateWebpackConfig = ({ getConfig, actions, stage }) => {
   const output = getConfig().output || {};
