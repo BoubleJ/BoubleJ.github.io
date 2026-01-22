@@ -1,17 +1,16 @@
 import React from "react";
-import { GatsbyImage, IGatsbyImageData } from "gatsby-plugin-image";
 import PostHeadInfo, { PostHeadInfoProps } from "components/Post/PostHeadInfo";
 import * as styles from "./PostHead.css";
 
 interface PostHeadProps extends PostHeadInfoProps {
-  thumbnail: IGatsbyImageData;
+  thumbnail: string;
 }
 
 function PostHead({ title, date, categories, thumbnail }: PostHeadProps) {
   return (
     <div className={styles.postHeadWrapper}>
-      <GatsbyImage
-        image={thumbnail}
+      <img
+        src={thumbnail}
         alt="thumbnail"
         className={styles.backgroundImage}
         style={{ position: "absolute" }}

@@ -44,21 +44,18 @@ function PostTemplate({
         summary,
         date,
         categories,
-        thumbnail: {
-          childImageSharp: { gatsbyImageData },
-          publicURL,
-        },
+        thumbnail,
       },
     },
   } = edges[0];
 
   return (
-    <Template title={title} description={summary} url={href} image={publicURL}>
+    <Template title={title} description={summary} url={href} image={thumbnail}>
       <PostHead
         title={title}
         date={date}
         categories={categories}
-        thumbnail={gatsbyImageData}
+        thumbnail={thumbnail}
       />
       <PostContent html={html} body={body} />
       <CommentWidget />
@@ -79,12 +76,7 @@ export const queryMarkdownDataBySlug = graphql`
             summary
             date(formatString: "YYYY.MM.DD.")
             categories
-            thumbnail {
-              childImageSharp {
-                gatsbyImageData
-              }
-              publicURL
-            }
+            thumbnail
           }
         }
       }
@@ -98,12 +90,7 @@ export const queryMarkdownDataBySlug = graphql`
             summary
             date(formatString: "YYYY.MM.DD.")
             categories
-            thumbnail {
-              childImageSharp {
-                gatsbyImageData
-              }
-              publicURL
-            }
+            thumbnail
           }
         }
       }

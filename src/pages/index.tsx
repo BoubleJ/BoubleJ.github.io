@@ -131,11 +131,7 @@ export const getPostList = graphql`
             summary
             date(formatString: "YYYY.MM.DD.")
             categories
-            thumbnail {
-              childImageSharp {
-                gatsbyImageData(width: 768, height: 400)
-              }
-            }
+            thumbnail
           }
         }
       }
@@ -154,11 +150,7 @@ export const getPostList = graphql`
             summary
             date(formatString: "YYYY.MM.DD.")
             categories
-            thumbnail {
-              childImageSharp {
-                gatsbyImageData(width: 768, height: 400)
-              }
-            }
+            thumbnail
           }
         }
       }

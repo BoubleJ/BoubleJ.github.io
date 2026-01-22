@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "gatsby";
 import { PostFrontmatterType } from "types/PostItem.types";
-import { GatsbyImage } from "gatsby-plugin-image";
 import * as styles from "./PostItem.css";
 
 type PostItemProps = PostFrontmatterType & { link: string };
@@ -10,15 +9,13 @@ function PostItem({
   date,
   categories,
   summary,
-  thumbnail: {
-    childImageSharp: { gatsbyImageData },
-  },
+  thumbnail,
   link,
 }: PostItemProps) {
   return (
     <Link to={link} className={styles.postItemWrapper}>
-      <GatsbyImage
-        image={gatsbyImageData}
+      <img
+        src={thumbnail}
         alt="Post Item Image"
         className={styles.thumbnailImage}
       />
