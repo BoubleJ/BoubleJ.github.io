@@ -1,3 +1,3 @@
 // Gatsby browser API
-import "prism-themes/themes/prism-github.min.css";
+import "prism-themes/themes/prism-ghcolors.min.css";
 
