@@ -19,7 +19,7 @@
     "format": "biome format --write ."
   },
   "dependencies": {
-    "@mdx-js/react": "^3.1.1",
+    "@mdx-js/react": "^2.3.0",
     "@types/node": "^20.11.26",
     "@types/react": "^18.2.65",
     "@types/react-dom": "^18.2.21",
@@ -36,6 +36,10 @@
     "gatsby-plugin-sharp": "^5.15.0",
     "gatsby-plugin-sitemap": "^6.15.0",
     "gatsby-plugin-typescript": "^5.15.0",
+    "gatsby-remark-copy-linked-files": "^6.15.0",
+    "gatsby-remark-external-links": "^0.0.4",
+    "gatsby-remark-images": "^7.15.0",
+    "gatsby-remark-smartypants": "^6.15.0",
     "gatsby-source-filesystem": "^5.15.0",
     "gatsby-transformer-remark": "^6.15.0",
     "gatsby-transformer-sharp": "^5.15.0",
