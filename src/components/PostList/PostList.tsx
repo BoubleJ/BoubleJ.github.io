@@ -1,8 +1,6 @@
 import PostItem from "./PostItem";
 import { PostListItemType } from "@/types";
-import useInfiniteScroll, {
-  useInfiniteScrollType,
-} from "@/hooks/useInfiniteScroll";
+import useInfiniteScroll from "@/hooks/useInfiniteScroll";
 import * as styles from "./PostList.css";
 import EmptyPostList from "./EmptyPostList";
 
@@ -18,7 +16,7 @@ export default function PostList({
   searchTerm = "",
   posts,
 }: PostListProps) {
-  const { containerRef, postList }: useInfiniteScrollType = useInfiniteScroll(
+  const { containerRef, postList } = useInfiniteScroll(
     selectedCategory,
     searchTerm,
     posts
