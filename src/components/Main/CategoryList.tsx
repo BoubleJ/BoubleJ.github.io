@@ -14,7 +14,7 @@ function CategoryList({ selectedCategory, categoryList }: CategoryListProps) {
     <div className={styles.categoryListWrapper}>
       {Object.entries(categoryList).map(([name, count]) => (
         <Link
-          to={`/?category=${name}`}
+          to={`/post?category=${name}`}
           className={`${styles.categoryItem} ${
             name === selectedCategory ? styles.categoryItemActive : ""
           }`}

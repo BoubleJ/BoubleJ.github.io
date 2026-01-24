@@ -7,4 +7,10 @@ export const container = style({
   maxWidth: "1200px",
   margin: "0 auto",
   width: "100%",
+  paddingTop: "70px",
+  "@media": {
+    "(max-width: 768px)": {
+      paddingTop: "60px",
+    },
+  },
 });

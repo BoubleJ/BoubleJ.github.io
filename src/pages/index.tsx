@@ -1,18 +1,14 @@
 import { useMemo } from "react";
-import CategoryList, { CategoryListProps } from "components/Main/CategoryList";
+import { Link } from "gatsby";
 import Introduction from "components/Main/Introduction";
-import PostList, { PostType } from "components/Main/PostList";
-import SearchBox from "components/Main/SearchBox";
+import PostItem from "components/Main/PostItem";
 import Template from "components/Common/Template";
 import { graphql } from "gatsby";
 import { PostListItemType } from "types/PostItem.types";
 import { IGatsbyImageData } from "gatsby-plugin-image";
-import queryString, { ParsedQuery } from "query-string";
+import * as styles from "./index.css";
 
 interface PageProps {
-  location: {
-    search: string;
-  };
   data: {
     site: {
       siteMetadata: {
@@ -37,7 +33,6 @@ interface PageProps {
 }
 
 function Page({
-  location: { search },
   data: {
     site: {
       siteMetadata: { title, description, siteUrl },
@@ -48,40 +43,7 @@ function Page({
   },
 }: PageProps) {
   const edges = [...markdownEdges, ...mdxEdges];
-  const parsed: ParsedQuery<string> = queryString.parse(search);
-  const selectedCategory: string =
-    typeof parsed.category !== "string" || !parsed.category
-      ? "All"
-      : parsed.category;
-  const searchTerm: string =
-    typeof parsed.search === "string" ? parsed.search : "";
-
-  type NewType = CategoryListProps;
-
-  const categoryList = useMemo(
-    () =>
-      edges.reduce(
-        (
-          list: NewType["categoryList"],
-          {
-            node: {
-              frontmatter: { categories },
-            },
-          }: PostType
-        ) => {
-          categories.forEach((category) => {
-            if (list[category] === undefined) list[category] = 1;
-            else list[category]++;
-          });
-
-          list["All"]++;
-
-          return list;
-        },
-        { All: 0 }
-      ),
-    [edges]
-  );
+  const latestPosts = edges.slice(0, 6);
 
   return (
     <Template
@@ -91,16 +53,25 @@ function Page({
       image={publicURL}
     >
       <Introduction />
-      <SearchBox initialValue={searchTerm} />
-      <CategoryList
-        selectedCategory={selectedCategory}
-        categoryList={categoryList}
-      />
-      <PostList
-        selectedCategory={selectedCategory}
-        searchTerm={searchTerm}
-        posts={edges}
-      />
+      <div className={styles.postsSection}>
+        <h2 className={styles.sectionTitle}>최신 글</h2>
+        <div className={styles.postListWrapper}>
+          {latestPosts.map(
+            ({
+              node: {
+                id,
+                fields: { slug },
+                frontmatter,
+              },
+            }: PostListItemType) => (
+              <PostItem {...frontmatter} link={slug} key={id} />
+            )
+          )}
+        </div>
+        <Link to="/post" className={styles.moreButton}>
+          더 보기
+        </Link>
+      </div>
     </Template>
   );
 }

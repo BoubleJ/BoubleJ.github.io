@@ -4,7 +4,8 @@ function Introduction() {
   return (
     <div className={styles.background}>
       <div className={styles.wrapper}>
-        <img src="/image/profile-image.png" alt="Profile" style={{ maxWidth: "200px", borderRadius: "50%" }} />
+        <h1 className={styles.title}>Tech Blog</h1>
+        <p className={styles.description}>기술과 개발에 대한 이야기를 공유합니다</p>
       </div>
     </div>
   );

@@ -1,4 +1,3 @@
-import React from "react";
 import PostItem from "components/Main/PostItem";
 import { PostListItemType } from "types/PostItem.types";
 import useInfiniteScroll, {
