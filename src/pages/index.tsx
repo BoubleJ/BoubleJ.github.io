@@ -36,12 +36,12 @@ function Page({
       siteMetadata: { title, description, siteUrl },
     },
     allMarkdownRemark: { edges: markdownEdges },
-    allMdx: { edges: mdxEdges },
+    // allMdx: { edges: mdxEdges }, mdx로 변환 시 사용할 props
     file,
   },
 }: PageProps) {
   const publicURL = file?.publicURL || "";
-  const edges = [...markdownEdges, ...mdxEdges];
+  const edges = [...markdownEdges];
   const latestPosts = edges.slice(0, 8);
 
   return (

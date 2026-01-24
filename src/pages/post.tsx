@@ -40,12 +40,12 @@ function PostPage({
       siteMetadata: { title, description, siteUrl },
     },
     allMarkdownRemark: { edges: markdownEdges },
-    allMdx: { edges: mdxEdges },
+    // allMdx: { edges: mdxEdges }, mdx로 변환 시 사용할 props
     file,
   },
 }: PostPageProps) {
   const publicURL = file?.publicURL || "";
-  const edges = [...markdownEdges, ...mdxEdges];
+  const edges = [...markdownEdges];
   const parsed: ParsedQuery<string> = queryString.parse(search);
   const selectedCategory: string =
     typeof parsed.category !== "string" || !parsed.category

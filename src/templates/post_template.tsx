@@ -29,11 +29,11 @@ export type PostPageItemType = {
 function PostTemplate({
   data: {
     allMarkdownRemark: { edges: markdownEdges },
-    allMdx: { edges: mdxEdges },
+    // allMdx: { edges: mdxEdges }, mdx로 변환 시 사용할 props
   },
   location: { href },
 }: PostTemplateProps) {
-  const edges = [...markdownEdges, ...mdxEdges];
+  const edges = [...markdownEdges];
   const {
     node: {
       html,
