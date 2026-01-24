@@ -1,8 +1,8 @@
 import { ReactNode } from "react";
-import GlobalStyle from "components/Common/GlobalStyle";
 import Header from "components/Common/Header";
 import Footer from "components/Common/Footer";
 import * as styles from "./Layout.css";
+import "./GlobalStyle.css";
 
 type LayoutProps = {
   children: ReactNode;
@@ -11,7 +11,6 @@ type LayoutProps = {
 function Layout({ children }: LayoutProps) {
   return (
     <>
-      <GlobalStyle />
       <Header />
       <main className={styles.container}>{children}</main>
       <Footer />

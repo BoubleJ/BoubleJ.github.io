@@ -33,7 +33,6 @@ function PostList({
     searchTerm,
     posts
   );
-  console.log(posts);
   
   if (postList.length === 0) {
     return (

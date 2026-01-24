@@ -5,6 +5,7 @@ import * as styles from "./Header.css";
 
 function Header() {
   const location = useLocation();
+  console.log(location.pathname);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [isVisible, setIsVisible] = useState(true);
@@ -72,24 +73,19 @@ function Header() {
           <span className={styles.logoText}>Tech Blog</span>
         </Link>
         <nav className={styles.nav}>
-          <Link
-            to="/"
-            className={`${styles.navLink} ${isActive("/") ? styles.navLinkActive : ""}`}
-          >
-            Home
-          </Link>
-          <Link
-            to="/post"
-            className={`${styles.navLink} ${isActive("/post") ? styles.navLinkActive : ""}`}
-          >
-            Posts
-          </Link>
-          <Link
-            to="/tag"
-            className={`${styles.navLink} ${isActive("/tag") ? styles.navLinkActive : ""}`}
-          >
-            Tags
-          </Link>
+          {[
+            { path: "/", label: "Home" },
+            { path: "/post", label: "Posts" },
+            { path: "/tag", label: "Tags" },
+          ].map(({ path, label }) => (
+            <Link
+              key={path}
+              to={path}
+              className={`${styles.navLink} ${isActive(path) ? styles.navLinkActive : ""}`}
+            >
+              {label}
+            </Link>
+          ))}
           <button
             type="button"
             className={styles.searchIconButton}

@@ -1,12 +1,10 @@
-import React, { FunctionComponent } from "react";
+import { FunctionComponent } from "react";
 import { Link, graphql } from "gatsby";
-import GlobalStyle from "components/Common/GlobalStyle";
 import * as styles from "./404.css";
 
 const NotFoundPage: FunctionComponent = function () {
   return (
     <div className={styles.notFoundPageWrapper}>
-      <GlobalStyle />
       <div className={styles.notFoundText}>404</div>
       <div className={styles.notFoundDescription}>
         찾을 수 없는 페이지입니다. <br />
