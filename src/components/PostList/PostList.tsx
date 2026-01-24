@@ -36,7 +36,7 @@ export default function PostList({
             }: PostListItemType,
             index: number
           ) => (
-            <PostItem {...frontmatter} link={slug} key={id} index={index} />
+            <PostItem {...frontmatter} link={slug} key={id} index={index % 10} />
           )
         )
       )}
