@@ -3,12 +3,12 @@ import { style } from "@vanilla-extract/css";
 export const postsSection = style({
   maxWidth: "1200px",
   width: "100%",
-  margin: "60px auto 0",
-  padding: "0 24px",
+  margin: "60px auto",
+  padding: "60px 24px",
   "@media": {
     "(max-width: 768px)": {
-      margin: "40px auto 0",
-      padding: "0 20px",
+      margin: "40px auto",
+      padding: "40px 20px",
     },
   },
 });
@@ -28,12 +28,18 @@ export const sectionTitle = style({
 
 export const postListWrapper = style({
   display: "grid",
-  gridTemplateColumns: "repeat(2, 1fr)",
+  gridTemplateColumns: "repeat(4, 1fr)",
+  gridTemplateRows: "repeat(2, 1fr)",
   gap: "24px",
   marginBottom: "48px",
   "@media": {
+    "(max-width: 1024px)": {
+      gridTemplateColumns: "repeat(2, 1fr)",
+      gridTemplateRows: "repeat(4, 1fr)",
+    },
     "(max-width: 768px)": {
       gridTemplateColumns: "1fr",
+      gridTemplateRows: "auto",
       gap: "20px",
       marginBottom: "32px",
     },

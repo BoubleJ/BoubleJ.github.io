@@ -41,7 +41,7 @@ function Page({
   },
 }: PageProps) {
   const edges = [...markdownEdges, ...mdxEdges];
-  const latestPosts = edges.slice(0, 6);
+  const latestPosts = edges.slice(0, 8);
 
   return (
     <Template
