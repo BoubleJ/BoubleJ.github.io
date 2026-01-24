@@ -17,8 +17,6 @@ export default function PostList({
   posts,
 }: PostListProps) {
   const { containerRef, postList } = useInfiniteScroll(
-    selectedCategory,
-    searchTerm,
     posts
   );
   

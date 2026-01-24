@@ -18,22 +18,14 @@ export default function TagPage({
       siteMetadata: { title, description, siteUrl },
     },
     allMarkdownRemark: { edges: markdownEdges },
-    allMdx: { edges: mdxEdges },
+    // allMdx: { edges: mdxEdges },
     file,
   },
   location,
 }: TagPageProps) {
   const publicURL = file?.publicURL || "";
   
-  const edges = useMemo(() => {
-      const markdownPosts = markdownEdges || [];
-      
-      return [...markdownPosts].sort((a, b) => {
-        const dateA = new Date(a.node.frontmatter.date).getTime();
-        const dateB = new Date(b.node.frontmatter.date).getTime();
-        return dateB - dateA;
-      });
-  }, [markdownEdges, mdxEdges]);
+  const edges =  [...markdownEdges]
 
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
@@ -104,6 +96,8 @@ export default function TagPage({
       return selectedTags.some(tag => categories.includes(tag));
     });
   }, [edges, selectedTags]);
+
+  console.log('filteredPosts', filteredPosts);
 
   return (
     <Template

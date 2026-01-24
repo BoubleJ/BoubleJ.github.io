@@ -1,86 +1,51 @@
-import { useState, useEffect, useRef, useMemo } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { PostListItemType } from '@/types'
 
 const NUMBER_OF_ITEMS_PER_PAGE = 10
 
-const useInfiniteScroll = function (
-  selectedCategory: string,
-  searchTerm: string = "",
-  posts: PostListItemType[],
-) {
+const useInfiniteScroll = (posts: PostListItemType[]) => {
   const containerRef = useRef<HTMLDivElement | null>(null)
-    useRef<HTMLDivElement>(null)
-  const observer = useRef<IntersectionObserver | null>(null)
-    useRef<IntersectionObserver>(null)
-  const [count, setCount] = useState<number>(1)
-
-  const postListByCategory = useMemo<PostListItemType[]>(
-    () => {
-      let filtered = posts;
-
-      // 카테고리 필터링
-      if (selectedCategory !== 'All') {
-        filtered = filtered.filter(
-          ({
-            node: {
-              frontmatter: { categories },
-            },
-          }: PostListItemType) => categories.includes(selectedCategory),
-        );
-      }
-
-      // 검색어 필터링
-      if (searchTerm.trim()) {
-        const lowerSearchTerm = searchTerm.toLowerCase();
-        filtered = filtered.filter(
-          ({
-            node: {
-              frontmatter: { title, summary },
-            },
-          }: PostListItemType) => {
-            const lowerTitle = title.toLowerCase();
-            const lowerSummary = summary?.toLowerCase() || '';
-            return (
-              lowerTitle.includes(lowerSearchTerm) ||
-              lowerSummary.includes(lowerSearchTerm)
-            );
-          },
-        );
-      }
-
-      return filtered;
-    },
-    [selectedCategory, searchTerm, posts],
-  )
+  const observerRef = useRef<IntersectionObserver | null>(null)
+  const [count, setCount] = useState(1)
 
   useEffect(() => {
-    observer.current = new IntersectionObserver((entries, observer) => {
-      if (!entries[0].isIntersecting) return
-
-      setCount(value => value + 1)
-      observer.unobserve(entries[0].target)
+    observerRef.current = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        setCount(prev => prev + 1)
+      }
     })
+
+    return () => {
+      observerRef.current?.disconnect()
+    }
   }, [])
 
-  useEffect(() => setCount(1), [selectedCategory, searchTerm])
+  useEffect(() => {
+    observerRef.current?.disconnect()
+    setCount(1)
+  }, [posts]) 
+
 
   useEffect(() => {
-    if (
-      NUMBER_OF_ITEMS_PER_PAGE * count >= postListByCategory.length ||
-      containerRef.current === null ||
-      containerRef.current.children.length === 0 ||
-      observer.current === null
-    )
-      return
+    const container = containerRef.current
+    const observer = observerRef.current
 
-    observer.current.observe(
-      containerRef.current.children[containerRef.current.children.length - 1],
-    )
-  }, [count, selectedCategory, searchTerm, postListByCategory.length])
+    if (!container || !observer || container.children.length === 0) return
+
+    const hasMore = count * NUMBER_OF_ITEMS_PER_PAGE < posts.length
+    if (!hasMore) return
+
+    const lastChild = container.children[container.children.length - 1]
+    observer.observe(lastChild)
+
+    return () => {
+      observer.unobserve(lastChild)
+    }
+  }, [count, posts.length])
 
   return {
     containerRef,
-    postList: postListByCategory.slice(0, count * NUMBER_OF_ITEMS_PER_PAGE),
+    postList: posts.slice(0, count * NUMBER_OF_ITEMS_PER_PAGE),
   }
 }
 
