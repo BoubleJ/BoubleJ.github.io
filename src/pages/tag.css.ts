@@ -1,4 +1,5 @@
 import { style } from "@vanilla-extract/css";
+import { vars } from "@/styles/theme.css";
 
 export const tagPage = style({
   maxWidth: "1200px",
@@ -17,7 +18,7 @@ export const pageTitle = style({
   fontSize: "36px",
   fontWeight: 700,
   margin: "0 0 40px 0",
-  color: "#24292e",
+  color: vars.color.text,
   "@media": {
     "(max-width: 768px)": {
       fontSize: "28px",
@@ -30,6 +31,7 @@ export const tagListWrapper = style({
   display: "flex",
   flexWrap: "wrap",
   gap: "8px",
+  marginBottom: "40px",
 });
 
 export const tagItem = style({
@@ -39,14 +41,15 @@ export const tagItem = style({
   padding: "6px 10px",
   borderRadius: "8px",
   textDecoration: "none",
-  color: "inherit",
-  backgroundColor: "#f6f8fa",
-  border: "1px solid #e1e4e8",
+  color: vars.color.text,
+  backgroundColor: vars.color.buttonHoverBg,
+  border: `1px solid ${vars.color.border}`,
   transition: "all 0.2s ease",
+  cursor: "pointer",
   ":hover": {
-    backgroundColor: "#667eea",
+    backgroundColor: vars.color.primary,
     color: "#ffffff",
-    borderColor: "#667eea",
+    borderColor: vars.color.primary,
     transform: "translateY(-2px)",
     boxShadow: "0 4px 12px rgba(102, 126, 234, 0.3)",
   },
@@ -56,6 +59,16 @@ export const tagItem = style({
       fontSize: "14px",
     },
   },
+});
+
+export const tagItemActive = style({
+  backgroundColor: vars.color.primary,
+  color: "#ffffff",
+  borderColor: vars.color.primary,
+  ":hover": {
+    backgroundColor: vars.color.linkHover,
+    borderColor: vars.color.linkHover,
+  }
 });
 
 export const tagName = style({

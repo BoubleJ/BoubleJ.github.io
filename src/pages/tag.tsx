@@ -1,11 +1,15 @@
-import { useMemo } from "react";
-import { Link, graphql } from "gatsby";
+import { useMemo, useState, useCallback, useEffect } from "react";
+import { graphql, navigate } from "gatsby";
 import { GraphqlDataType } from "@/types";
 import { PostType } from "@/types";
 import Template from "@/components/Template";
+import PostList from "@/components/PostList/PostList";
 import * as styles from "./tag.css";
 
 interface TagPageProps extends GraphqlDataType {
+  location: {
+    search: string;
+  };
 }
 
 export default function TagPage({
@@ -14,12 +18,34 @@ export default function TagPage({
       siteMetadata: { title, description, siteUrl },
     },
     allMarkdownRemark: { edges: markdownEdges },
-    // allMdx: { edges: mdxEdges }, mdx로 변환 시 사용할 props
+    allMdx: { edges: mdxEdges },
     file,
   },
+  location,
 }: TagPageProps) {
   const publicURL = file?.publicURL || "";
-  const edges = [...markdownEdges];
+  
+  const edges = useMemo(() => {
+      const markdownPosts = markdownEdges || [];
+      
+      return [...markdownPosts].sort((a, b) => {
+        const dateA = new Date(a.node.frontmatter.date).getTime();
+        const dateB = new Date(b.node.frontmatter.date).getTime();
+        return dateB - dateA;
+      });
+  }, [markdownEdges, mdxEdges]);
+
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tagsParam = params.get("tags");
+    if (tagsParam) {
+      setSelectedTags(tagsParam.split(","));
+    } else {
+      setSelectedTags([]);
+    }
+  }, [location.search]);
 
   const categoryList = useMemo(
     () =>
@@ -32,11 +58,12 @@ export default function TagPage({
             },
           }: PostType
         ) => {
-          categories.forEach((category) => {
-            if (list[category] === undefined) list[category] = 1;
-            else list[category]++;
-          });
-
+          if (categories) {
+              categories.forEach((category) => {
+                if (list[category] === undefined) list[category] = 1;
+                else list[category]++;
+              });
+          }
           return list;
         },
         {}
@@ -50,6 +77,34 @@ export default function TagPage({
     [categoryList]
   );
 
+  const handleTagClick = useCallback((tag: string) => {
+    let newTags: string[];
+    if (selectedTags.includes(tag)) {
+      newTags = selectedTags.filter((t) => t !== tag);
+    } else {
+      newTags = [...selectedTags, tag];
+    }
+
+    const searchParams = new URLSearchParams();
+    if (newTags.length > 0) {
+      searchParams.set("tags", newTags.join(","));
+      navigate(`/tag?${searchParams.toString()}`);
+    } else {
+      navigate("/tag");
+    }
+  }, [selectedTags]);
+
+  const filteredPosts = useMemo(() => {
+    if (selectedTags.length === 0) {
+      return edges;
+    }
+
+    return edges.filter(({ node: { frontmatter: { categories } } }: PostType) => {
+      if (!categories) return false;
+      return selectedTags.some(tag => categories.includes(tag));
+    });
+  }, [edges, selectedTags]);
+
   return (
     <Template
       title={`${title} - Tags`}
@@ -58,19 +113,35 @@ export default function TagPage({
       image={publicURL}
     >
       <div className={styles.tagPage}>
-        <h1 className={styles.pageTitle}>모든 태그</h1>
+        <h1 className={styles.pageTitle}>태그 목록</h1>
         <div className={styles.tagListWrapper}>
-          {sortedCategories.map(([name, count]) => (
-            <Link
-              to={`/post?category=${encodeURIComponent(name)}`}
-              className={styles.tagItem}
-              key={name}
-            >
-              <span className={styles.tagName}>#{name}</span>
-              <span className={styles.tagCount}>({count})</span>
-            </Link>
-          ))}
+          {sortedCategories.map(([name, count]) => {
+            const isActive = selectedTags.includes(name);
+            return (
+                <div
+                key={name}
+                className={`${styles.tagItem} ${isActive ? styles.tagItemActive : ""}`}
+                onClick={() => handleTagClick(name)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        handleTagClick(name);
+                    }
+                }}
+                >
+                <span className={styles.tagName}>#{name}</span>
+                <span className={styles.tagCount}>({count})</span>
+                </div>
+            )
+          })}
         </div>
+
+        <PostList 
+            posts={filteredPosts} 
+            selectedCategory="All" 
+            searchTerm="" 
+        />
       </div>
     </Template>
   );
