@@ -1,10 +1,8 @@
-import { useMemo } from "react";
 import { graphql } from "gatsby";
 import { PostListItemType } from "types/PostItem.types";
 import { IGatsbyImageData } from "gatsby-plugin-image";
 import queryString, { ParsedQuery } from "query-string";
-import CategoryList, { CategoryListProps } from "components/Main/CategoryList";
-import PostList, { PostType } from "components/Main/PostList";
+import PostList from "components/Main/PostList";
 import Template from "components/Common/Template";
 import * as styles from "./post.css";
 
@@ -55,31 +53,6 @@ function PostPage({
   const searchTerm: string =
     typeof parsed.search === "string" ? parsed.search : "";
 
-  const categoryList = useMemo(
-    () =>
-      edges.reduce(
-        (
-          list: CategoryListProps["categoryList"],
-          {
-            node: {
-              frontmatter: { categories },
-            },
-          }: PostType
-        ) => {
-          categories.forEach((category) => {
-            if (list[category] === undefined) list[category] = 1;
-            else list[category]++;
-          });
-
-          list["All"]++;
-
-          return list;
-        },
-        { All: 0 }
-      ),
-    [edges]
-  );
-
   return (
     <Template
       title={`${title} - Posts`}
@@ -89,10 +62,6 @@ function PostPage({
     >
       <div className={styles.postsPage}>
         <h1 className={styles.pageTitle}>모든 포스트</h1>
-        <CategoryList
-          selectedCategory={selectedCategory}
-          categoryList={categoryList}
-        />
         <PostList
           selectedCategory={selectedCategory}
           searchTerm={searchTerm}
