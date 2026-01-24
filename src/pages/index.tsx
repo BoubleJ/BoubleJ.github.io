@@ -1,6 +1,4 @@
-import { useMemo } from "react";
 import { Link } from "gatsby";
-import Introduction from "components/Main/Introduction";
 import PostItem from "components/Main/PostItem";
 import Template from "components/Common/Template";
 import { graphql } from "gatsby";
@@ -52,19 +50,21 @@ function Page({
       url={siteUrl}
       image={publicURL}
     >
-      <Introduction />
       <div className={styles.postsSection}>
         <h2 className={styles.sectionTitle}>최신 글</h2>
         <div className={styles.postListWrapper}>
           {latestPosts.map(
-            ({
-              node: {
-                id,
-                fields: { slug },
-                frontmatter,
-              },
-            }: PostListItemType) => (
-              <PostItem {...frontmatter} link={slug} key={id} />
+            (
+              {
+                node: {
+                  id,
+                  fields: { slug },
+                  frontmatter,
+                },
+              }: PostListItemType,
+              index: number
+            ) => (
+              <PostItem {...frontmatter} link={slug} key={id} index={index} />
             )
           )}
         </div>

@@ -28,7 +28,7 @@ export const sectionTitle = style({
 
 export const postListWrapper = style({
   display: "grid",
-  gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+  gridTemplateColumns: "repeat(2, 1fr)",
   gap: "24px",
   marginBottom: "48px",
   "@media": {

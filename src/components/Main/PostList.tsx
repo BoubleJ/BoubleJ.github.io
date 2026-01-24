@@ -50,14 +50,17 @@ function PostList({
   return (
     <div className={styles.postListWrapper} ref={containerRef}>
       {postList.map(
-        ({
-          node: {
-            id,
-            fields: { slug },
-            frontmatter,
-          },
-        }: PostListItemType) => (
-          <PostItem {...frontmatter} link={slug} key={id} />
+        (
+          {
+            node: {
+              id,
+              fields: { slug },
+              frontmatter,
+            },
+          }: PostListItemType,
+          index: number
+        ) => (
+          <PostItem {...frontmatter} link={slug} key={id} index={index} />
         )
       )}
     </div>

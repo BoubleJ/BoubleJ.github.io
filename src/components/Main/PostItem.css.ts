@@ -1,4 +1,15 @@
-import { style } from "@vanilla-extract/css";
+import { style, keyframes } from "@vanilla-extract/css";
+
+const slideUpFadeIn = keyframes({
+  "0%": {
+    transform: "translateY(30px)",
+    opacity: 0,
+  },
+  "100%": {
+    transform: "translateY(0)",
+    opacity: 1,
+  },
+});
 
 export const postItemWrapper = style({
   display: "flex",
@@ -9,6 +20,8 @@ export const postItemWrapper = style({
   cursor: "pointer",
   textDecoration: "none",
   color: "inherit",
+  animation: `${slideUpFadeIn} 0.6s ease-out forwards`,
+  opacity: 0,
   ":hover": {
     boxShadow: "0 0 10px rgba(0, 0, 0, 0.3)",
   },

@@ -1,9 +1,8 @@
-import React from "react";
 import { Link } from "gatsby";
 import { PostFrontmatterType } from "types/PostItem.types";
 import * as styles from "./PostItem.css";
 
-type PostItemProps = PostFrontmatterType & { link: string };
+type PostItemProps = PostFrontmatterType & { link: string; index?: number };
 function PostItem({
   title,
   date,
@@ -11,9 +10,16 @@ function PostItem({
   summary,
   thumbnail,
   link,
+  index = 0,
 }: PostItemProps) {
   return (
-    <Link to={link} className={styles.postItemWrapper}>
+    <Link
+      to={link}
+      className={styles.postItemWrapper}
+      style={{
+        animationDelay: `${index * 0.1}s`,
+      }}
+    >
       <img
         src={thumbnail}
         alt="Post Item Image"

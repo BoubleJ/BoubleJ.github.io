@@ -69,6 +69,9 @@ function Header() {
           <Link to="/post" className={styles.navLink}>
             Posts
           </Link>
+          <Link to="/tag" className={styles.navLink}>
+            Tags
+          </Link>
           <button
             type="button"
             className={styles.searchIconButton}
