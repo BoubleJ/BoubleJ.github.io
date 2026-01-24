@@ -1,20 +1,24 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, navigate, useLocation } from "gatsby";
+import { Link, navigate } from "gatsby";
 import * as styles from "./Header.css";
 
 function Header() {
-  const location = useLocation();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [currentPath, setCurrentPath] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setCurrentPath(window.location.pathname);
+  }, []);
 
   const isActive = (path: string) => {
     if (path === "/") {
-      return location.pathname === "/";
+      return currentPath === "/";
     }
-    return location.pathname.startsWith(path);
+    return currentPath.startsWith(path);
   };
 
   useEffect(() => {
