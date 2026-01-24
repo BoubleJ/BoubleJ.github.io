@@ -1,9 +1,5 @@
-import React, { ReactNode } from "react";
-import GlobalStyle from "components/Common/GlobalStyle";
-import Header from "components/Common/Header";
-import Footer from "components/Common/Footer";
+import { ReactNode } from "react";
 import { Helmet } from "react-helmet";
-import * as styles from "./Template.css";
 
 type TemplateProps = {
   title: string;
@@ -15,7 +11,7 @@ type TemplateProps = {
 
 function Template({ title, description, url, image, children }: TemplateProps) {
   return (
-    <main className={styles.container}>
+    <>
       <Helmet>
         <title>{title}</title>
 
@@ -39,12 +35,8 @@ function Template({ title, description, url, image, children }: TemplateProps) {
 
         <html lang="ko" />
       </Helmet>
-
-      <GlobalStyle />
-      <Header />
       {children}
-      <Footer />
-    </main>
+    </>
   );
 }
 

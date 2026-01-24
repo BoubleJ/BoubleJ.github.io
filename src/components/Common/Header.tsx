@@ -1,47 +1,21 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, navigate } from "gatsby";
+import { useLocation } from "@reach/router";
 import * as styles from "./Header.css";
 
 function Header() {
+  const location = useLocation();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
-  const [currentPath, setCurrentPath] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    const updatePath = () => {
-      setCurrentPath(window.location.pathname);
-    };
-    
-    updatePath();
-    
-    // 페이지 이동 시 경로 업데이트
-    const handleRouteChange = () => {
-      updatePath();
-    };
-    
-    window.addEventListener("popstate", handleRouteChange);
-    
-    // Gatsby의 클라이언트 사이드 라우팅 감지
-    const originalPushState = history.pushState;
-    history.pushState = function(...args) {
-      originalPushState.apply(history, args);
-      setTimeout(updatePath, 0);
-    };
-    
-    return () => {
-      window.removeEventListener("popstate", handleRouteChange);
-      history.pushState = originalPushState;
-    };
-  }, []);
 
   const isActive = (path: string) => {
     if (path === "/") {
-      return currentPath === "/";
+      return location.pathname === "/";
     }
-    return currentPath.startsWith(path);
+    return location.pathname.startsWith(path);
   };
 
   useEffect(() => {
