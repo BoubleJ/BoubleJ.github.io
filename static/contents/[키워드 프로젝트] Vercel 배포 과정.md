@@ -1,7 +1,7 @@
 ---
 date: "2024-06-03"
 title: "[키워드프로젝트] Vercel 배포 과정"
-categories: ["Keyword"]
+categories: ["Vercel"]
 summary: "제작한 프로젝트를 Vercel로 배포하는 과정을 기록해보겠습니다."
 thumbnail: "/image/vercel.jpg"
 ---

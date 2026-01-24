@@ -3,13 +3,7 @@ date: "2024-10-07"
 title: "[React] React의 Components Elements 기반 동작 원리"
 categories:
   [
-    "React",
-    "Components",
-    "Elements",
-    "DOM",
-    "decoupling",
-    "Reconciliation",
-    "Top-Down Reconciliation",
+    "React"
   ]
 summary: "React의 동작원리를 컴포넌트, 엘리먼트로 분석해봅시다."
 thumbnail: "/image/reacticon.png"

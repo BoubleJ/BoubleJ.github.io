@@ -1,7 +1,7 @@
 ---
 date: "2024-02-07"
 title: "[React Study - 리액트를 다루는 기술] 7장. 컴포넌트의 라이프사이클 메서드"
-categories: ["ReactStudy", "React"]
+categories: [ "React"]
 summary: "대표적인 리액트 스타터 툴인 CRA(Create React App)과 Vite에 대해서 알아보았습니다. "
 thumbnail: "/image/cra와vite.png"
 ---

@@ -3,13 +3,7 @@ date: "2024-10-01"
 title: "[React] useDeferredValue와 useTransition"
 categories:
   [
-    "React",
-    "useDeferredValue",
-    "React18",
-    "React Hook",
-    "useTransition",
-    "concurrent rendering",
-    "동시성 렌더링",
+    "React"
   ]
 summary: "React 18에서 concurrent rendering(동시성 렌더링)을 위해 새로 나온 useDeferredValue와 useTransition 리액트 훅을 알아봅시다."
 thumbnail: "/image/useDeferredValue썸네일.png"

@@ -1,7 +1,7 @@
 ---
 date: "2024-01-31"
 title: "[React Study - 리액트를 다루는 기술] 5장. ref:DOM에 이름달기"
-categories: ["ReactStudy", "React"]
+categories: [ "React"]
 summary: "비록 리액트 관련된 내용은 아니지만 문득 console의 정확한 뜻이 무엇인지 궁금해서 조사해봤습니다."
 thumbnail: "/image/콘솔로표시각화.png"
 ---

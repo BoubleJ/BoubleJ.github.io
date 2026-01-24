@@ -1,7 +1,7 @@
 ---
 date: "2024-05-06"
 title: "[코딩테스트 프로그래머스] 문자열 내 p와 y의 개수 (레벨1)"
-categories: ["codingTest", "Programmers", "Level.1"]
+categories: ["Algorithm"]
 summary: "문자열 내 p와 y의 개수 문제 풀이과정"
 thumbnail: "/image/프로그래머스.png"
 ---

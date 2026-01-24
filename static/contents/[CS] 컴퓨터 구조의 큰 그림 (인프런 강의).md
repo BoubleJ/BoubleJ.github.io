@@ -1,7 +1,7 @@
 ---
 date: "2024-09-01"
 title: "[CS] 컴퓨터 구조의 큰 그림 (인프런 강의)"
-categories: ["CS", "컴퓨터공학", "CPU", "RAM", "메모리", "보조기억장치", "입출력장치", "메인보드", "시스템버스" ]
+categories: ["CS" ]
 summary: "컴퓨터 공학을 입문해봅시다."
 thumbnail: "/image/컴퓨터공학.jpg"
 ---

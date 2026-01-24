@@ -29,19 +29,14 @@ export const pageTitle = style({
 export const tagListWrapper = style({
   display: "flex",
   flexWrap: "wrap",
-  gap: "16px",
-  "@media": {
-    "(max-width: 768px)": {
-      gap: "12px",
-    },
-  },
+  gap: "8px",
 });
 
 export const tagItem = style({
   display: "flex",
   alignItems: "center",
   gap: "8px",
-  padding: "12px 20px",
+  padding: "6px 10px",
   borderRadius: "8px",
   textDecoration: "none",
   color: "inherit",
@@ -64,17 +59,17 @@ export const tagItem = style({
 });
 
 export const tagName = style({
-  fontSize: "16px",
+  fontSize: "12px",
   fontWeight: 600,
   "@media": {
     "(max-width: 768px)": {
-      fontSize: "14px",
+      fontSize: "12px",
     },
   },
 });
 
 export const tagCount = style({
-  fontSize: "14px",
+  fontSize: "12px",
   fontWeight: 400,
   opacity: 0.7,
   "@media": {

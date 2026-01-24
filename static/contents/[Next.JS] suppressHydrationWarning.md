@@ -1,7 +1,7 @@
 ---
 date: "2024-09-28"
 title: "[Next.JS] Hydration 에러를 해결하기 위한 suppressHydrationWarning"
-categories: ["Next.JS", "suppressHydrationWarning", "hydration", "SSR"]
+categories: ["Next.JS"]
 summary: "Hydration Failed 에러와 suppressHydrationWarning를 알아봅시다."
 thumbnail: "/image/하이드레이션에러.png"
 ---

@@ -1,7 +1,7 @@
 ---
 date: "2024-10-13"
 title: "[Next.JS] 서버 컴포넌트 렌더링 및 RSC Payload"
-categories: ["Next.JS", "RSC", "RSC Payload", "Server Component"]
+categories: ["Next.JS"]
 summary: "Next.js에서 리액트 서버 컴포넌트는 어떻게 렌더링 될까?"
 thumbnail: "/image/NEXT.png"
 ---

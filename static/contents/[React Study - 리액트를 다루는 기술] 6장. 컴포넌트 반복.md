@@ -1,7 +1,7 @@
 ---
 date: "2024-01-31"
 title: "[React Study - 리액트를 다루는 기술] 6장. 컴포넌트 반복"
-categories: ["ReactStudy", "React"]
+categories: [ "React"]
 summary: "자바스크립트 forEach과 map 메서드를 딥다이브 해보았습니다."
 thumbnail: "/image/map함수예시.png"
 ---
