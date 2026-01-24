@@ -4,9 +4,9 @@
 
 module.exports = {
   siteMetadata: {
-    title: `주니어 프론트엔드 개발자의 블로그`,
+    title: `Epik's Blog`,
     siteUrl: 'https://BoubleJ.github.io/',
-    description: `누구나 쉽게 이해할 수 있는 블로그가 되기를 지향합니다.`,
+    description: `개발하며 궁금한 점을 정리하는 블로그`,
     author: `Epik`,
   },
   plugins: [
@@ -21,7 +21,6 @@ module.exports = {
     "gatsby-plugin-sharp",
     "gatsby-plugin-sitemap",
     `gatsby-transformer-sharp`,
-    `gatsby-plugin-resolve-src`,
     `gatsby-plugin-react-helmet`,
     {
       resolve: `gatsby-plugin-sharp`,
