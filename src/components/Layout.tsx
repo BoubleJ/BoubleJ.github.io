@@ -4,10 +4,17 @@ import Footer from "./Footer/Footer";
 import * as styles from "./Layout.css";
 import "@/styles/GlobalStyle.css";
 
-function Layout({ children }: PropsWithChildren) {
+interface LayoutProps extends PropsWithChildren {
+  location?: {
+    pathname: string;
+  };
+}
+
+function Layout({ children, location }: LayoutProps) {
+  const pathname = location?.pathname || "";
   return (
     <>
-      <Header />
+      <Header pathname={pathname} />
       <main className={styles.container}>{children}</main>
       <Footer />
     </>

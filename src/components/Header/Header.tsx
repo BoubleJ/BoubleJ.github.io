@@ -1,13 +1,15 @@
 import { Link } from "gatsby";
-import { useLocation } from "@reach/router";
 import * as styles from "./Header.css";
 import { NAV_LINKS } from "@/constants";
 import SearchIcon from "@/components/icon/SearchIcon";
 import SearchContainer from "./SearchContainer";
 import useHeader from "@/hooks/useHeader";
 
-export default function Header() {
-  const location = useLocation();
+interface HeaderProps {
+  pathname: string;
+}
+
+export default function Header({ pathname }: HeaderProps) {
   const { isSearchOpen, isVisible, handleSearchClose, handleSearchIconClick } = useHeader();
   return (
     <header className={`${styles.header} ${isVisible ? styles.headerVisible : styles.headerHidden}`}>
@@ -20,7 +22,7 @@ export default function Header() {
             <Link
               key={path}
               to={path}
-              className={`${styles.navLink} ${location.pathname === path ? styles.navLinkActive : ""}`}
+              className={`${styles.navLink} ${pathname === path ? styles.navLinkActive : ""}`}
             >
               {label}
             </Link>
