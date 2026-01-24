@@ -1,4 +1,5 @@
 import { globalStyle } from "@vanilla-extract/css";
+import { vars } from "./theme.css";
 
 globalStyle("*", {
   padding: 0,
@@ -8,14 +9,17 @@ globalStyle("*", {
 
 globalStyle("html, body, #___gatsby", {
   height: "100%",
+  backgroundColor: vars.color.background,
+  color: vars.color.text,
+  transition: "background-color 0.2s ease, color 0.2s ease",
 });
 
 globalStyle("a", {
-  color: "black",
+  color: "inherit",
   textDecoration: "none",
 });
 
 globalStyle("a:hover", {
-  color: "#0969D9",
+  color: vars.color.linkHover,
   cursor: "pointer",
 });

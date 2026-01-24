@@ -1,12 +1,12 @@
 import { globalStyle } from "@vanilla-extract/css";
+import { vars, darkTheme } from "./theme.css";
 
-// 마크다운 전용 스타일 - 컴포넌트 스타일과 분리
-// .markdown-content 클래스로 스코프를 제한하여 컴포넌트 스타일과 충돌 방지
 globalStyle(".markdown-content h1, .markdown-h1", {
   marginTop: "60px",
   marginBottom: "30px",
   fontSize: "2em",
   fontWeight: "bold",
+  color: vars.color.text,
 });
 
 globalStyle(".markdown-content h2, .markdown-h2", {
@@ -14,6 +14,7 @@ globalStyle(".markdown-content h2, .markdown-h2", {
   marginBottom: "10px",
   fontSize: "1.5em",
   fontWeight: "bold",
+  color: vars.color.text,
 });
 
 globalStyle(".markdown-content h3, .markdown-h3", {
@@ -21,24 +22,27 @@ globalStyle(".markdown-content h3, .markdown-h3", {
   marginBottom: "5px",
   fontSize: "1.25em",
   fontWeight: "bold",
+  color: vars.color.text,
 });
 
 globalStyle(".markdown-content p, .markdown-p", {
   margin: "3px 0",
   lineHeight: 1.6,
+  color: vars.color.text,
 });
 
 globalStyle(".markdown-content blockquote, .markdown-blockquote", {
   margin: "10px 0px",
   padding: "15px",
-  borderLeft: "3px solid #d2d7df",
-  backgroundColor: "#f6f8fa",
-  color: "#72757b",
+  borderLeft: `3px solid ${vars.color.blockquoteBorder}`,
+  backgroundColor: vars.color.blockquoteBg,
+  color: vars.color.blockquoteText,
 });
 
 globalStyle(".markdown-content ol, .markdown-content ul, .markdown-ol, .markdown-ul", {
   marginLeft: "20px",
   padding: "5px 0",
+  color: vars.color.text,
 });
 
 globalStyle(".markdown-content li, .markdown-li", {
@@ -46,12 +50,13 @@ globalStyle(".markdown-content li, .markdown-li", {
 });
 
 globalStyle(".markdown-content a, .markdown-a", {
-  color: "#0366d6",
+  color: vars.color.link,
   textDecoration: "none",
 });
 
 globalStyle(".markdown-content a:hover, .markdown-a:hover", {
   textDecoration: "underline",
+  color: vars.color.linkHover,
 });
 
 globalStyle(".markdown-content img", {
@@ -66,22 +71,57 @@ globalStyle(".markdown-content table", {
 });
 
 globalStyle(".markdown-content table th, .markdown-content table td", {
-  border: "1px solid #dfe2e5",
+  border: `1px solid ${vars.color.tableBorder}`,
   padding: "6px 13px",
+  color: vars.color.text,
 });
 
 globalStyle(".markdown-content table th", {
-  backgroundColor: "#f6f8fa",
+  backgroundColor: vars.color.tableHeaderBg,
   fontWeight: "bold",
 });
 
 // 코드블록은 Prism.js가 처리하므로 마크다운 스타일에서 제외
 // .markdown-code는 인라인 코드만, .markdown-pre는 Prism이 처리
 globalStyle(".markdown-code:not([class*='language-'])", {
-  backgroundColor: "#f7f6f3",
+  backgroundColor: vars.color.codeBg,
   padding: "2px 6px",
   borderRadius: "3px",
   fontSize: "85%",
   fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace',
-  color: "#e83e8c",
+  color: vars.color.codeColor,
+});
+
+
+// PrismJS Code Block Theme Overrides for Dark Mode
+// 다크모드(darkTheme 클래스가 body에 적용됨)일 때 Prism 스타일을 재정의합니다.
+
+globalStyle(`body.${darkTheme} :not(pre) > code[class*="language-"], body.${darkTheme} pre[class*="language-"]`, {
+  backgroundColor: "#161b22", // GitHub Dark Dimmed background
+  color: "#adbac7",
+  textShadow: "none"
+});
+
+globalStyle(`body.${darkTheme} .token.comment, body.${darkTheme} .token.prolog, body.${darkTheme} .token.doctype, body.${darkTheme} .token.cdata`, {
+  color: "#768390"
+});
+
+globalStyle(`body.${darkTheme} .token.punctuation`, {
+  color: "#adbac7"
+});
+
+globalStyle(`body.${darkTheme} .token.delimiter.important, body.${darkTheme} .token.selector, body.${darkTheme} .token.tag, body.${darkTheme} .token.operator, body.${darkTheme} .token.keyword`, {
+  color: "#f47067"
+});
+
+globalStyle(`body.${darkTheme} .token.string, body.${darkTheme} .token.char, body.${darkTheme} .token.attr-value, body.${darkTheme} .token.regex, body.${darkTheme} .token.variable`, {
+  color: "#96d0ff"
+});
+
+globalStyle(`body.${darkTheme} .token.atrule, body.${darkTheme} .token.attr-value, body.${darkTheme} .token.function, body.${darkTheme} .token.class-name`, {
+  color: "#dcbdfb"
+});
+
+globalStyle(`body.${darkTheme} .token.constant`, {
+  color: "#6cb6ff"
 });

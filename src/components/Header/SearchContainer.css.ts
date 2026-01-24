@@ -1,4 +1,5 @@
 import { keyframes, style } from "@vanilla-extract/css";
+import { vars } from "@/styles/theme.css";
 
 export const searchContainer = style({
     maxWidth: "1200px",
@@ -66,15 +67,17 @@ export const searchInput = style({
     flex: 1,
     padding: "12px 16px",
     fontSize: "16px",
-    border: "2px solid #e0e0e0",
+    border: `2px solid ${vars.color.inputBorder}`,
     borderRadius: "8px",
     outline: "none",
-    transition: "border-color 0.3s",
+    backgroundColor: vars.color.background,
+    color: vars.color.text,
+    transition: "border-color 0.3s, background-color 0.2s, color 0.2s",
     ":focus": {
-        borderColor: "#667eea",
+        borderColor: vars.color.primary,
     },
     "::placeholder": {
-        color: "#999",
+        color: vars.color.placeholder,
     },
     "@media": {
         "(max-width: 768px)": {

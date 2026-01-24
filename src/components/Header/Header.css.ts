@@ -1,4 +1,5 @@
 import { style, keyframes } from "@vanilla-extract/css";
+import { vars } from "@/styles/theme.css";
 
 const slideDown = keyframes({
   "0%": {
@@ -22,20 +23,16 @@ const slideUp = keyframes({
   },
 });
 
-
-
-
-
 export const header = style({
   position: "fixed",
   top: 0,
   left: 0,
   right: 0,
   zIndex: 1000,
-  backgroundColor: "#ffffff",
-  borderBottom: "1px solid #e1e4e8",
+  backgroundColor: vars.color.background,
+  borderBottom: `1px solid ${vars.color.border}`,
   boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-  transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
+  transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background-color 0.2s, border-color 0.2s",
 });
 
 export const headerVisible = style({
@@ -101,12 +98,12 @@ export const nav = style({
 
 export const navLink = style({
   textDecoration: "none",
-  color: "#586069",
+  color: vars.color.secondary,
   fontSize: "16px",
   fontWeight: 500,
   transition: "color 0.2s",
   ":hover": {
-    color: "#667eea",
+    color: vars.color.primary,
   },
   "@media": {
     "(max-width: 768px)": {
@@ -116,7 +113,7 @@ export const navLink = style({
 });
 
 export const navLinkActive = style({
-  color: "#667eea",
+  color: vars.color.primary,
   fontWeight: 600,
   position: "relative",
   "::after": {
@@ -126,7 +123,7 @@ export const navLinkActive = style({
     left: 0,
     right: 0,
     height: "2px",
-    backgroundColor: "#667eea",
+    backgroundColor: vars.color.primary,
     borderRadius: "1px",
   },
 });
@@ -142,7 +139,7 @@ export const searchIconButton = style({
   borderRadius: "8px",
   transition: "background-color 0.2s",
   ":hover": {
-    backgroundColor: "#f3f4f6",
+    backgroundColor: vars.color.buttonHoverBg,
   },
   ":active": {
     transform: "scale(0.95)",
@@ -152,11 +149,11 @@ export const searchIconButton = style({
 export const searchIcon = style({
   width: "20px",
   height: "20px",
-  color: "#586069",
+  color: vars.color.secondary,
   transition: "color 0.2s",
   selectors: {
     [`${searchIconButton}:hover &`]: {
-      color: "#667eea",
+      color: vars.color.primary,
     },
   },
 });
@@ -173,8 +170,6 @@ export const searchContainer = style({
   },
 });
 
-
-
 export const searchForm = style({
   display: "flex",
   gap: "8px",
@@ -185,4 +180,3 @@ export const searchForm = style({
     },
   },
 });
-

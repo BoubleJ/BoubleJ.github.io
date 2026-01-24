@@ -1,8 +1,14 @@
 // Gatsby browser API
 import "prism-themes/themes/prism-ghcolors.min.css";
 import React from "react";
-import Layout from "@/components/Layout";
+import Layout from "./src/components/Layout";
+import { ThemeProvider } from "./src/context/ThemeContext";
 
-export const wrapPageElement = ({ element, props }) => {
-    return React.createElement(Layout, props, element);
-};
+
+export const wrapRootElement = ({ element }) => (
+  <ThemeProvider>{element}</ThemeProvider>
+);
+
+export const wrapPageElement = ({ element, props }) => (
+  <Layout {...props}>{element}</Layout>
+);

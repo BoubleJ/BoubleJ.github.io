@@ -2,8 +2,10 @@ import { Link } from "gatsby";
 import * as styles from "./Header.css";
 import { NAV_LINKS } from "@/constants";
 import SearchIcon from "@/components/icon/SearchIcon";
+import ThemeIcon from "@/components/icon/ThemeIcon";
 import SearchContainer from "./SearchContainer";
 import useHeader from "@/hooks/useHeader";
+import { useTheme } from "@/context/ThemeContext";
 
 interface HeaderProps {
   pathname: string;
@@ -11,6 +13,8 @@ interface HeaderProps {
 
 export default function Header({ pathname }: HeaderProps) {
   const { isSearchOpen, isVisible, handleSearchClose, handleSearchIconClick } = useHeader();
+  const { toggleTheme } = useTheme();
+
   return (
     <header className={`${styles.header} ${isVisible ? styles.headerVisible : styles.headerHidden}`}>
       <div className={styles.headerContainer}>
@@ -35,10 +39,17 @@ export default function Header({ pathname }: HeaderProps) {
           >
             <SearchIcon />
           </button>
+          <button
+            type="button"
+            className={styles.searchIconButton}
+            onClick={toggleTheme}
+            aria-label="테마 변경"
+          >
+            <ThemeIcon />
+          </button>
         </nav>
       </div>
       <SearchContainer isSearchOpen={isSearchOpen} onSearchClose={handleSearchClose} />
     </header>
   );
 }
-
