@@ -10,6 +10,13 @@ module.exports = {
     author: `Epik`,
   },
   plugins: [
+    {
+      resolve: "gatsby-plugin-page-creator",
+      options: {
+        path: `${__dirname}/src/pages`,
+        ignore: ["**/*.css.ts"],
+      },
+    },
     "gatsby-plugin-image",
     "gatsby-plugin-sharp",
     "gatsby-plugin-sitemap",
