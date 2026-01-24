@@ -29,7 +29,7 @@ interface PostPageProps {
         gatsbyImageData: IGatsbyImageData;
       };
       publicURL: string;
-    };
+    } | null;
   };
 }
 
@@ -41,9 +41,10 @@ function PostPage({
     },
     allMarkdownRemark: { edges: markdownEdges },
     allMdx: { edges: mdxEdges },
-    file: { publicURL },
+    file,
   },
 }: PostPageProps) {
+  const publicURL = file?.publicURL || "";
   const edges = [...markdownEdges, ...mdxEdges];
   const parsed: ParsedQuery<string> = queryString.parse(search);
   const selectedCategory: string =

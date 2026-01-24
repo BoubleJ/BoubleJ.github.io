@@ -26,7 +26,7 @@ interface TagPageProps {
         gatsbyImageData: IGatsbyImageData;
       };
       publicURL: string;
-    };
+    } | null;
   };
 }
 
@@ -37,9 +37,10 @@ function TagPage({
     },
     allMarkdownRemark: { edges: markdownEdges },
     allMdx: { edges: mdxEdges },
-    file: { publicURL },
+    file,
   },
 }: TagPageProps) {
+  const publicURL = file?.publicURL || "";
   const edges = [...markdownEdges, ...mdxEdges];
 
   const categoryList = useMemo(
