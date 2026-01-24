@@ -1,13 +1,21 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, navigate } from "gatsby";
+import { Link, navigate, useLocation } from "gatsby";
 import * as styles from "./Header.css";
 
 function Header() {
+  const location = useLocation();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const isActive = (path: string) => {
+    if (path === "/") {
+      return location.pathname === "/";
+    }
+    return location.pathname.startsWith(path);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -63,13 +71,22 @@ function Header() {
           <span className={styles.logoText}>Tech Blog</span>
         </Link>
         <nav className={styles.nav}>
-          <Link to="/" className={styles.navLink}>
+          <Link
+            to="/"
+            className={`${styles.navLink} ${isActive("/") ? styles.navLinkActive : ""}`}
+          >
             Home
           </Link>
-          <Link to="/post" className={styles.navLink}>
+          <Link
+            to="/post"
+            className={`${styles.navLink} ${isActive("/post") ? styles.navLinkActive : ""}`}
+          >
             Posts
           </Link>
-          <Link to="/tag" className={styles.navLink}>
+          <Link
+            to="/tag"
+            className={`${styles.navLink} ${isActive("/tag") ? styles.navLinkActive : ""}`}
+          >
             Tags
           </Link>
           <button

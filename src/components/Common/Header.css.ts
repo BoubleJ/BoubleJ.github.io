@@ -141,6 +141,22 @@ export const navLink = style({
   },
 });
 
+export const navLinkActive = style({
+  color: "#667eea",
+  fontWeight: 600,
+  position: "relative",
+  "::after": {
+    content: '""',
+    position: "absolute",
+    bottom: "-4px",
+    left: 0,
+    right: 0,
+    height: "2px",
+    backgroundColor: "#667eea",
+    borderRadius: "1px",
+  },
+});
+
 export const searchIconButton = style({
   background: "none",
   border: "none",
