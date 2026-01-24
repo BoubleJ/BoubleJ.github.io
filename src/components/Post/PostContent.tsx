@@ -1,5 +1,4 @@
-import React from "react";
-import { MDXRenderer } from "gatsby-plugin-mdx";
+import { MDXProvider } from "@mdx-js/react";
 import * as styles from "./PostContent.css";
 import "../../styles/markdown.css";
 
@@ -12,7 +11,7 @@ function PostContent({ html, body }: PostContentProps) {
   if (body) {
     return (
       <div className={`${styles.markdownRenderer} markdown-content`}>
-        <MDXRenderer>{body}</MDXRenderer>
+        <MDXProvider>{body}</MDXProvider>
       </div>
     );
   }
