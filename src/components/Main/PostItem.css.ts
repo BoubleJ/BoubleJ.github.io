@@ -16,7 +16,7 @@ export const postItemWrapper = style({
   flexDirection: "column",
   borderRadius: "10px",
   boxShadow: "0 0 8px rgba(0, 0, 0, 0.15)",
-  transition: "0.3s box-shadow",
+  transition: "0.3s box-shadow, 0.3s transform",
   cursor: "pointer",
   textDecoration: "none",
   color: "inherit",
@@ -24,6 +24,7 @@ export const postItemWrapper = style({
   opacity: 0,
   ":hover": {
     boxShadow: "0 0 10px rgba(0, 0, 0, 0.3)",
+    transform: "translateY(-8px)",
   },
 });
 
