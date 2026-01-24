@@ -1,5 +1,5 @@
 import { Link } from "gatsby";
-import { PostFrontmatterType } from "types/PostItem.types";
+import { PostFrontmatterType } from "@/types/PostItem.types";
 import * as styles from "./PostItem.css";
 
 type PostItemProps = PostFrontmatterType & { link: string; index?: number };

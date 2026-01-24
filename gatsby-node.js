@@ -20,9 +20,8 @@ exports.onCreateWebpackConfig = ({ getConfig, actions, stage }) => {
     output,
     resolve: {
       alias: {
-        components: path.resolve(__dirname, "src/components"),
-        utils: path.resolve(__dirname, "src/utils"),
-        hooks: path.resolve(__dirname, "src/hooks"),
+        "@": path.resolve(__dirname, "src"),
+        "static": path.resolve(__dirname, "static"),
       },
     },
     plugins: [

@@ -1,4 +1,4 @@
-import PostHeadInfo, { PostHeadInfoProps } from "components/Post/PostHeadInfo";
+import PostHeadInfo, { PostHeadInfoProps } from "./PostHeadInfo";
 import * as styles from "./PostHead.css";
 
 interface PostHeadProps extends PostHeadInfoProps {

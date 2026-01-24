@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 import { Link, graphql } from "gatsby";
-import { PostListItemType } from "types/PostItem.types";
+import { PostListItemType } from "@/types/PostItem.types";
 import { IGatsbyImageData } from "gatsby-plugin-image";
-import { PostType } from "components/Main/PostList";
-import Template from "components/Common/Template";
+import { PostType } from "@/components/Main/PostList";
+import Template from "@/components/Common/Template";
 import * as styles from "./tag.css";
 
 interface TagPageProps {

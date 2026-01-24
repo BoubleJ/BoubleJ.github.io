@@ -1,8 +1,8 @@
 import { Link } from "gatsby";
-import PostItem from "components/Main/PostItem";
-import Template from "components/Common/Template";
+import PostItem from "@/components/Main/PostItem";
+import Template from "@/components/Common/Template";
 import { graphql } from "gatsby";
-import { PostListItemType } from "types/PostItem.types";
+import { PostListItemType } from "@/types/PostItem.types";
 import { IGatsbyImageData } from "gatsby-plugin-image";
 import * as styles from "./index.css";
 

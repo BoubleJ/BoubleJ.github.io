@@ -1,8 +1,8 @@
-import PostItem from "components/Main/PostItem";
-import { PostListItemType } from "types/PostItem.types";
+import PostItem from "./PostItem";
+import { PostListItemType } from "@/types/PostItem.types";
 import useInfiniteScroll, {
   useInfiniteScrollType,
-} from "hooks/useInfiniteScroll";
+} from "@/hooks/useInfiniteScroll";
 import * as styles from "./PostList.css";
 
 export interface PostType {

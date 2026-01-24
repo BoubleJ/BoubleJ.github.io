@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { Link, navigate } from "gatsby";
 import { useLocation } from "@reach/router";
 import * as styles from "./Header.css";
+import { NAV_LINKS } from "@/constants";
+import SearchIcon from "@/components/icon/SearchIcon";
 
 function Header() {
   const location = useLocation();
@@ -72,11 +74,7 @@ function Header() {
           <span className={styles.logoText}>Tech Blog</span>
         </Link>
         <nav className={styles.nav}>
-          {[
-            { path: "/", label: "Home" },
-            { path: "/post", label: "Posts" },
-            { path: "/tag", label: "Tags" },
-          ].map(({ path, label }) => (
+          {NAV_LINKS.map(({ path, label }) => (
             <Link
               key={path}
               to={path}
@@ -91,20 +89,7 @@ function Header() {
             onClick={handleSearchIconClick}
             aria-label="검색"
           >
-            <svg
-              className={styles.searchIcon}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
+            <SearchIcon />
           </button>
         </nav>
       </div>
