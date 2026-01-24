@@ -5,7 +5,7 @@ interface PostHeadProps extends PostHeadInfoProps {
   thumbnail: string;
 }
 
-function PostHead({ title, date, categories, thumbnail }: PostHeadProps) {
+export default function PostHead({ title, date, categories, thumbnail }: PostHeadProps) {
   return (
     <div className={styles.postHeadWrapper}>
       <img
@@ -19,4 +19,3 @@ function PostHead({ title, date, categories, thumbnail }: PostHeadProps) {
   );
 }
 
-export default PostHead;

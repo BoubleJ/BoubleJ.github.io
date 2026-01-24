@@ -1,5 +1,5 @@
 import { MutableRefObject, useState, useEffect, useRef, useMemo } from 'react'
-import { PostListItemType } from '@/types/PostItem.types'
+import { PostListItemType } from '@/types'
 
 export type useInfiniteScrollType = {
   containerRef: MutableRefObject<HTMLDivElement | null>

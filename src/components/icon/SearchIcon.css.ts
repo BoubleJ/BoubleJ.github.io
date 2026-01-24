@@ -1,5 +1,5 @@
 import { style } from "@vanilla-extract/css";
-import { searchIconButton } from "@/components/Common/Header.css";
+import { searchIconButton } from "@/components/Header/Header.css";
 
 export const searchIcon = style({
     width: "20px",

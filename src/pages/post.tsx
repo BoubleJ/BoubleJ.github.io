@@ -1,39 +1,17 @@
 import { graphql } from "gatsby";
-import { PostListItemType } from "@/types/PostItem.types";
-import { IGatsbyImageData } from "gatsby-plugin-image";
+import { GraphqlDataType } from "@/types";
 import queryString, { ParsedQuery } from "query-string";
-import PostList from "@/components/Main/PostList";
-import Template from "@/components/Common/Template";
+import PostList from "@/components/PostList/PostList";
+import Template from "@/components/Template";
 import * as styles from "./post.css";
 
-interface PostPageProps {
+interface PostPageProps extends GraphqlDataType {
   location: {
     search: string;
   };
-  data: {
-    site: {
-      siteMetadata: {
-        title: string;
-        description: string;
-        siteUrl: string;
-      };
-    };
-    allMarkdownRemark: {
-      edges: PostListItemType[];
-    };
-    allMdx: {
-      edges: PostListItemType[];
-    };
-    file: {
-      childImageSharp: {
-        gatsbyImageData: IGatsbyImageData;
-      };
-      publicURL: string;
-    } | null;
-  };
 }
 
-function PostPage({
+export default function PostPage({
   location: { search },
   data: {
     site: {
@@ -73,7 +51,6 @@ function PostPage({
   );
 }
 
-export default PostPage;
 
 export const getPostList = graphql`
   query getAllPosts {

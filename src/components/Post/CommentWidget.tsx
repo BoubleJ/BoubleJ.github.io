@@ -1,8 +1,8 @@
-import React, { createRef, useEffect } from "react";
+import { createRef, useEffect } from "react";
 import * as styles from "./CommentWidget.css";
 
 const src = "https://utteranc.es/client.js";
-const repo = "BoubleJ/BoubleJ.github.io"; // 자신 계정의 레포지토리로 설정
+const repo = "BoubleJ/BoubleJ.github.io"; 
 
 type UtterancesAttributesType = {
   src: string;
@@ -14,7 +14,7 @@ type UtterancesAttributesType = {
   async: string;
 };
 
-function CommentWidget() {
+export default function CommentWidget() {
   const element = createRef<HTMLDivElement>();
 
   useEffect(() => {
@@ -42,4 +42,3 @@ function CommentWidget() {
   return <div className={styles.utterancesWrapper} ref={element} />;
 }
 
-export default CommentWidget;

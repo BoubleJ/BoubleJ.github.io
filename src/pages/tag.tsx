@@ -1,36 +1,14 @@
 import { useMemo } from "react";
 import { Link, graphql } from "gatsby";
-import { PostListItemType } from "@/types/PostItem.types";
-import { IGatsbyImageData } from "gatsby-plugin-image";
-import { PostType } from "@/components/Main/PostList";
-import Template from "@/components/Common/Template";
+import { GraphqlDataType } from "@/types";
+import { PostType } from "@/types";
+import Template from "@/components/Template";
 import * as styles from "./tag.css";
 
-interface TagPageProps {
-  data: {
-    site: {
-      siteMetadata: {
-        title: string;
-        description: string;
-        siteUrl: string;
-      };
-    };
-    allMarkdownRemark: {
-      edges: PostListItemType[];
-    };
-    allMdx: {
-      edges: PostListItemType[];
-    };
-    file: {
-      childImageSharp: {
-        gatsbyImageData: IGatsbyImageData;
-      };
-      publicURL: string;
-    } | null;
-  };
+interface TagPageProps extends GraphqlDataType {
 }
 
-function TagPage({
+export default function TagPage({
   data: {
     site: {
       siteMetadata: { title, description, siteUrl },
@@ -98,7 +76,6 @@ function TagPage({
   );
 }
 
-export default TagPage;
 
 export const getAllTags = graphql`
   query getAllTags {

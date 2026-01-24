@@ -1,6 +1,6 @@
 import { graphql } from "gatsby";
-import { PostFrontmatterType } from "@/types/PostItem.types";
-import Template from "@/components/Common/Template";
+import { PostFrontmatterType } from "@/types";
+import Template from "@/components/Template";
 import PostHead from "@/components/Post/PostHead";
 import PostContent from "@/components/Post/PostContent";
 import CommentWidget from "@/components/Post/CommentWidget";
@@ -26,7 +26,7 @@ export type PostPageItemType = {
     frontmatter: PostFrontmatterType;
   };
 };
-function PostTemplate({
+export default function PostTemplate({
   data: {
     allMarkdownRemark: { edges: markdownEdges },
     // allMdx: { edges: mdxEdges }, mdx로 변환 시 사용할 props
@@ -62,7 +62,6 @@ function PostTemplate({
   );
 }
 
-export default PostTemplate;
 
 export const queryMarkdownDataBySlug = graphql`
   query queryMarkdownDataBySlug($slug: String) {

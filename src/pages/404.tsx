@@ -1,8 +1,7 @@
-import { FunctionComponent } from "react";
 import { Link, graphql } from "gatsby";
 import * as styles from "./404.css";
 
-const NotFoundPage: FunctionComponent = function () {
+export default function NotFoundPage () {
   return (
     <div className={styles.notFoundPageWrapper}>
       <div className={styles.notFoundText}>404</div>
@@ -17,7 +16,6 @@ const NotFoundPage: FunctionComponent = function () {
   );
 };
 
-export default NotFoundPage;
 
 export const query = graphql`
   query {

@@ -1,9 +1,9 @@
 import { Link } from "gatsby";
-import { PostFrontmatterType } from "@/types/PostItem.types";
+import { PostFrontmatterType } from "@/types";
 import * as styles from "./PostItem.css";
 
 type PostItemProps = PostFrontmatterType & { link: string; index?: number };
-function PostItem({
+export default function PostItem({
   title,
   date,
   categories,
@@ -42,4 +42,3 @@ function PostItem({
   );
 }
 
-export default PostItem;

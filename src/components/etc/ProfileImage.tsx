@@ -5,7 +5,7 @@ interface ProfileImageProps {
   profileImage: IGatsbyImageData;
 }
 
-function ProfileImage({ profileImage }: ProfileImageProps) {
+export default function ProfileImage({ profileImage }: ProfileImageProps) {
   return (
     <GatsbyImage
       image={profileImage}
@@ -15,4 +15,3 @@ function ProfileImage({ profileImage }: ProfileImageProps) {
   );
 }
 
-export default ProfileImage;

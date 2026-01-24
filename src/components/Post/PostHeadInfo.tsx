@@ -1,12 +1,12 @@
 import * as styles from "./PostHeadInfo.css";
 
-export type PostHeadInfoProps = {
+export interface PostHeadInfoProps {
   title: string;
   date: string;
   categories: string[];
 };
 
-function PostHeadInfo({ title, date, categories }: PostHeadInfoProps) {
+export default function PostHeadInfo({ title, date, categories }: PostHeadInfoProps) {
   const goBackPage = () => window.history.back();
 
   return (
@@ -22,4 +22,3 @@ function PostHeadInfo({ title, date, categories }: PostHeadInfoProps) {
   );
 }
 
-export default PostHeadInfo;
