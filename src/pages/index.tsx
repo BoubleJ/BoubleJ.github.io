@@ -26,7 +26,7 @@ interface PageProps {
         gatsbyImageData: IGatsbyImageData;
       };
       publicURL: string;
-    };
+    } | null;
   };
 }
 
@@ -37,9 +37,10 @@ function Page({
     },
     allMarkdownRemark: { edges: markdownEdges },
     allMdx: { edges: mdxEdges },
-    file: { publicURL },
+    file,
   },
 }: PageProps) {
+  const publicURL = file?.publicURL || "";
   const edges = [...markdownEdges, ...mdxEdges];
   const latestPosts = edges.slice(0, 8);
 
