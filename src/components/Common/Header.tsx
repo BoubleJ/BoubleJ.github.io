@@ -5,7 +5,6 @@ import * as styles from "./Header.css";
 
 function Header() {
   const location = useLocation();
-  console.log(location.pathname);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [isVisible, setIsVisible] = useState(true);
