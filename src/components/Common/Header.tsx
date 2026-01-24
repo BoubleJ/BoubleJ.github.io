@@ -11,7 +11,30 @@ function Header() {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setCurrentPath(window.location.pathname);
+    const updatePath = () => {
+      setCurrentPath(window.location.pathname);
+    };
+    
+    updatePath();
+    
+    // 페이지 이동 시 경로 업데이트
+    const handleRouteChange = () => {
+      updatePath();
+    };
+    
+    window.addEventListener("popstate", handleRouteChange);
+    
+    // Gatsby의 클라이언트 사이드 라우팅 감지
+    const originalPushState = history.pushState;
+    history.pushState = function(...args) {
+      originalPushState.apply(history, args);
+      setTimeout(updatePath, 0);
+    };
+    
+    return () => {
+      window.removeEventListener("popstate", handleRouteChange);
+      history.pushState = originalPushState;
+    };
   }, []);
 
   const isActive = (path: string) => {
