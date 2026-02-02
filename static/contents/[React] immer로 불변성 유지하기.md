@@ -1,8 +1,8 @@
 ---
 date: "2024-02-21"
-title: "[React Study - 리액트를 다루는 기술] 12장. immer를 사용하여 더 쉽게 불변성 유지하기"
-categories: [ "React"]
-summary: "이번 내용은 immer를 처음 접해보기 때문에 특정 부분 딥다이브 대신 교재내용에 충실해서 작성해보도록 하겠습니다."
+title: "[React] immer로 불변성 유지하기"
+categories: ["React"]
+summary: "immer로 불변성 유지하기, produce 사용법, 리듀서·함수형 업데이트에 적용."
 thumbnail: "/image/immer.png"
 ---
 

@@ -1,8 +1,8 @@
 ---
 date: "2024-03-20"
-title: "[React Study - 리액트를 다루는 기술] 19장. 코드 스플리팅"
-categories: [ "React"]
-summary: "이번 포스팅은 코드 스플리팅에 대해서 알아보겠습니다."
+title: "[React] 코드 스플리팅"
+categories: ["React"]
+summary: "코드 스플리팅과 비동기 로딩, React.lazy·Suspense, loadable Components."
 thumbnail: "/image/image-59.png"
 ---
 

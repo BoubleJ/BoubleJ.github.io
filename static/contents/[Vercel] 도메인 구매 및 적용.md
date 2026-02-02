@@ -1,8 +1,8 @@
 ---
 date: "2024-06-12"
-title: "[키워드 프로젝트] 도메인 구매 및 적용"
+title: "[Vercel] 도메인 구매 및 적용"
 categories: ["Gabia"]
-summary: "프로젝트 도메인 구매 및 적용과정을 기록했습니다."
+summary: "가비아에서 도메인 구매 후 Vercel 프로젝트에 커스텀 도메인 연결하는 방법."
 thumbnail: "/image/도메인이미지.png"
 ---
 

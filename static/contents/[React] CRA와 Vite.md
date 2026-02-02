@@ -1,8 +1,8 @@
 ---
 date: "2024-02-07"
-title: "[React Study - 리액트를 다루는 기술] 7장. 컴포넌트의 라이프사이클 메서드"
-categories: [ "React"]
-summary: "대표적인 리액트 스타터 툴인 CRA(Create React App)과 Vite에 대해서 알아보았습니다. "
+title: "[React] CRA와 Vite"
+categories: ["React"]
+summary: "CRA와 Vite 비교, HMR·eject·Native ESM, Vite가 빠른 이유."
 thumbnail: "/image/cra와vite.png"
 ---
 
@@ -129,7 +129,6 @@ https://lovemewithoutall.github.io/it/npm-run-eject-error/
   - 즉, ES 모듈을 사용하여 브라우저가 필요로 하는 어플리케이션 코드의 일부분만 변환하고 제공합니다.
     <br>
     <br>
-
 
 ### webpack(기존방식)과의 비교
 
