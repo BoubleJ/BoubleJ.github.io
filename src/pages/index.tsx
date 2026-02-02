@@ -5,8 +5,7 @@ import { GraphqlDataType } from "@/types";
 import * as styles from "./index.css";
 import PostList from "@/components/PostList/PostList";
 
-interface PageProps extends GraphqlDataType {
-}
+interface PageProps extends GraphqlDataType {}
 
 export default function Page({
   data: {
@@ -31,11 +30,7 @@ export default function Page({
     >
       <div className={styles.postsSection}>
         <h2 className={styles.sectionTitle}>최신 글</h2>
-        <PostList
-          selectedCategory="All"
-          searchTerm=""
-          posts={latestPosts}
-        />
+        <PostList selectedCategory="" searchTerm="" posts={latestPosts} />
         <Link to="/post" className={styles.moreButton}>
           더 보기
         </Link>
@@ -43,7 +38,6 @@ export default function Page({
     </Template>
   );
 }
-
 
 export const getPostList = graphql`
   query getPostList {

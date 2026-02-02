@@ -1,9 +1,12 @@
 import { graphql } from "gatsby";
+import { useRef } from "react";
 import { PostFrontmatterType } from "@/types";
 import Template from "@/components/Template";
 import PostHead from "@/components/Post/PostHead";
 import PostContent from "@/components/Post/PostContent";
+import TableOfContents from "@/components/Post/TableOfContents";
 import CommentWidget from "@/components/Post/CommentWidget";
+import * as styles from "./post_template.css";
 
 interface PostTemplateProps {
   data: {
@@ -38,15 +41,11 @@ export default function PostTemplate({
     node: {
       html,
       body,
-      frontmatter: {
-        title,
-        summary,
-        date,
-        categories,
-        thumbnail,
-      },
+      frontmatter: { title, summary, date, categories, thumbnail },
     },
   } = edges[0];
+
+  const contentRef = useRef<HTMLDivElement>(null);
 
   return (
     <Template title={title} description={summary} url={href} image={thumbnail}>
@@ -56,12 +55,18 @@ export default function PostTemplate({
         categories={categories}
         thumbnail={thumbnail}
       />
-      <PostContent html={html} body={body} />
+      <div className={styles.postBody}>
+        <div className={styles.postBodyContent}>
+          <PostContent ref={contentRef} html={html} body={body} />
+        </div>
+        <aside className={styles.postBodyToc}>
+          <TableOfContents contentRef={contentRef} />
+        </aside>
+      </div>
       <CommentWidget />
     </Template>
   );
 }
-
 
 export const queryMarkdownDataBySlug = graphql`
   query queryMarkdownDataBySlug($slug: String) {

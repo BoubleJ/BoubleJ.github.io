@@ -24,8 +24,8 @@ export default function TagPage({
   location,
 }: TagPageProps) {
   const publicURL = file?.publicURL || "";
-  
-  const edges =  [...markdownEdges]
+
+  const edges = [...markdownEdges];
 
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
@@ -51,10 +51,10 @@ export default function TagPage({
           }: PostType
         ) => {
           if (categories) {
-              categories.forEach((category) => {
-                if (list[category] === undefined) list[category] = 1;
-                else list[category]++;
-              });
+            categories.forEach((category) => {
+              if (list[category] === undefined) list[category] = 1;
+              else list[category]++;
+            });
           }
           return list;
         },
@@ -64,40 +64,46 @@ export default function TagPage({
   );
 
   const sortedCategories = useMemo(
-    () =>
-      Object.entries(categoryList).sort((a, b) => b[1] - a[1]),
+    () => Object.entries(categoryList).sort((a, b) => b[1] - a[1]),
     [categoryList]
   );
 
-  const handleTagClick = useCallback((tag: string) => {
-    let newTags: string[];
-    if (selectedTags.includes(tag)) {
-      newTags = selectedTags.filter((t) => t !== tag);
-    } else {
-      newTags = [...selectedTags, tag];
-    }
+  const handleTagClick = useCallback(
+    (tag: string) => {
+      let newTags: string[];
+      if (selectedTags.includes(tag)) {
+        newTags = selectedTags.filter((t) => t !== tag);
+      } else {
+        newTags = [...selectedTags, tag];
+      }
 
-    const searchParams = new URLSearchParams();
-    if (newTags.length > 0) {
-      searchParams.set("tags", newTags.join(","));
-      navigate(`/tag?${searchParams.toString()}`);
-    } else {
-      navigate("/tag");
-    }
-  }, [selectedTags]);
+      const searchParams = new URLSearchParams();
+      if (newTags.length > 0) {
+        searchParams.set("tags", newTags.join(","));
+        navigate(`/tag?${searchParams.toString()}`);
+      } else {
+        navigate("/tag");
+      }
+    },
+    [selectedTags]
+  );
 
   const filteredPosts = useMemo(() => {
     if (selectedTags.length === 0) {
       return edges;
     }
 
-    return edges.filter(({ node: { frontmatter: { categories } } }: PostType) => {
-      if (!categories) return false;
-      return selectedTags.some(tag => categories.includes(tag));
-    });
+    return edges.filter(
+      ({
+        node: {
+          frontmatter: { categories },
+        },
+      }: PostType) => {
+        if (!categories) return false;
+        return selectedTags.some((tag) => categories.includes(tag));
+      }
+    );
   }, [edges, selectedTags]);
-
-  console.log('filteredPosts', filteredPosts);
 
   return (
     <Template
@@ -112,35 +118,32 @@ export default function TagPage({
           {sortedCategories.map(([name, count]) => {
             const isActive = selectedTags.includes(name);
             return (
-                <div
+              <div
                 key={name}
-                className={`${styles.tagItem} ${isActive ? styles.tagItemActive : ""}`}
+                className={`${styles.tagItem} ${
+                  isActive ? styles.tagItemActive : ""
+                }`}
                 onClick={() => handleTagClick(name)}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        handleTagClick(name);
-                    }
+                  if (e.key === "Enter" || e.key === " ") {
+                    handleTagClick(name);
+                  }
                 }}
-                >
+              >
                 <span className={styles.tagName}>#{name}</span>
                 <span className={styles.tagCount}>({count})</span>
-                </div>
-            )
+              </div>
+            );
           })}
         </div>
 
-        <PostList 
-            posts={filteredPosts} 
-            selectedCategory="All" 
-            searchTerm="" 
-        />
+        <PostList posts={filteredPosts} selectedCategory="" searchTerm="" />
       </div>
     </Template>
   );
 }
-
 
 export const getAllTags = graphql`
   query getAllTags {

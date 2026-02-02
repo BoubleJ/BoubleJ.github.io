@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { MDXProvider } from "@mdx-js/react";
 import * as styles from "./PostContent.css";
 import "@/styles/markdown.css";
@@ -7,20 +8,27 @@ interface PostContentProps {
   body?: string;
 }
 
-export default function PostContent({ html, body }: PostContentProps) {
-  if (body) {
+const PostContent = forwardRef<HTMLDivElement, PostContentProps>(
+  function PostContent({ html, body }, ref) {
+    if (body) {
+      return (
+        <div
+          ref={ref}
+          className={`${styles.markdownRenderer} markdown-content`}
+        >
+          <MDXProvider>{body}</MDXProvider>
+        </div>
+      );
+    }
+
     return (
-      <div className={`${styles.markdownRenderer} markdown-content`}>
-        <MDXProvider>{body}</MDXProvider>
-      </div>
+      <div
+        ref={ref}
+        className={`${styles.markdownRenderer} markdown-content`}
+        dangerouslySetInnerHTML={{ __html: html || "" }}
+      />
     );
   }
+);
 
-  return (
-    <div
-      className={`${styles.markdownRenderer} markdown-content`}
-      dangerouslySetInnerHTML={{ __html: html || "" }}
-    />
-  );
-}
-
+export default PostContent;

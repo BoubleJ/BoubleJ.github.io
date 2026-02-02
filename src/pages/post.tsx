@@ -1,9 +1,23 @@
 import { graphql } from "gatsby";
-import { GraphqlDataType } from "@/types";
+import { useMemo } from "react";
+import { GraphqlDataType, PostListItemType } from "@/types";
 import queryString, { ParsedQuery } from "query-string";
 import PostList from "@/components/PostList/PostList";
 import Template from "@/components/Template";
 import * as styles from "./post.css";
+
+function filterPostsBySearchTerm(
+  edges: PostListItemType[],
+  searchTerm: string
+): PostListItemType[] {
+  if (!searchTerm.trim()) return edges;
+  const lower = searchTerm.trim().toLowerCase();
+  return edges.filter(({ node: { frontmatter } }) => {
+    const title = (frontmatter.title ?? "").toLowerCase();
+    const summary = (frontmatter.summary ?? "").toLowerCase();
+    return title.includes(lower) || summary.includes(lower);
+  });
+}
 
 interface PostPageProps extends GraphqlDataType {
   location: {
@@ -26,11 +40,16 @@ export default function PostPage({
   const edges = [...markdownEdges];
   const parsed: ParsedQuery<string> = queryString.parse(search);
   const selectedCategory: string =
-    typeof parsed.category !== "string" || !parsed.category
-      ? "All"
-      : parsed.category;
+    typeof parsed.category === "string" && parsed.category
+      ? parsed.category
+      : "";
   const searchTerm: string =
     typeof parsed.search === "string" ? parsed.search : "";
+
+  const filteredPosts = useMemo(
+    () => filterPostsBySearchTerm(edges, searchTerm),
+    [edges, searchTerm]
+  );
 
   return (
     <Template
@@ -44,13 +63,12 @@ export default function PostPage({
         <PostList
           selectedCategory={selectedCategory}
           searchTerm={searchTerm}
-          posts={edges}
+          posts={filteredPosts}
         />
       </div>
     </Template>
   );
 }
-
 
 export const getPostList = graphql`
   query getAllPosts {
