@@ -4,7 +4,7 @@ import * as styles from "./TableOfContents.css";
 export interface TocItem {
   id: string;
   text: string;
-  level: number; // 2 | 3 | 4 (h2, h3, h4)
+  level: number; // 1 | 2 | 3 | 4 (h1, h2, h3, h4)
 }
 
 function slugify(text: string): string {
@@ -16,12 +16,13 @@ function slugify(text: string): string {
 }
 
 function getTocItems(container: HTMLElement): TocItem[] {
-  const headings = container.querySelectorAll<HTMLHeadingElement>("h2, h3, h4");
+  const headings =
+    container.querySelectorAll<HTMLHeadingElement>("h1, h2, h3, h4");
   const items: TocItem[] = [];
   const seen = new Set<string>();
 
   headings.forEach((el) => {
-    const level = Number(el.tagName.charAt(1)) as 2 | 3 | 4;
+    const level = Number(el.tagName.charAt(1)) as 1 | 2 | 3 | 4;
     const text = el.textContent?.trim() ?? "";
     let id = el.id;
 
@@ -59,6 +60,7 @@ export default function TableOfContents({ contentRef }: TableOfContentsProps) {
   if (items.length === 0) return null;
 
   const getItemClass = (level: number) => {
+    if (level === 1) return styles.tocItemLevel1;
     if (level === 2) return styles.tocItemLevel2;
     if (level === 3) return styles.tocItemLevel3;
     return styles.tocItemLevel4;
