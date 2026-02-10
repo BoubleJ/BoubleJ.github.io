@@ -9,6 +9,7 @@ export default function PostHead({
   title,
   date,
   categories,
+  readingTimeText,
   thumbnail,
 }: PostHeadProps) {
   return (
@@ -19,7 +20,12 @@ export default function PostHead({
         className={styles.backgroundImage}
         style={{ position: "absolute" }}
       />
-      <PostHeadInfo title={title} date={date} categories={categories} />
+      <PostHeadInfo
+        title={title}
+        date={date}
+        categories={categories}
+        readingTimeText={readingTimeText}
+      />
     </div>
   );
 }

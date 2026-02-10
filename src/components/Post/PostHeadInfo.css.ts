@@ -31,8 +31,24 @@ export const postData = style({
       alignItems: "flex-start",
       fontSize: "15px",
       fontWeight: 400,
+      gap: "4px",
     },
   },
+});
+
+export const postMetaRight = style({
+  display: "flex",
+  alignItems: "center",
+  gap: "12px",
+});
+
+export const readingTime = style({
+  display: "inline-flex",
+  alignItems: "center",
+  gap: "6px",
+  fontSize: "16px",
+  fontWeight: 500,
+  opacity: 0.9,
 });
 
 export const postHeadInfoWrapper = style({

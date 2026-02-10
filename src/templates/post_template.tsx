@@ -26,6 +26,14 @@ export type PostPageItemType = {
   node: {
     html?: string;
     body?: string;
+    fields?: {
+      readingTime?: {
+        text: string;
+        minutes: number;
+        time: number;
+        words: number;
+      };
+    };
     frontmatter: PostFrontmatterType;
   };
 };
@@ -41,6 +49,7 @@ export default function PostTemplate({
     node: {
       html,
       body,
+      fields,
       frontmatter: { title, summary, date, categories, thumbnail },
     },
   } = edges[0];
@@ -53,6 +62,7 @@ export default function PostTemplate({
         title={title}
         date={date}
         categories={categories}
+        readingTimeText={fields?.readingTime?.text}
         thumbnail={thumbnail}
       />
       <div className={styles.postBody}>
@@ -74,6 +84,14 @@ export const queryMarkdownDataBySlug = graphql`
       edges {
         node {
           html
+          fields {
+            readingTime {
+              text
+              minutes
+              time
+              words
+            }
+          }
           frontmatter {
             title
             summary
