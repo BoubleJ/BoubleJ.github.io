@@ -93,6 +93,53 @@ globalStyle(".markdown-code:not([class*='language-'])", {
 });
 
 
+// 코드블록 복사 버튼 스타일
+globalStyle(".markdown-content pre[class*='language-'], .markdown-content pre", {
+  position: "relative",
+});
+
+globalStyle(".markdown-content .code-copy-button", {
+  position: "absolute",
+  top: "8px",
+  right: "8px",
+  zIndex: 1,
+  padding: "4px 6px",
+  borderRadius: "4px",
+  border: `1px solid ${vars.color.border}`,
+  backgroundColor: vars.color.background,
+  color: vars.color.secondary,
+  fontSize: "11px",
+  cursor: "pointer",
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: "4px",
+  opacity: 0,
+  transform: "translateY(-4px)",
+  transition: "opacity 0.15s ease, transform 0.15s ease, background-color 0.15s ease, color 0.15s ease",
+  pointerEvents: "none",
+});
+
+globalStyle(".markdown-content pre:hover .code-copy-button", {
+  opacity: 1,
+  transform: "translateY(0)",
+  pointerEvents: "auto",
+});
+
+globalStyle(".markdown-content .code-copy-button.copied", {
+  backgroundColor: vars.color.primary,
+  color: "#ffffff",
+  borderColor: vars.color.primary,
+});
+
+globalStyle(".markdown-content .code-copy-button .code-copy-icon", {
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  lineHeight: 1,
+});
+
+
 // PrismJS Code Block Theme Overrides for Dark Mode
 // 다크모드(darkTheme 클래스가 body에 적용됨)일 때 Prism 스타일을 재정의합니다.
 
