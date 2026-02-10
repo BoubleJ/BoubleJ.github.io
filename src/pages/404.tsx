@@ -1,7 +1,7 @@
-import { Link, graphql } from "gatsby";
+import { graphql, Link } from "gatsby";
 import * as styles from "./404.css";
 
-export default function NotFoundPage () {
+export default function NotFoundPage() {
   return (
     <div className={styles.notFoundPageWrapper}>
       <div className={styles.notFoundText}>404</div>
@@ -14,8 +14,7 @@ export default function NotFoundPage () {
       </Link>
     </div>
   );
-};
-
+}
 
 export const query = graphql`
   query {

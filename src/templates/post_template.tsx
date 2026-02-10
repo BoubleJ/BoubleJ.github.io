@@ -1,11 +1,11 @@
 import { graphql } from "gatsby";
 import { useRef } from "react";
-import { PostFrontmatterType } from "@/types";
-import Template from "@/components/Template";
-import PostHead from "@/components/Post/PostHead";
-import PostContent from "@/components/Post/PostContent";
-import TableOfContents from "@/components/Post/TableOfContents";
 import CommentWidget from "@/components/Post/CommentWidget";
+import PostContent from "@/components/Post/PostContent";
+import PostHead from "@/components/Post/PostHead";
+import TableOfContents from "@/components/Post/TableOfContents";
+import Template from "@/components/Template";
+import type { PostFrontmatterType } from "@/types";
 import * as styles from "./post_template.css";
 
 interface PostTemplateProps {

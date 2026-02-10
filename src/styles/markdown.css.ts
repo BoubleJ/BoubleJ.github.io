@@ -1,5 +1,5 @@
 import { globalStyle } from "@vanilla-extract/css";
-import { vars, darkTheme } from "./theme.css";
+import { darkTheme, vars } from "./theme.css";
 
 globalStyle(".markdown-content h1, .markdown-h1", {
   marginTop: "60px",
@@ -92,7 +92,6 @@ globalStyle(".markdown-code:not([class*='language-'])", {
   color: vars.color.codeColor,
 });
 
-
 // 코드블록 복사 버튼 스타일
 globalStyle(".markdown-content pre[class*='language-'], .markdown-content pre", {
   position: "relative",
@@ -139,36 +138,47 @@ globalStyle(".markdown-content .code-copy-button .code-copy-icon", {
   lineHeight: 1,
 });
 
-
 // PrismJS Code Block Theme Overrides for Dark Mode
 // 다크모드(darkTheme 클래스가 body에 적용됨)일 때 Prism 스타일을 재정의합니다.
 
 globalStyle(`body.${darkTheme} :not(pre) > code[class*="language-"], body.${darkTheme} pre[class*="language-"]`, {
   backgroundColor: "#161b22", // GitHub Dark Dimmed background
   color: "#adbac7",
-  textShadow: "none"
+  textShadow: "none",
 });
 
-globalStyle(`body.${darkTheme} .token.comment, body.${darkTheme} .token.prolog, body.${darkTheme} .token.doctype, body.${darkTheme} .token.cdata`, {
-  color: "#768390"
-});
+globalStyle(
+  `body.${darkTheme} .token.comment, body.${darkTheme} .token.prolog, body.${darkTheme} .token.doctype, body.${darkTheme} .token.cdata`,
+  {
+    color: "#768390",
+  },
+);
 
 globalStyle(`body.${darkTheme} .token.punctuation`, {
-  color: "#adbac7"
+  color: "#adbac7",
 });
 
-globalStyle(`body.${darkTheme} .token.delimiter.important, body.${darkTheme} .token.selector, body.${darkTheme} .token.tag, body.${darkTheme} .token.operator, body.${darkTheme} .token.keyword`, {
-  color: "#f47067"
-});
+globalStyle(
+  `body.${darkTheme} .token.delimiter.important, body.${darkTheme} .token.selector, body.${darkTheme} .token.tag, body.${darkTheme} .token.operator, body.${darkTheme} .token.keyword`,
+  {
+    color: "#f47067",
+  },
+);
 
-globalStyle(`body.${darkTheme} .token.string, body.${darkTheme} .token.char, body.${darkTheme} .token.attr-value, body.${darkTheme} .token.regex, body.${darkTheme} .token.variable`, {
-  color: "#96d0ff"
-});
+globalStyle(
+  `body.${darkTheme} .token.string, body.${darkTheme} .token.char, body.${darkTheme} .token.attr-value, body.${darkTheme} .token.regex, body.${darkTheme} .token.variable`,
+  {
+    color: "#96d0ff",
+  },
+);
 
-globalStyle(`body.${darkTheme} .token.atrule, body.${darkTheme} .token.attr-value, body.${darkTheme} .token.function, body.${darkTheme} .token.class-name`, {
-  color: "#dcbdfb"
-});
+globalStyle(
+  `body.${darkTheme} .token.atrule, body.${darkTheme} .token.attr-value, body.${darkTheme} .token.function, body.${darkTheme} .token.class-name`,
+  {
+    color: "#dcbdfb",
+  },
+);
 
 globalStyle(`body.${darkTheme} .token.constant`, {
-  color: "#6cb6ff"
+  color: "#6cb6ff",
 });

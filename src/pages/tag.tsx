@@ -1,9 +1,8 @@
-import { useMemo, useState, useCallback, useEffect } from "react";
 import { graphql, navigate } from "gatsby";
-import { GraphqlDataType } from "@/types";
-import { PostType } from "@/types";
-import Template from "@/components/Template";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import PostList from "@/components/PostList/PostList";
+import Template from "@/components/Template";
+import type { GraphqlDataType, PostType } from "@/types";
 import * as styles from "./tag.css";
 
 interface TagPageProps extends GraphqlDataType {
@@ -48,7 +47,7 @@ export default function TagPage({
             node: {
               frontmatter: { categories },
             },
-          }: PostType
+          }: PostType,
         ) => {
           if (categories) {
             categories.forEach((category) => {
@@ -58,15 +57,12 @@ export default function TagPage({
           }
           return list;
         },
-        {}
+        {},
       ),
-    [edges]
+    [edges],
   );
 
-  const sortedCategories = useMemo(
-    () => Object.entries(categoryList).sort((a, b) => b[1] - a[1]),
-    [categoryList]
-  );
+  const sortedCategories = useMemo(() => Object.entries(categoryList).sort((a, b) => b[1] - a[1]), [categoryList]);
 
   const handleTagClick = useCallback(
     (tag: string) => {
@@ -85,7 +81,7 @@ export default function TagPage({
         navigate("/tag");
       }
     },
-    [selectedTags]
+    [selectedTags],
   );
 
   const filteredPosts = useMemo(() => {
@@ -101,17 +97,12 @@ export default function TagPage({
       }: PostType) => {
         if (!categories) return false;
         return selectedTags.some((tag) => categories.includes(tag));
-      }
+      },
     );
   }, [edges, selectedTags]);
 
   return (
-    <Template
-      title={`${title} - Tags`}
-      description={description}
-      url={siteUrl}
-      image={publicURL}
-    >
+    <Template title={`${title} - Tags`} description={description} url={siteUrl} image={publicURL}>
       <div className={styles.tagPage}>
         <h1 className={styles.pageTitle}>태그 목록</h1>
         <div className={styles.tagListWrapper}>
@@ -120,9 +111,7 @@ export default function TagPage({
             return (
               <div
                 key={name}
-                className={`${styles.tagItem} ${
-                  isActive ? styles.tagItemActive : ""
-                }`}
+                className={`${styles.tagItem} ${isActive ? styles.tagItemActive : ""}`}
                 onClick={() => handleTagClick(name)}
                 role="button"
                 tabIndex={0}

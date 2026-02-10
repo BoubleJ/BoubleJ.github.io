@@ -1,4 +1,4 @@
-import { RefObject, useEffect, useState } from "react";
+import { type RefObject, useEffect, useState } from "react";
 import * as styles from "./TableOfContents.css";
 
 export interface TocItem {
@@ -16,8 +16,7 @@ function slugify(text: string): string {
 }
 
 function getTocItems(container: HTMLElement): TocItem[] {
-  const headings =
-    container.querySelectorAll<HTMLHeadingElement>("h1, h2, h3, h4");
+  const headings = container.querySelectorAll<HTMLHeadingElement>("h1, h2, h3, h4");
   const items: TocItem[] = [];
   const seen = new Set<string>();
 

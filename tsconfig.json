@@ -13,20 +13,11 @@
     "strict": true,
     "skipLibCheck": true,
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "static/*": [
-        "./static/*"
-      ]
+      "@/*": ["./src/*"],
+      "static/*": ["./static/*"]
     },
     "resolveJsonModule": true
   },
-  "include": [
-    "src/**/*.tsx",
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["src/**/*.tsx", "src/**/*.ts"],
+  "exclude": ["node_modules"]
 }

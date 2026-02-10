@@ -1,17 +1,9 @@
 import { Link } from "gatsby";
-import { PostFrontmatterType } from "@/types";
+import type { PostFrontmatterType } from "@/types";
 import * as styles from "./PostItem.css";
 
 type PostItemProps = PostFrontmatterType & { link: string; index?: number };
-export default function PostItem({
-  title,
-  date,
-  categories,
-  summary,
-  thumbnail,
-  link,
-  index = 0,
-}: PostItemProps) {
+export default function PostItem({ title, date, categories, summary, thumbnail, link, index = 0 }: PostItemProps) {
   return (
     <Link
       to={link}
@@ -20,11 +12,7 @@ export default function PostItem({
         animationDelay: `${index * 0.1}s`,
       }}
     >
-      <img
-        src={thumbnail}
-        alt="Post Item Image"
-        className={styles.thumbnailImage}
-      />
+      <img src={thumbnail} alt="Post Item Image" className={styles.thumbnailImage} />
 
       <div className={styles.postItemContent}>
         <div className={styles.title}>{title}</div>
@@ -41,4 +29,3 @@ export default function PostItem({
     </Link>
   );
 }
-

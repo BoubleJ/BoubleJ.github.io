@@ -1,15 +1,12 @@
 import { graphql } from "gatsby";
+import queryString, { type ParsedQuery } from "query-string";
 import { useMemo } from "react";
-import { GraphqlDataType, PostListItemType } from "@/types";
-import queryString, { ParsedQuery } from "query-string";
 import PostList from "@/components/PostList/PostList";
 import Template from "@/components/Template";
+import type { GraphqlDataType, PostListItemType } from "@/types";
 import * as styles from "./post.css";
 
-function filterPostsBySearchTerm(
-  edges: PostListItemType[],
-  searchTerm: string
-): PostListItemType[] {
+function filterPostsBySearchTerm(edges: PostListItemType[], searchTerm: string): PostListItemType[] {
   if (!searchTerm.trim()) return edges;
   const lower = searchTerm.trim().toLowerCase();
   return edges.filter(({ node: { frontmatter } }) => {
@@ -39,32 +36,16 @@ export default function PostPage({
   const publicURL = file?.publicURL || "";
   const edges = [...markdownEdges];
   const parsed: ParsedQuery<string> = queryString.parse(search);
-  const selectedCategory: string =
-    typeof parsed.category === "string" && parsed.category
-      ? parsed.category
-      : "";
-  const searchTerm: string =
-    typeof parsed.search === "string" ? parsed.search : "";
+  const selectedCategory: string = typeof parsed.category === "string" && parsed.category ? parsed.category : "";
+  const searchTerm: string = typeof parsed.search === "string" ? parsed.search : "";
 
-  const filteredPosts = useMemo(
-    () => filterPostsBySearchTerm(edges, searchTerm),
-    [edges, searchTerm]
-  );
+  const filteredPosts = useMemo(() => filterPostsBySearchTerm(edges, searchTerm), [edges, searchTerm]);
 
   return (
-    <Template
-      title={`${title} - Posts`}
-      description={description}
-      url={siteUrl}
-      image={publicURL}
-    >
+    <Template title={`${title} - Posts`} description={description} url={siteUrl} image={publicURL}>
       <div className={styles.postsPage}>
         <h1 className={styles.pageTitle}>모든 포스트</h1>
-        <PostList
-          selectedCategory={selectedCategory}
-          searchTerm={searchTerm}
-          posts={filteredPosts}
-        />
+        <PostList selectedCategory={selectedCategory} searchTerm={searchTerm} posts={filteredPosts} />
       </div>
     </Template>
   );

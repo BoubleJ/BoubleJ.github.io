@@ -1,23 +1,22 @@
-import { IGatsbyImageData } from "gatsby-plugin-image"
+import type { IGatsbyImageData } from "gatsby-plugin-image";
 
 export type PostFrontmatterType = {
-  title: string
-  date: string
-  categories: string[]
-  summary: string
-  thumbnail: string
-}
+  title: string;
+  date: string;
+  categories: string[];
+  summary: string;
+  thumbnail: string;
+};
 
 export type PostListItemType = {
   node: {
-    id: string
+    id: string;
     fields: {
-      slug: string
-    }
-    frontmatter: PostFrontmatterType
-  }
-}
-
+      slug: string;
+    };
+    frontmatter: PostFrontmatterType;
+  };
+};
 
 export interface PostType {
   node: {
@@ -30,7 +29,7 @@ export interface PostType {
       thumbnail: string;
     };
   };
-};
+}
 
 export interface GraphqlDataType {
   data: {
@@ -54,4 +53,4 @@ export interface GraphqlDataType {
       publicURL: string;
     } | null;
   };
-} 
+}

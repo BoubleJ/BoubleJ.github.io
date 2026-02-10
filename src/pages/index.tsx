@@ -1,9 +1,8 @@
-import { Link } from "gatsby";
-import Template from "@/components/Template";
-import { graphql } from "gatsby";
-import { GraphqlDataType } from "@/types";
-import * as styles from "./index.css";
+import { graphql, Link } from "gatsby";
 import PostList from "@/components/PostList/PostList";
+import Template from "@/components/Template";
+import type { GraphqlDataType } from "@/types";
+import * as styles from "./index.css";
 
 interface PageProps extends GraphqlDataType {}
 
@@ -22,12 +21,7 @@ export default function Page({
   const latestPosts = edges.slice(0, 8);
 
   return (
-    <Template
-      title={title}
-      description={description}
-      url={siteUrl}
-      image={publicURL}
-    >
+    <Template title={title} description={description} url={siteUrl} image={publicURL}>
       <div className={styles.postsSection}>
         <h2 className={styles.sectionTitle}>최신 글</h2>
         <PostList selectedCategory="" searchTerm="" posts={latestPosts} />

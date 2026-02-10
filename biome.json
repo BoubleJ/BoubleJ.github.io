@@ -1,35 +1,85 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.3.11/schema.json",
-	"vcs": {
-		"enabled": true,
-		"clientKind": "git",
-		"useIgnoreFile": true
-	},
-	"files": {
-		"ignoreUnknown": false
-	},
-	"formatter": {
-		"enabled": true,
-		"indentStyle": "space",
-		"indentWidth": 2
-	},
-	"linter": {
-		"enabled": true,
-		"rules": {
-			"recommended": true
-		}
-	},
-	"javascript": {
-		"formatter": {
-			"quoteStyle": "double"
-		}
-	},
-	"assist": {
-		"enabled": true,
-		"actions": {
-			"source": {
-				"organizeImports": "on"
-			}
-		}
-	}
+  "$schema": "https://biomejs.dev/schemas/2.3.11/schema.json",
+
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+
+  "files": {
+    "ignoreUnknown": true,
+    "includes": ["**", "!public"]
+  },
+
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": {
+          "level": "on",
+          "options": {
+            "groups": [":NODE:", ":PACKAGE:", ":ALIAS:", ":PATH:"]
+          }
+        },
+        "useSortedProperties": "on"
+      }
+    }
+  },
+
+  "formatter": {
+    "indentStyle": "space",
+    "lineEnding": "lf",
+    "lineWidth": 120,
+    "includes": ["**", "!*.md", "!*.yml", "!*.yaml"]
+  },
+
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "double",
+      "semicolons": "always"
+    }
+  },
+
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
+
+  "linter": {
+    "includes": ["src/**", "app/**"],
+    "domains": {
+      "next": "recommended",
+      "test": "recommended"
+    },
+    "rules": {
+      "performance": {
+        "noImgElement": "off"
+      },
+      "a11y": {
+        "noAutofocus": "off",
+        "useAriaPropsSupportedByRole": "warn",
+        "useButtonType": "warn"
+      },
+      "complexity": {
+        "noBannedTypes": "off"
+      },
+      "correctness": {
+        "useExhaustiveDependencies": "warn"
+      },
+      "security": {
+        "noDangerouslySetInnerHtml": "off"
+      },
+      "style": {
+        "useConsistentCurlyBraces": {
+          "level": "warn",
+          "fix": "safe"
+        }
+      },
+      "suspicious": {
+        "noArrayIndexKey": "warn",
+        "noRedeclare": "warn"
+      }
+    }
+  }
 }

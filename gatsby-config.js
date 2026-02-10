@@ -5,7 +5,7 @@
 module.exports = {
   siteMetadata: {
     title: `Epik's Blog`,
-    siteUrl: 'https://BoubleJ.github.io/',
+    siteUrl: "https://BoubleJ.github.io/",
     description: `개발하며 궁금한 점을 정리하는 블로그`,
     author: `Epik`,
   },

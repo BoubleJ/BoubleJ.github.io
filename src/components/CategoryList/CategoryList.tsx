@@ -14,9 +14,7 @@ export default function CategoryList({ selectedCategory, categoryList }: Categor
       {Object.entries(categoryList).map(([name, count]) => (
         <Link
           to={`/post?category=${name}`}
-          className={`${styles.categoryItem} ${
-            name === selectedCategory ? styles.categoryItemActive : ""
-          }`}
+          className={`${styles.categoryItem} ${name === selectedCategory ? styles.categoryItemActive : ""}`}
           key={name}
         >
           #{name}({count})
@@ -25,4 +23,3 @@ export default function CategoryList({ selectedCategory, categoryList }: Categor
     </div>
   );
 }
-

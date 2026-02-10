@@ -1,11 +1,11 @@
 import { Link } from "gatsby";
-import * as styles from "./Header.css";
-import { NAV_LINKS } from "@/constants";
 import SearchIcon from "@/components/icon/SearchIcon";
 import ThemeIcon from "@/components/icon/ThemeIcon";
-import SearchContainer from "./SearchContainer";
-import useHeader from "@/hooks/useHeader";
+import { NAV_LINKS } from "@/constants";
 import { useTheme } from "@/context/ThemeContext";
+import useHeader from "@/hooks/useHeader";
+import * as styles from "./Header.css";
+import SearchContainer from "./SearchContainer";
 
 interface HeaderProps {
   pathname: string;
@@ -23,28 +23,14 @@ export default function Header({ pathname }: HeaderProps) {
         </Link>
         <nav className={styles.nav}>
           {NAV_LINKS.map(({ path, label }) => (
-            <Link
-              key={path}
-              to={path}
-              className={`${styles.navLink} ${pathname === path ? styles.navLinkActive : ""}`}
-            >
+            <Link key={path} to={path} className={`${styles.navLink} ${pathname === path ? styles.navLinkActive : ""}`}>
               {label}
             </Link>
           ))}
-          <button
-            type="button"
-            className={styles.searchIconButton}
-            onClick={handleSearchIconClick}
-            aria-label="검색"
-          >
+          <button type="button" className={styles.searchIconButton} onClick={handleSearchIconClick} aria-label="검색">
             <SearchIcon />
           </button>
-          <button
-            type="button"
-            className={styles.searchIconButton}
-            onClick={toggleTheme}
-            aria-label="테마 변경"
-          >
+          <button type="button" className={styles.searchIconButton} onClick={toggleTheme} aria-label="테마 변경">
             <ThemeIcon />
           </button>
         </nav>

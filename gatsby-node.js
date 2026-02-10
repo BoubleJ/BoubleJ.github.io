@@ -23,7 +23,7 @@ exports.onCreateWebpackConfig = ({ getConfig, actions, stage }) => {
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "src"),
-        "static": path.resolve(__dirname, "static"),
+        static: path.resolve(__dirname, "static"),
       },
     },
     plugins: [
@@ -108,7 +108,7 @@ exports.createPages = async ({ actions, graphql, reporter }) => {
           }
         }
       }
-    `
+    `,
   );
 
   // Handling GraphQL Query Error
@@ -118,10 +118,7 @@ exports.createPages = async ({ actions, graphql, reporter }) => {
   }
 
   // Import Post Template Component
-  const PostTemplateComponent = path.resolve(
-    __dirname,
-    "src/templates/post_template.tsx"
-  );
+  const PostTemplateComponent = path.resolve(__dirname, "src/templates/post_template.tsx");
 
   // Page Generating Function
   const generatePostPage = ({

@@ -68,7 +68,7 @@ export const tagItemActive = style({
   ":hover": {
     backgroundColor: vars.color.linkHover,
     borderColor: vars.color.linkHover,
-  }
+  },
 });
 
 export const tagName = style({

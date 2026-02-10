@@ -2,7 +2,7 @@ import { createRef, useEffect } from "react";
 import * as styles from "./CommentWidget.css";
 
 const src = "https://utteranc.es/client.js";
-const repo = "BoubleJ/BoubleJ.github.io"; 
+const repo = "BoubleJ/BoubleJ.github.io";
 
 type UtterancesAttributesType = {
   src: string;
@@ -41,4 +41,3 @@ export default function CommentWidget() {
 
   return <div className={styles.utterancesWrapper} ref={element} />;
 }
-

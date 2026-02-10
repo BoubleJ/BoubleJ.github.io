@@ -1,8 +1,8 @@
-import { PropsWithChildren } from "react";
-import Header from "./Header/Header";
+import type { PropsWithChildren } from "react";
 import Footer from "./Footer/Footer";
-import ScrollToTop from "./ScrollToTop/ScrollToTop";
+import Header from "./Header/Header";
 import * as styles from "./Layout.css";
+import ScrollToTop from "./ScrollToTop/ScrollToTop";
 import "@/styles/GlobalStyle.css";
 
 interface LayoutProps extends PropsWithChildren {

@@ -1,4 +1,4 @@
-import { IGatsbyImageData, GatsbyImage } from "gatsby-plugin-image";
+import { GatsbyImage, type IGatsbyImageData } from "gatsby-plugin-image";
 import * as styles from "./ProfileImage.css";
 
 interface ProfileImageProps {
@@ -6,12 +6,5 @@ interface ProfileImageProps {
 }
 
 export default function ProfileImage({ profileImage }: ProfileImageProps) {
-  return (
-    <GatsbyImage
-      image={profileImage}
-      alt="Profile Image"
-      className={styles.profileImageWrapper}
-    />
-  );
+  return <GatsbyImage image={profileImage} alt="Profile Image" className={styles.profileImageWrapper} />;
 }
-
