@@ -19,7 +19,7 @@ export default function PostHeadInfo({
 
   return (
     <div className={styles.postHeadInfoWrapper}>
-      <button className={styles.prevPageIcon} onClick={goBackPage}>
+      <button className={styles.prevPageIcon} type="button" onClick={goBackPage}>
         <ArrowLeftIcon size={24} />
       </button>
       <div className={styles.title}>{title}</div>

@@ -1,5 +1,5 @@
 import { graphql, navigate } from "gatsby";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import PostList from "@/components/PostList/PostList";
 import Template from "@/components/Template";
 import type { GraphqlDataType, PostType } from "@/types";
@@ -59,46 +59,38 @@ export default function TagPage({
       {},
     );
 
-  const sortedCategories = Object.entries(categoryList()).sort(
-    (a, b) => b[1] - a[1],
-  );
+  const sortedCategories = Object.entries(categoryList()).sort((a, b) => b[1] - a[1]);
 
-  const handleTagClick = useCallback(
-    (tag: string) => {
-      let newTags: string[];
-      if (selectedTags.includes(tag)) {
-        newTags = selectedTags.filter((t) => t !== tag);
-      } else {
-        newTags = [...selectedTags, tag];
-      }
-
-      const searchParams = new URLSearchParams();
-      if (newTags.length > 0) {
-        searchParams.set("tags", newTags.join(","));
-        navigate(`/tag?${searchParams.toString()}`);
-      } else {
-        navigate("/tag");
-      }
-    },
-    [selectedTags],
-  );
-
-  const filteredPosts = useMemo(() => {
-    if (selectedTags.length === 0) {
-      return edges;
+  function handleTagClick(tag: string) {
+    let newTags: string[];
+    if (selectedTags.includes(tag)) {
+      newTags = selectedTags.filter((t) => t !== tag);
+    } else {
+      newTags = [...selectedTags, tag];
     }
 
-    return edges.filter(
-      ({
-        node: {
-          frontmatter: { categories },
-        },
-      }: PostType) => {
-        if (!categories) return false;
-        return selectedTags.some((tag) => categories.includes(tag));
-      },
-    );
-  }, [selectedTags]);
+    const searchParams = new URLSearchParams();
+    if (newTags.length > 0) {
+      searchParams.set("tags", newTags.join(","));
+      navigate(`/tag?${searchParams.toString()}`);
+    } else {
+      navigate("/tag");
+    }
+  }
+
+  const filteredPosts =
+    selectedTags.length === 0
+      ? edges
+      : edges.filter(
+          ({
+            node: {
+              frontmatter: { categories },
+            },
+          }: PostType) => {
+            if (!categories) return false;
+            return selectedTags.some((tag) => categories.includes(tag));
+          },
+        );
 
   return (
     <Template

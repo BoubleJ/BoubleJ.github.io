@@ -23,7 +23,7 @@ const useInfiniteScroll = (posts: PostListItemType[]) => {
   useEffect(() => {
     observerRef.current?.disconnect();
     setCount(1);
-  }, [posts]);
+  }, []);
 
   useEffect(() => {
     const container = containerRef.current;

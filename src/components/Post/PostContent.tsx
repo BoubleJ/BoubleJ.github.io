@@ -99,7 +99,7 @@ const PostContent = forwardRef<HTMLDivElement, PostContentProps>(function PostCo
         button.remove();
       });
     };
-  }, [html, body, ref]);
+  }, []);
 
   if (body) {
     return (

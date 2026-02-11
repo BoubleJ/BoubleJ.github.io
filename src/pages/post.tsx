@@ -1,6 +1,5 @@
 import { graphql } from "gatsby";
 import queryString, { type ParsedQuery } from "query-string";
-import { useMemo } from "react";
 import PostList from "@/components/PostList/PostList";
 import Template from "@/components/Template";
 import type { GraphqlDataType, PostListItemType } from "@/types";
@@ -43,10 +42,7 @@ export default function PostPage({
     typeof parsed.category === "string" && parsed.category ? parsed.category : "";
   const searchTerm: string = typeof parsed.search === "string" ? parsed.search : "";
 
-  const filteredPosts = useMemo(
-    () => filterPostsBySearchTerm(edges, searchTerm),
-    [edges, searchTerm],
-  );
+  const filteredPosts = filterPostsBySearchTerm(edges, searchTerm);
 
   return (
     <Template
