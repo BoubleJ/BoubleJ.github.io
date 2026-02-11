@@ -1,7 +1,7 @@
 ---
 date: "2024-09-28"
-title: "[Next.JS] Hydration 에러를 해결하기 위한 suppressHydrationWarning"
-categories: ["Next.JS"]
+title: "[Next.js] Hydration 에러를 해결하기 위한 suppressHydrationWarning"
+categories: ["Next.js"]
 summary: "Hydration Failed 에러와 suppressHydrationWarning를 알아봅시다."
 thumbnail: "/image/하이드레이션에러.png"
 ---
@@ -10,7 +10,7 @@ thumbnail: "/image/하이드레이션에러.png"
 
 ![하이드레이션에러코드](/image/하이드레이션에러코드.png)
 
-우리가 next.js로 개발하다보면 가끔 목도하는 에러입니다.
+우리가 Next.js로 개발하다보면 가끔 목도하는 에러입니다.
 
 과연 어떤 에러인지, 왜 발생하는지, 해결방법은 뭔지 알아봅시다.
 
@@ -22,7 +22,7 @@ Hydration Error 에러란,
 
 서버에서 렌더링된 초기 UI가 클라이언트에서 렌더링된 UI와 일치하지 않을 때 발생하는 에러입니다.
 
-React(next.js)에서는 `서버 사이드 렌더링(SSR)`과 `클라이언트 사이드 렌더링(CSR)` 사이에 정확한 일치가 필요합니다.
+React(Next.js)에서는 `서버 사이드 렌더링(SSR)`과 `클라이언트 사이드 렌더링(CSR)` 사이에 정확한 일치가 필요합니다.
 
 즉 `서버 사이드에서 생성된 html`과 이 `html`을 클라이언트로 가져와 이벤트 핸들링과 같은 동적이벤트를 적용하는 `리액트 컴포넌트 활성화`를 통해 만들어지는 `html`이 동일해야한다는 뜻입니다.
 

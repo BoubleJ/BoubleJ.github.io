@@ -93,7 +93,7 @@ routines:ssl3_read_bytes:tlsv1 alert internal
 error:ssl/record/rec_layer_s3.c:861:SSL alert number 80
 ```
 
-잘 되던 MongoDB 통신이 시작하자마자 터진다거나 && SSL 에러 메세지가 보인다면
+잘 되던 MongoDB 통신이 시작하자마자 터진다거나 SSL 에러 메세지가 보인다면
 
 내가 새로운 곳에서 개발하고 있지는 않는지 생각해보라는군요.
 

@@ -1,7 +1,7 @@
 ---
 date: "2024-10-13"
-title: "[Next.JS] 서버 컴포넌트 렌더링 및 RSC Payload"
-categories: ["Next.JS"]
+title: "[Next.js] 서버 컴포넌트 렌더링 및 RSC Payload"
+categories: ["Next.js"]
 summary: "Next.js에서 리액트 서버 컴포넌트는 어떻게 렌더링 될까?"
 thumbnail: "/image/NEXT.png"
 ---
@@ -31,7 +31,7 @@ thumbnail: "/image/NEXT.png"
 
 ## 생성 과정
 
-next.js는 서버에서 `rendering work`가 `chunk`로 `스플릿`이 됩니다. 분리가 되는거죠.
+Next.js는 서버에서 `rendering work`가 `chunk`로 `스플릿`이 됩니다. 분리가 되는거죠.
 
 스플릿 되는 기준은
 
@@ -94,7 +94,7 @@ useState에 포함되어 있는 value이나 setState 함수, 이벤트 핸들러
 
 ![클라이언트컴포넌트](/image/클라이언트컴포넌트.png)
 
-next.js 에 다음과 같은 클라이언트 컴포넌트를 선언했습니다.
+Next.js 에 다음과 같은 클라이언트 컴포넌트를 선언했습니다.
 
 해당 컴포넌트에는 useState가 선언되어있고 state를 할당한 상태입니다.
 
@@ -115,7 +115,7 @@ onClick={()=>{
 
 ![빌드시next파일생성](/image/빌드시next파일생성.png)
 
- next.js 프로젝트를 빌드하면 .next 라는 디렉토리가 생성되는데 빌드 결과물이 저장되는 공간입니다.
+ Next.js 프로젝트를 빌드하면 .next 라는 디렉토리가 생성되는데 빌드 결과물이 저장되는 공간입니다.
 
 
  <br>
@@ -166,7 +166,7 @@ page라는 가장 기본적인 라우트 세그먼트를 방문하게 되면 웹
 
 실제로 개발자모드를 통해 방금 봤던 청크js파일과 동일한 js파일을 받아와 hydrate 한 것을 확인할 수 있습니다.
 
-이런 방식으로 next.js 는 서버컴포넌트를 렌더링하고 hydrate 한답니다! 끝!
+이런 방식으로 Next.js 는 서버컴포넌트를 렌더링하고 hydrate 한답니다! 끝!
 
 
 <br>

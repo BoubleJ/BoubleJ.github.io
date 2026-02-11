@@ -2,7 +2,7 @@
 date: "2025-07-28"
 title: "[React] 리액트 key 값이 리스트 렌더링에 미치는 영향"
 categories: ["React"]
-summary: "Hydration Failed 에러와 suppressHydrationWarning를 알아봅시다."
+summary: "리액트에서 key값은 정확히 어떤 역할을 하는지 알아봅시다."
 thumbnail: "/image/리액트key.png"
 ---
 

@@ -1,6 +1,6 @@
 ---
 date: "2025-03-05"
-title: "[Next.js] Colorzilla Extension에 의한 next.js 15 hydration 에러"
+title: "[Next.js] Colorzilla Extension에 의한 Next.js 15 hydration 에러"
 categories: ["Next.js"]
 summary: "크롬 익스텐션인 Colorzilla 때문에 에러도 발생하네요."
 thumbnail: "/image/하이드레이션에러.png"
@@ -8,7 +8,7 @@ thumbnail: "/image/하이드레이션에러.png"
 
 # 문제발생
 
-새로운 프로젝트를 만들기 위해 next.js 를 설치했는데 설치하자마자 `hydration` 에러가 발생했습니다.
+새로운 프로젝트를 만들기 위해 Next.js 를 설치했는데 설치하자마자 `hydration` 에러가 발생했습니다.
 
 ![하이드레이션에러2](/image/하이드레이션에러2.png)
 
@@ -34,7 +34,7 @@ thumbnail: "/image/하이드레이션에러.png"
 
 어떤 원인인지 구글링해보니
 
-https://github.com/vercel/next.js/discussions/72035
+https://github.com/vercel/Next.js/discussions/72035
 
 해당 깃허브링크에서 찾을 수 있었습니다.
 
@@ -42,7 +42,7 @@ https://github.com/vercel/next.js/discussions/72035
 
 Colorzilla 크롬 확장프로그램은 colorzilla extension/add-on라는 기능을 통해 body 태그에 `cz-shortcut-listen="true"` 속성을 주입한다고 합니다.
 
-그리고 이 속성은 next.js 15 버전의 hydration 에러를 일으킨다고 합니다.
+그리고 이 속성은 Next.js 15 버전의 hydration 에러를 일으킨다고 합니다.
 
 # 해결
 
@@ -68,7 +68,7 @@ Colorzilla 크롬 확장프로그램은 colorzilla extension/add-on라는 기능
 
 <div markdown="1">
 
-https://github.com/vercel/next.js/discussions/72035
+https://github.com/vercel/Next.js/discussions/72035
 
 https://dev-astra.tistory.com/669
 
