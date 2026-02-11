@@ -40,14 +40,19 @@ export default function Layout({ children }: LayoutProps) {
 2. GNB 탭(Home / About / Dashboard) 등으로 다른 페이지로 이동하면
 3. 페이지는 바뀌지만 **스크롤 위치는 그대로** 유지됩니다.
 
+![스크롤초기화안됨](/image/스크롤초기화안됨.gif)
+
+<br>
+<br>
+
+
+
 **재현되지 않는 경우**
 
 - 스크롤을 하지 않은 채로 페이지 이동 → 스크롤은 맨 위로 리셋됨.
 - 상단 여백을 모두 지나 **그보다 많이** 스크롤한 뒤 페이지 이동 → 이때도 스크롤이 맨 위로 리셋됨.
 
-<!-- [GIF 1] 스크롤이 초기화되지 않는 경우: 레이아웃 패딩 영역보다 적게 스크롤한 뒤 About/Dashboard 탭으로 이동하면 스크롤이 유지되는 모습 -->
-
-<!-- [GIF 2] 스크롤이 정상적으로 맨 위로 초기화되는 경우: 스크롤을 많이 내린 뒤 탭 이동 시 맨 위로 올라가는 모습 -->
+![스크롤초기화됨](/image/스크롤초기화됨.gif)
 
 <br>
 <br>
@@ -70,17 +75,29 @@ Next.js 소스에는 대략 아래와 같은 보조 함수와 분기가 있습�
 
 ```ts
 function topOfElementInViewport(element: HTMLElement, viewportHeight: number) {
-  const rect = element.getBoundingClientRect();
-  return rect.top >= 0 && rect.top <= viewportHeight;
+  const rect = element.getBoundingClientRect()
+  return rect.top >= 0 && rect.top <= viewportHeight
 }
 
-// 페이지 전환 시:
-// if (topOfElementInViewport(domNode, viewportHeight)) {
-//   return;  // 이미 뷰포트 안에 있으면 스크롤 안 함
-// }
-// htmlElement.scrollTop = 0;
-// ...
-// (domNode as HTMLElement).scrollIntoView();
+// ....
+
+
+  // If the element's top edge is already in the viewport, exit early.
+          if (topOfElementInViewport(domNode as HTMLElement, viewportHeight)) {
+            return
+          }
+
+          // Otherwise, try scrolling go the top of the document to be backward compatible with pages
+          // scrollIntoView() called on `<html/>` element scrolls horizontally on chrome and firefox (that shouldn't happen)
+          // We could use it to scroll horizontally following RTL but that also seems to be broken - it will always scroll left
+          // scrollLeft = 0 also seems to ignore RTL and manually checking for RTL is too much hassle so we will scroll just vertically
+          htmlElement.scrollTop = 0
+
+          // Scroll to domNode if domNode is not in viewport when scrolled to top of document
+          if (!topOfElementInViewport(domNode as HTMLElement, viewportHeight)) {
+            // Scroll into view doesn't scroll horizontally by default when not needed
+            ;(domNode as HTMLElement).scrollIntoView()
+          }
 ```
 
 - `domNode`는 **레이아웃이 아니라 페이지 컨텐츠 영역의 최상단 요소**로 전달됩니다.
@@ -117,7 +134,7 @@ function topOfElementInViewport(element: HTMLElement, viewportHeight: number) {
 - 스크롤을 조금만 내려도 해당 요소의 `rect.top`이 음수가 되어,
 - Next.js가 “뷰포트 밖”으로 판단해 **페이지 이동 시 스크롤을 맨 위로 리셋**하게 됩니다.
 
-예시는 아래와 같습니다. (실제 프로젝트에 맞게 wrapper 이름·위치는 조정하면 됩니다.)
+예시는 아래와 같습니다.
 
 ```tsx
 // 레이아웃: 상단 여백 제거
@@ -153,8 +170,8 @@ export default function AboutPage() {
 
 - **장점**: 이슈는 해소되고, 페이지 이동 시 스크롤이 맨 위로 초기화됩니다.
 - **단점**:
-  - GNB가 있는 모든 페이지를 ContentWrapper 등으로 감싸야 해서 반복이 생깁니다.
-  - 레이아웃에 있던 subTab 등이 이제 “페이지 최상단”에 붙어서, 고정 헤더에 가릴 수 있어 레이아웃/페이지 간 컴포넌트 배치를 조정해야 할 수 있습니다.
+  - 헤더가 존재하는 모든 페이지를 ContentWrapper 등으로 감싸야하는 번거로움이 생깁니다.
+  - 레이아웃에 있던 헤더, GNB탭 등이 next page 컴포넌트에 위치해야하는 경우가 생길 수 있습니다.
   - “레이아웃이 전역 상단 여백을 담당한다”는 역할이 줄어들어, 레이아웃 설계를 다시 보는 게 좋습니다.
 
 정리하면, **Next.js의 스크롤 최적화(이미 뷰포트 안에 있으면 스크롤 유지)** 와 **레이아웃 상단 여백 구조**가 맞물려서, “조금만 스크롤한 상태”에서만 스크롤이 리셋되지 않는 현상이 발생한 것이고, 상단 여백을 레이아웃이 아닌 페이지 쪽으로 옮기면 해결할 수 있습니다.  
