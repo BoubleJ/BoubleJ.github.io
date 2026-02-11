@@ -14,7 +14,8 @@ export default function CheckIcon({ size = 16 }: CheckIconProps) {
       strokeWidth={2}
       strokeLinecap="round"
       strokeLinejoin="round"
-      aria-hidden
+      role="img"
+      aria-label="확인"
     >
       <path d="M20 6L9 17l-5-5" />
     </svg>

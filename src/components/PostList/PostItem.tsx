@@ -3,7 +3,15 @@ import type { PostFrontmatterType } from "@/types";
 import * as styles from "./PostItem.css";
 
 type PostItemProps = PostFrontmatterType & { link: string; index?: number };
-export default function PostItem({ title, date, categories, summary, thumbnail, link, index = 0 }: PostItemProps) {
+export default function PostItem({
+  title,
+  date,
+  categories,
+  summary,
+  thumbnail,
+  link,
+  index = 0,
+}: PostItemProps) {
   return (
     <Link
       to={link}
@@ -12,7 +20,11 @@ export default function PostItem({ title, date, categories, summary, thumbnail, 
         animationDelay: `${index * 0.1}s`,
       }}
     >
-      <img src={thumbnail} alt="Post Item Image" className={styles.thumbnailImage} />
+      <img
+        src={thumbnail}
+        alt={`${title} 썸네일 이미지`}
+        className={styles.thumbnailImage}
+      />
 
       <div className={styles.postItemContent}>
         <div className={styles.title}>{title}</div>

@@ -14,7 +14,8 @@ export default function ArrowLeftIcon({ size = 24 }: ArrowLeftIconProps) {
       strokeWidth={2}
       strokeLinecap="round"
       strokeLinejoin="round"
-      aria-hidden
+      role="img"
+      aria-label="뒤로 가기"
     >
       <path d="M19 12H5M12 19l-7-7 7-7" />
     </svg>

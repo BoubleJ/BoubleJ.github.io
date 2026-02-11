@@ -1,5 +1,6 @@
 pre-commit:
   commands:
     check:
-      run: pnpm lint --write --no-errors-on-unmatched --colors=off {staged_files}
+      run: npx biome check --write {staged_files}
+      glob: "**/*.{ts,tsx,js,jsx,css}"
       stage_fixed: true

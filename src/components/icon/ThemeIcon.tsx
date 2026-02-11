@@ -5,7 +5,13 @@ export default function ThemeIcon() {
   const { theme } = useTheme();
 
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className={styles.themeIcon}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      className={styles.themeIcon}
+      role="img"
+      aria-label={theme === "light" ? "다크 모드로 전환" : "라이트 모드로 전환"}
+    >
       {theme === "light" ? (
         // Moon Icon for Light Mode (click to switch to Dark)
         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />

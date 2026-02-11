@@ -109,11 +109,11 @@ export default function TagPage({
           {sortedCategories.map(([name, count]) => {
             const isActive = selectedTags.includes(name);
             return (
-              <div
+              <button
                 key={name}
+                type="button"
                 className={`${styles.tagItem} ${isActive ? styles.tagItemActive : ""}`}
                 onClick={() => handleTagClick(name)}
-                role="button"
                 tabIndex={0}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
@@ -123,7 +123,7 @@ export default function TagPage({
               >
                 <span className={styles.tagName}>#{name}</span>
                 <span className={styles.tagCount}>({count})</span>
-              </div>
+              </button>
             );
           })}
         </div>

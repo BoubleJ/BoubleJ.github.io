@@ -8,6 +8,8 @@ export default function SearchIcon() {
       stroke="currentColor"
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
+      role="img"
+      aria-label="검색"
     >
       <path
         strokeLinecap="round"

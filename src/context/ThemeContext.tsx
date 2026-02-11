@@ -1,13 +1,7 @@
-import {
-  createContext,
-  type ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, type ReactNode, useContext, useEffect, useState } from "react";
 import { darkTheme, lightTheme } from "@/styles/theme.css";
 
-type Theme = "light";
+type Theme = "light" | "dark";
 
 interface ThemeContextType {
   theme: Theme;
@@ -26,13 +20,10 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
       setThemeState(savedTheme);
       document.body.className = savedTheme === "dark" ? darkTheme : lightTheme;
     } else {
-      const prefersDark = window.matchMedia(
-        "(prefers-color-scheme: dark)",
-      ).matches;
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
       const initialTheme = prefersDark ? "dark" : "light";
       setThemeState(initialTheme);
-      document.body.className =
-        initialTheme === "dark" ? darkTheme : lightTheme;
+      document.body.className = initialTheme === "dark" ? darkTheme : lightTheme;
     }
   }, []);
 
@@ -46,11 +37,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     setTheme(theme === "light" ? "dark" : "light");
   };
 
-  return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
-      {children}
-    </ThemeContext.Provider>
-  );
+  return <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>{children}</ThemeContext.Provider>;
 };
 
 export const useTheme = () => {
