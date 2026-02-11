@@ -6,8 +6,14 @@ interface SearchContainerProps {
   onSearchClose: () => void;
 }
 
-export default function SearchContainer({ isSearchOpen, onSearchClose }: SearchContainerProps) {
-  const { handleSearchSubmit, searchInputRef } = useSearch({ isSearchOpen, onSearchClose });
+export default function SearchContainer({
+  isSearchOpen,
+  onSearchClose,
+}: SearchContainerProps) {
+  const { handleSearchSubmit, searchInputRef } = useSearch({
+    isSearchOpen,
+    onSearchClose,
+  });
 
   return (
     <div

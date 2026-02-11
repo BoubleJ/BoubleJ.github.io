@@ -10,7 +10,11 @@ interface PostListProps {
   posts: PostListItemType[];
 }
 
-export default function PostList({ selectedCategory, searchTerm = "", posts }: PostListProps) {
+export default function PostList({
+  selectedCategory,
+  searchTerm = "",
+  posts,
+}: PostListProps) {
   const { containerRef, postList } = useInfiniteScroll(posts);
 
   return (

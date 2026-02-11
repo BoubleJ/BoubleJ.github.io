@@ -37,7 +37,7 @@ export default function CommentWidget() {
     });
 
     element.current.appendChild(utterances);
-  }, []);
+  }, [element.current]);
 
   return <div className={styles.utterancesWrapper} ref={element} />;
 }

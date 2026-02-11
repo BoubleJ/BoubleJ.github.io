@@ -5,7 +5,10 @@ interface EmptyPostListProps {
   selectedCategory: string;
 }
 
-export default function EmptyPostList({ searchTerm, selectedCategory }: EmptyPostListProps) {
+export default function EmptyPostList({
+  searchTerm,
+  selectedCategory,
+}: EmptyPostListProps) {
   return (
     <div className={styles.emptyMessage}>
       {searchTerm

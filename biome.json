@@ -29,7 +29,7 @@
   "formatter": {
     "indentStyle": "space",
     "lineEnding": "lf",
-    "lineWidth": 120,
+    "lineWidth": 90,
     "includes": ["**", "!*.md", "!*.yml", "!*.yaml"]
   },
 

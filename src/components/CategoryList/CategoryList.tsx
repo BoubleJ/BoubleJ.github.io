@@ -8,7 +8,10 @@ interface CategoryListProps {
   };
 }
 
-export default function CategoryList({ selectedCategory, categoryList }: CategoryListProps) {
+export default function CategoryList({
+  selectedCategory,
+  categoryList,
+}: CategoryListProps) {
   return (
     <div className={styles.categoryListWrapper}>
       {Object.entries(categoryList).map(([name, count]) => (

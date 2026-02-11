@@ -9,7 +9,12 @@ export interface PostHeadInfoProps {
   readingTimeText?: string;
 }
 
-export default function PostHeadInfo({ title, date, categories, readingTimeText }: PostHeadInfoProps) {
+export default function PostHeadInfo({
+  title,
+  date,
+  categories,
+  readingTimeText,
+}: PostHeadInfoProps) {
   const goBackPage = () => window.history.back();
 
   return (

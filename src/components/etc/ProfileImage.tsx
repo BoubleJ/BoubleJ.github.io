@@ -6,5 +6,11 @@ interface ProfileImageProps {
 }
 
 export default function ProfileImage({ profileImage }: ProfileImageProps) {
-  return <GatsbyImage image={profileImage} alt="Profile Image" className={styles.profileImageWrapper} />;
+  return (
+    <GatsbyImage
+      image={profileImage}
+      alt="Profile Image"
+      className={styles.profileImageWrapper}
+    />
+  );
 }

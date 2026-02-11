@@ -6,4 +6,6 @@ import { ThemeProvider } from "./src/context/ThemeContext";
 
 export const wrapRootElement = ({ element }) => <ThemeProvider>{element}</ThemeProvider>;
 
-export const wrapPageElement = ({ element, props }) => <Layout {...props}>{element}</Layout>;
+export const wrapPageElement = ({ element, props }) => (
+  <Layout {...props}>{element}</Layout>
+);

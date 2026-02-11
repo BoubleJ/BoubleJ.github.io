@@ -38,31 +38,30 @@ export default function TagPage({
     }
   }, [location.search]);
 
-  const categoryList = useMemo(
-    () =>
-      edges.reduce(
-        (
-          list: { [key: string]: number },
-          {
-            node: {
-              frontmatter: { categories },
-            },
-          }: PostType,
-        ) => {
-          if (categories) {
-            categories.forEach((category) => {
-              if (list[category] === undefined) list[category] = 1;
-              else list[category]++;
-            });
-          }
-          return list;
-        },
-        {},
-      ),
-    [edges],
-  );
+  const categoryList = () =>
+    edges.reduce(
+      (
+        list: { [key: string]: number },
+        {
+          node: {
+            frontmatter: { categories },
+          },
+        }: PostType,
+      ) => {
+        if (categories) {
+          categories.forEach((category) => {
+            if (list[category] === undefined) list[category] = 1;
+            else list[category]++;
+          });
+        }
+        return list;
+      },
+      {},
+    );
 
-  const sortedCategories = useMemo(() => Object.entries(categoryList).sort((a, b) => b[1] - a[1]), [categoryList]);
+  const sortedCategories = Object.entries(categoryList()).sort(
+    (a, b) => b[1] - a[1],
+  );
 
   const handleTagClick = useCallback(
     (tag: string) => {
@@ -99,10 +98,15 @@ export default function TagPage({
         return selectedTags.some((tag) => categories.includes(tag));
       },
     );
-  }, [edges, selectedTags]);
+  }, [selectedTags]);
 
   return (
-    <Template title={`${title} - Tags`} description={description} url={siteUrl} image={publicURL}>
+    <Template
+      title={`${title} - Tags`}
+      description={description}
+      url={siteUrl}
+      image={publicURL}
+    >
       <div className={styles.tagPage}>
         <h1 className={styles.pageTitle}>태그 목록</h1>
         <div className={styles.tagListWrapper}>

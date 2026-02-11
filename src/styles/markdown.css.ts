@@ -88,7 +88,8 @@ globalStyle(".markdown-code:not([class*='language-'])", {
   padding: "2px 6px",
   borderRadius: "3px",
   fontSize: "85%",
-  fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace',
+  fontFamily:
+    'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace',
   color: vars.color.codeColor,
 });
 
@@ -115,7 +116,8 @@ globalStyle(".markdown-content .code-copy-button", {
   gap: "4px",
   opacity: 0,
   transform: "translateY(-4px)",
-  transition: "opacity 0.15s ease, transform 0.15s ease, background-color 0.15s ease, color 0.15s ease",
+  transition:
+    "opacity 0.15s ease, transform 0.15s ease, background-color 0.15s ease, color 0.15s ease",
   pointerEvents: "none",
 });
 
@@ -141,11 +143,14 @@ globalStyle(".markdown-content .code-copy-button .code-copy-icon", {
 // PrismJS Code Block Theme Overrides for Dark Mode
 // 다크모드(darkTheme 클래스가 body에 적용됨)일 때 Prism 스타일을 재정의합니다.
 
-globalStyle(`body.${darkTheme} :not(pre) > code[class*="language-"], body.${darkTheme} pre[class*="language-"]`, {
-  backgroundColor: "#161b22", // GitHub Dark Dimmed background
-  color: "#adbac7",
-  textShadow: "none",
-});
+globalStyle(
+  `body.${darkTheme} :not(pre) > code[class*="language-"], body.${darkTheme} pre[class*="language-"]`,
+  {
+    backgroundColor: "#161b22", // GitHub Dark Dimmed background
+    color: "#adbac7",
+    textShadow: "none",
+  },
+);
 
 globalStyle(
   `body.${darkTheme} .token.comment, body.${darkTheme} .token.prolog, body.${darkTheme} .token.doctype, body.${darkTheme} .token.cdata`,
