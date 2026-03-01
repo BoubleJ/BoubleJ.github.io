@@ -12,7 +12,7 @@ thumbnail: "/image/리액트key.png"
 
 ```ts
 
-// 사내 코드는 공개할 수 없어, 예시 코드로 구현했습니다.
+// 사내 코드를 가져오질 못해 예시 코드로 구현했습니다.
 
 import { getItems } from "../lib/items";
 import Buttons from "../components/Buttons";
@@ -34,7 +34,7 @@ export default async function Dashboard() {
 
 ```ts
 
-// 사내 코드는 공개할 수 없어, 예시 코드로 구현했습니다.
+// 사내 코드를 가져오질 못해 예시 코드로 구현했습니다.
 
 "use client";
 
