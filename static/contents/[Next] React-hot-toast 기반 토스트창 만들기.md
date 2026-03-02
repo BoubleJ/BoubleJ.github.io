@@ -1,9 +1,9 @@
 ---
 date: "2023-11-20"
-title: "[CSS] CSS 방법론"
+title: "[Next.js] React-hot-toast 기반 토스트창 만들기"
 categories: ["CSS"]
-summary: " CSS에서 클래스 네임을 지을 때 작성하는 방식으로 일종의 naming convention입니다."
-thumbnail: "/image/css-logo.png"
+summary: "React-hot-toast 기반 토스트창 만들기."
+thumbnail: "/thumbnail/React-hot-toast.png"
 ---
 
 ```css

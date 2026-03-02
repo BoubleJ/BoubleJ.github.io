@@ -3,7 +3,7 @@ date: "2024-07-03"
 title: "[React] useRef 동작원리"
 categories: ["React"]
 summary: "useRef 동작원리에 대해 알아보겠습니다."
-thumbnail: "/image/useRef아이콘.jpeg"
+thumbnail: "/thumbnail/useRef.jpeg"
 ---
 
 useRef는 리액트 컴포넌트의 불필요한 Re-rendering을 하지 않고 값만 보존하기 위해 사용하는 hook입니다. 

@@ -3,7 +3,7 @@ date: "2024-06-03"
 title: "[Vercel] Vercel 배포 과정"
 categories: ["Vercel"]
 summary: "Git 저장소를 Vercel에 연결하고 프로젝트를 배포하는 과정 정리."
-thumbnail: "/image/vercel.jpg"
+thumbnail: "/thumbnail/vercel.jpg"
 ---
 
 프로젝트를 만들었으니 배포해야겠죠??

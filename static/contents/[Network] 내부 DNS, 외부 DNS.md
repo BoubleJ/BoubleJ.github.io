@@ -3,7 +3,7 @@ date: "2024-08-13"
 title: "[Network] 내부 DNS, 외부 DNS"
 categories: ["Network"]
 summary: "내부 DNS, 외부 DNS을 알아봅시다."
-thumbnail: "/image/dns이미지.png"
+thumbnail: "/thumbnail/DNS.png"
 ---
 
 # DNS 서버란?

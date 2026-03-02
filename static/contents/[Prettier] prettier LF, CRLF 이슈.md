@@ -3,7 +3,7 @@ date: "2024-10-01"
 title: "[Prettier] prettier LF, CRLF 이슈"
 categories: ["Prettier", "ESLint"]
 summary: "error delete `␍` prettier/prettier 이슈를 해결해봅시다."
-thumbnail: "/image/prettier에러.png"
+thumbnail: "/thumbnail/prettier.jpg"
 ---
 
 # 개요

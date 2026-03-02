@@ -3,7 +3,7 @@ date: "2024-08-13"
 title: "[Network] VDI란?"
 categories: ["Network"]
 summary: "VDI의 정의를 알아봅시다."
-thumbnail: "/image/vdi란.png"
+thumbnail: "/thumbnail/VDI.png"
 ---
 
 # 1. VDI 란 무엇일까?

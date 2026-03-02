@@ -3,7 +3,7 @@ date: "2024-09-01"
 title: "[CS] 컴퓨터 구조의 큰 그림 (인프런 강의)"
 categories: ["CS" ]
 summary: "컴퓨터 공학을 입문해봅시다."
-thumbnail: "/image/컴퓨터공학.jpg"
+thumbnail: "/thumbnail/컴퓨터공학.jpg"
 ---
 
 어찌저찌 운좋게 프론트엔드 개발자로 취업했지만 컴퓨터 공학에 대한 지식이 전무한 것 같아 CS 공부를 시작했고 이를 기록하려합니다.

@@ -3,7 +3,7 @@ date: "2024-01-24"
 title: "[React] 리액트 이벤트 핸들링 원리"
 categories: ["React"]
 summary: "리액트 이벤트 핸들링 원리와 이벤트 위임, React 17 이후 root container 부착 방식 정리."
-thumbnail: "/image/리액트구조.png"
+thumbnail: "/thumbnail/리액트트리구조.png"
 ---
 
 4장은 리액트 이벤트 설정인데 다들 아실거라 생각되어 이벤트 핸들링의 원리를 딥다이브 해보았습니다.

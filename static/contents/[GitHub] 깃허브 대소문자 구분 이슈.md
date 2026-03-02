@@ -3,7 +3,7 @@ date: "2024-06-24"
 title: "[GitHub] 깃허브 대소문자 구분 이슈"
 categories: ["GitHub"]
 summary: "로컬에서 파일 대소문자 변경 후 push해도 원격에서는 변경사항이 적용되지 않는 문제를 해결하는 방법을 알아봅니다."
-thumbnail: "/image/깃허브아이콘.png"
+thumbnail: "/thumbnail/깃허브.png"
 ---
 
 본 개발 블로그 포스팅 중 이상한 점을 발견했습니다.

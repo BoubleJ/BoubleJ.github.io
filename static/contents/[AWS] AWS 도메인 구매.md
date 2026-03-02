@@ -3,7 +3,7 @@ date: "2024-06-03"
 title: "[AWS] AWS Certificate manager을 이용한 커스텀 도메인 설정"
 categories: ["AWS"]
 summary: "AWS Certificate manager을 이용한 커스텀 도메인 설정하고 서브 도메인을 연결하는 방법에 대해 알아보겠습니다."
-thumbnail: "/image/AWSCertificatemanager.png"
+thumbnail: "/thumbnail/ACM.png"
 ---
 
 https://d7zyusgbyb73k.cloudfront.net/

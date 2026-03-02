@@ -3,7 +3,7 @@ date: "2024-08-18"
 title: "[Programming] 모노레포(MonoRepo), 멀티레포(MultiRepo)"
 categories: ["Programming"]
 summary: "구글. 트워터 등 거대기업에서도 사용하는 모노레포와 반대 개념인 멀티레포에 대해 알아봅시다. "
-thumbnail: "/image/모노레포.png"
+thumbnail: "/thumbnail/모노레포.png"
 ---
 
 # 모노레포와 멀티레포

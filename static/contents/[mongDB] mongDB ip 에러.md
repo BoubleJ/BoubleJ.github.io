@@ -3,7 +3,7 @@ date: "2025-02-26"
 title: "[mongDB] mongDB ip 에러"
 categories: ["mongoDB"]
 summary: "몽고DB에서 발생한 IP 에러를 기록했습니다."
-thumbnail: "/image/ip가달라요.png"
+thumbnail: "/thumbnail/MongoDB.png"
 ---
 
 코딩애플 mongoDB 강의를 들으며 node 공부하던 중

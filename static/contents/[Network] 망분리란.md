@@ -3,7 +3,7 @@ date: "2024-08-13"
 title: "[Network] 망분리란?"
 categories: ["Network"]
 summary: "망분리의 정의와 종류를 알아봅시다."
-thumbnail: "/image/망분리.jpg"
+thumbnail: "/thumbnail/망분리.jpg"
 ---
 
 # 1. 망분리의 개념

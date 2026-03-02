@@ -3,7 +3,7 @@ date: "2025-05-01"
 title: "[Docker] Windows 포트 잠김으로 인한 도커 컨테이너 못 올리는 이슈"
 categories: ["Docker"]
 summary: "도커 컨테이너를 올리려는데 사용할 수 없는 포트라는 에러가 떴습니다."
-thumbnail: "/image/도커아이콘.png"
+thumbnail: "/thumbnail/도커.png"
 ---
 
 # 문제 발생

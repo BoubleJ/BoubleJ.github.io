@@ -3,7 +3,7 @@ date: "2024-06-12"
 title: "[Vercel] 도메인 구매 및 적용"
 categories: ["Gabia"]
 summary: "가비아에서 도메인 구매 후 Vercel 프로젝트에 커스텀 도메인 연결하는 방법."
-thumbnail: "/image/도메인이미지.png"
+thumbnail: "/thumbnail/도메인.png"
 ---
 
 

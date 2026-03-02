@@ -1,9 +1,9 @@
 ---
 date: "2024-01-31"
 title: "[Javascript] forEach와 map 차이점"
-categories: ["React"]
+categories: ["Javascript"]
 summary: "forEach와 map의 반환값·불변성 차이, 얕은 복사와 깊은 복사, 리액트에서 map을 쓰는 이유."
-thumbnail: "/image/map함수예시.png"
+thumbnail: "/thumbnail/자바스크립트.jpeg"
 ---
 
 자바스크립트 forEach과 map 메서드를 딥다이브 해보았습니다.

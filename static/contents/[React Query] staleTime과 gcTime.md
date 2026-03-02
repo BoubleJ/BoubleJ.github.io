@@ -3,7 +3,7 @@ date: "2024-06-15"
 title: "[ReactQuery] staleTime과 gcTime"
 categories: ["ReactQuery"]
 summary: "StaleTime과 GcTime의 정의를 알아봅시다."
-thumbnail: "/image/리액트쿼리데이터상태.png"
+thumbnail: "/thumbnail/리액트쿼리.png"
 ---
 
 

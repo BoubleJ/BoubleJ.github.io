@@ -3,7 +3,7 @@ date: "2025-03-05"
 title: "[Next.js] Next.js 페이지 이동 후 스크롤이 맨 위로 가지 않는 이슈"
 categories: ["Next.js"]
 summary: "레이아웃에 상단 여백을 둔 Next.js 앱에서, 페이지 이동 시 스크롤이 초기화되지 않는 현상의 원인과 대응을 정리했습니다."
-thumbnail: "/image/NEXT.png"
+thumbnail: "/thumbnail/NEXT.png"
 ---
 
 # 개요

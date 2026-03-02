@@ -3,7 +3,7 @@ date: "2025-05-17"
 title: "[WSL] Window 환경 WSL2 우분투 설치과정"
 categories: ["WSL"]
 summary: "Window 11 환경 WSL2 우분투 설치과정을 정리했습니다."
-thumbnail: "/image/wsl썸네일.png"
+thumbnail: "/thumbnail/WSL.png"
 ---
 
 window 11 환경에 ubuntu를 설치해도보록 하겠습니다. 

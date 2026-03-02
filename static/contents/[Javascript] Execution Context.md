@@ -3,7 +3,7 @@ date: "2024-06-17"
 title: "[Javascript] Execution Context"
 categories: ["Javascript"]
 summary: "Execution Context(실행 컨텍스트)를 알아봅시다."
-thumbnail: "/image/실행컨텍스트.png"
+thumbnail: "/thumbnail/실행컨텍스트.png"
 ---
 
 자바스크립트를 주 언어로 다루는 프론트엔드 개발자로서 자바스크립트 동작 원리는 알고 있어야하지 않나 싶어 실행 컨텍스트와 관련 용어들을 정리해보았습니다.

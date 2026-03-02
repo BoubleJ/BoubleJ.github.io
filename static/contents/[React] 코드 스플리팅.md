@@ -3,7 +3,7 @@ date: "2024-03-20"
 title: "[React] 코드 스플리팅"
 categories: ["React"]
 summary: "코드 스플리팅과 비동기 로딩, React.lazy·Suspense, loadable Components."
-thumbnail: "/image/image-59.png"
+thumbnail: "/thumbnail/코드스플리팅.png"
 ---
 
 이번 포스팅은 코드 스플리팅에 대해서 알아보겠습니다.

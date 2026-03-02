@@ -3,7 +3,7 @@ date: "2024-07-20"
 title: "[Node.JS] npm, yarn, npx 차이점"
 categories: ["Node.JS"]
 summary: " npm, yarn, npx를 알아봅시다."
-thumbnail: "/image/npmyarn.png"
+thumbnail: "/thumbnail/Npm과Yarn.png"
 ---
 
 우리는 CLI 를 통해 npm, yarn, npx 를 접합니다. 이 명령어들의 차이점을 알아봅시다. 

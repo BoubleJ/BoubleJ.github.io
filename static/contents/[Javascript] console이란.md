@@ -3,7 +3,7 @@ date: "2024-01-31"
 title: "[Javascript] console이란"
 categories: ["React"]
 summary: "브라우저와 Node.js의 console 객체, level별 함수(log, info, warn, error), table·dir·time·count·trace 사용법."
-thumbnail: "/image/콘솔로표시각화.png"
+thumbnail: "/thumbnail/자바스크립트.jpeg"
 ---
 
 비록 리액트 관련된 내용은 아니지만 문득 console의 정확한 뜻이 무엇인지 궁금해서 조사해봤습니다.

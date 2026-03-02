@@ -3,7 +3,7 @@ date: "2024-07-01"
 title: "[AWS] 외부 도메인 route53으로 옮기기"
 categories: ["AWS"]
 summary: "S3 CloudFront로 배포한 웹페이지에 외부 도메인을 적용시켜보겠습니다."
-thumbnail: "/image/AWSCertificatemanager.png"
+thumbnail: "/thumbnail/ACM.png"
 ---
 
 https://d7zyusgbyb73k.cloudfront.net/

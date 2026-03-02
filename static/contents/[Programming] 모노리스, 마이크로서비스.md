@@ -3,7 +3,7 @@ date: "2024-08-18"
 title: "[Programming] 모놀리식 아키텍처 (Monolithic Architecture), 마이크로 서비스 (MicroService)"
 categories: ["Programming"]
 summary: "모놀리식 아키텍처와 마이크로 서비스에 대해 알아봅시다."
-thumbnail: "/image/모놀레틱과마이크로서비스.png"
+thumbnail: "/thumbnail/모놀레틱과마이크로서비스.png"
 ---
 
 # 아키텍처란?

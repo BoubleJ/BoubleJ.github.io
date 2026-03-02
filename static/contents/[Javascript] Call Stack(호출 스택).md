@@ -3,7 +3,7 @@ date: "2023-12-07"
 title: "[Javascript] Call Stack(호출 스택)"
 categories: ["Javascript"]
 summary: "호출 스택을 알아보기 전 Stack과 Queue를 먼저 알아보자."
-thumbnail: "/image/자바스크립트엔진구동.png"
+thumbnail: "/thumbnail/자바스크립트.jpeg"
 ---
 
 호출 스택을 알아보기 전 Stack과 Queue를 먼저 알아보자

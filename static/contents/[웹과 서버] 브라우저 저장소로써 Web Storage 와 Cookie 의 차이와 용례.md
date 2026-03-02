@@ -3,7 +3,7 @@ date: "2023-11-30"
 title: "[웹과 서버] 브라우저 저장소로써 Web Storage 와 Cookie 의 차이와 용례"
 categories: ["Web"]
 summary: "Web Storage 와 Cookie의 차이점을 알아봅시다."
-thumbnail: "/image/클라이언트와서버이미지.png"
+thumbnail: "/thumbnail/클라이언트와서버.png"
 ---
 
 # Web Storage

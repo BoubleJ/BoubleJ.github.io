@@ -3,7 +3,7 @@ date: "2024-02-07"
 title: "[React] CRA와 Vite"
 categories: ["React"]
 summary: "CRA와 Vite 비교, HMR·eject·Native ESM, Vite가 빠른 이유."
-thumbnail: "/image/cra와vite.png"
+thumbnail: "/thumbnail/CRA와VITE.png"
 ---
 
 대표적인 리액트 스타터 툴인 CRA(Create React App)과 Vite에 대해서 알아보았습니다.

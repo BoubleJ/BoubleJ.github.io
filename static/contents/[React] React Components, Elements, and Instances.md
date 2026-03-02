@@ -6,7 +6,7 @@ categories:
     "React"
   ]
 summary: "React의 동작원리를 컴포넌트, 엘리먼트로 분석해봅시다."
-thumbnail: "/image/reacticon.png"
+thumbnail: "/thumbnail/리액트.png"
 ---
 
 우리가 자주 사용하는 리액트는 어떤 원리로 컴포넌트를 브라우저에 렌더링하는걸까요?? 자세히 알아봅시다.

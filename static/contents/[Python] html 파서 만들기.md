@@ -3,7 +3,7 @@ date: "2024-04-18"
 title: "[Python] html 파서 만들기"
 categories: ["Python"]
 summary: "쿠팡 카테고리 id 값을 추출하기 위해 Python으로 html 파서를 만들어보겠습니다."
-thumbnail: "/image/파이썬.png"
+thumbnail: "/thumbnail/파이썬.png"
 ---
 
 html 파서 라는 것을 사용하기 위해선 파이썬을 설치해야합니다. 파이썬을 사용해본적이 없어 설치했습니다.

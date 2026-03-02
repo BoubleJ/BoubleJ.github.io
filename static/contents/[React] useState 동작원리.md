@@ -3,7 +3,7 @@ date: "2024-07-03"
 title: "[React] useState 동작원리"
 categories: ["React"]
 summary: "useState 동작원리에 대해 알아보겠습니다."
-thumbnail: "/image/useState아이콘.png"
+thumbnail: "/thumbnail/useState.png"
 ---
 
 비동기적으로 동작하는 useState의 성질로 인한 State 값 업데이트 이슈를 해결하면서 문득 useState의 동작원리에 대해 궁금해졌습니다.

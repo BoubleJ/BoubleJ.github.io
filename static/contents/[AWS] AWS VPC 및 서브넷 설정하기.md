@@ -3,7 +3,7 @@ date: "2024-06-24"
 title: "[AWS] AWS VPC 및 서브넷 설정하기"
 categories: ["AWS"]
 summary: "AWS VPC 및 서브넷 설정하기."
-thumbnail: "/image/vpc.png"
+thumbnail: "/thumbnail/vpc.png"
 ---
 
 # AWS VPC 및 서브넷 설정하기

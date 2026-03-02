@@ -3,7 +3,7 @@ date: "2023-11-20"
 title: "[CSS] CSS 방법론"
 categories: ["CSS"]
 summary: " CSS에서 클래스 네임을 지을 때 작성하는 방식으로 일종의 naming convention입니다."
-thumbnail: "/image/css-logo.png"
+thumbnail: "/thumbnail/CSS.png"
 ---
 
 CSS에서 클래스 네임을 지을 때 작성하는 방식으로 일종의 **naming convention**이다
