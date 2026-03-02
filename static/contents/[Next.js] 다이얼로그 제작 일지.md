@@ -1,27 +1,24 @@
 ---
 date: "2025-12-02"
-title: "[Next.js] 다이얼로그 제작 일지"
+title: "[Next.js] 다이얼로그 마이그레이션 일지"
 categories: ["Next.js"]
-summary: "사내 프로젝트의 불편했던 다이얼로그를 교체하며 겪은 과정과 한계를 기록합니다."
-thumbnail: ""
+summary: "사내 서비스에서 사용되는 다이얼로그 마이그레이션 과정을 정리했습니다."
+thumbnail: "/image/다이얼로그썸네일.png"
 ---
 
-# 배경
+다이얼로그는 대부분의 웹사이트에서 사용되는 대표적인 UX 요소 중 하나입니다. 그만큼 웹을 구성하는 데 있어 중요도가 높고, 다양한 상황에서 활용되기 때문에 여러 가지 관리 방식이 적용됩니다. 동시에, 구현과 관리가 까다로운 컴포넌트이기도 합니다.
 
-사내 프로젝트에서 기존에 쓰이던 다이얼로그가 꽤 불편해서, 새로 만들고 교체하는 작업을 진행했습니다. 그 과정에서 만든 두 가지 방식과 각각의 문제점을 정리해 둡니다.
+제가 재직 중인 회사에서도 요구사항에 적절히 대응 가능하면서, 유지보수가 용이한 다이얼로그를 만들기 위해 여러 시도를 거쳤습니다. 그 과정에서 다양한 시행착오를 겪었고, 세 차례의 마이그레이션을 통해 최종적인 형태를 완성할 수 있었습니다. 이번 글에서는 그 과정에서 겪었던 문제점과 개선 과정을 공유하고자 합니다.
 
 <br>
 <br>
 <br>
-
-
-// 다이얼로그안닫힘.gif
-//다이얼로그 웹접근성
-//다이얼로그 노출 예시.gif
 
 # 첫 번째 다이얼로그 — Recoil 전역 상태
 
-기존에는 Recoil로 모달 열림 상태를 전역 관리하는 방식이었습니다.
+제가 입사했을 당시에는 Recoil 전역 상태를 사용해 다이얼로그를 관리하는 방식이었습니다.
+
+전역 layout.tsx 내부에서 createPortal로 모달을 렌더링하고, 해당 모달의 열림 상태를 Recoil 전역 상태값으로 제어했습니다.
 
 ```ts
 const useModal = (modalId: ModalState) => {
@@ -40,44 +37,95 @@ const useModal = (modalId: ModalState) => {
 
   return { isOpen, onOpen, onClose }
 }
+```
 
-
+```ts
 export const modalState = atom<{
   [key in ModalState]: boolean
 }>({
   key: 'modalState',
   default: {
     SIDEBAR: false,
-    RECOM_GENRE: false,
     MAIN_POPUP_BANNER: false,
-    PASSWORD: false,
-    RANKING_FILTER: false,
-    GIFT_COUPON_INFO: false,
-    REVIEW_INFO: false,
-    NOVEL_GENRE: false,
+ //... 여러 키 값들 
   },
 })
 ```
 
-이 방식에는 두 가지가 부담이었습니다.
+<br>
 
-**1. 모달을 쓰는 페이지마다 Recoil key를 추가해야 함**
 
-새 화면에서 다이얼로그를 띄우려면 `ModalState` 타입과 `modalState` default 객체에 항목을 하나씩 추가해야 했습니다. 사용처가 늘어날수록 열거형·atom이 계속 커지는 번거로움이 있었습니다.
+사용 예시는 다음과 같습니다.
+```ts
+// 노출 시키고 싶은 다이얼로그 key값을 인자로 넘겨줍니다.
 
-**2. 페이지 이동 시 다이얼로그가 닫히지 않음**
-
-상태가 Recoil 전역이라, 다이얼로그가 떠 있는 상태에서 뒤로 가기 등으로 라우트만 바뀌어도 모달이 그대로 남았습니다. 화면은 바뀌었는데 오버레이와 다이얼로그만 남는 UX가 되어 버렸습니다.
-
-이런 이유로 전역 상태 기반 첫 번째 다이얼로그를 쓰지 않고, 컴포넌트/훅 단위로 열고 닫는 두 번째 방식을 만들게 됐습니다.
+  const { onClose, onOpen } = useModal('SIDEBAR')
+```
 
 <br>
 <br>
 <br>
 
-# 두 번째 다이얼로그 — useDialog 훅
+## 문제점
 
-페이지와 무관하게 “해당 컴포넌트에서만” 열고 닫는 다이얼로그를 위해 `useDialog` 훅과 `Dialog` 컴포넌트를 만들었습니다.
+이 방식에는 두 가지 문제점이 존재했습니다. 
+
+<br><br>
+
+### 1. 모달을 쓰는 페이지마다 Recoil key를 추가해야 함
+
+새로운 화면에서 다이얼로그를 띄우기 위해서는 ModalState 타입과 modalState의 default 객체에 항목을 하나씩 추가해야 했습니다.
+
+사용처가 늘어날수록 atom의 키 값도 계속 증가했고, 각 키가 어떤 역할을 하는지 한눈에 파악하기 어려워지면서 유지보수성이 저하되는 문제가 발생했습니다.
+
+
+```ts
+export const modalState = atom<{
+  [key in ModalState]: boolean
+}>({
+  key: 'modalState',
+  default: {
+    SIDEBAR: false,
+    MAIN_POPUP_BANNER: false,
+ // 키 값을 추가해야합니다.
+ //  PASSWORD : false
+  },
+})
+```
+
+```ts
+export type ModalState =
+  | 'SIDEBAR'
+  | 'RECOM_GENRE'
+  //타입도 추가해야합니다.
+  // | 'PASSWORD'
+
+```
+
+<br>
+<br>
+
+### 2. 페이지 이동 시 다이얼로그가 닫히지 않음
+
+다이얼로그를 Recoil 전역 상태로 관리하고 있었기 때문에, 다이얼로그가 열린 상태에서 뒤로 가기와 같은 페이지 이동이 발생해도 Recoil 상태값이 갱신되지 않는 문제가 있었습니다.
+
+그 결과, 페이지가 변경되었음에도 다이얼로그가 닫히지 않고 그대로 남아있는 버그가 발생했습니다.
+
+![다이얼로그안닫힘.gif](/image/다이얼로그안닫힘.gif)
+
+
+이런 이유로 전역 상태 기반 첫 번째 다이얼로그를 폐기 처분하고, 두 번째 다이얼로그를 만들게 됐습니다.
+
+<br>
+<br>
+<br>
+<br>
+
+# 두 번째 다이얼로그 — 로컬 state 기반 컴포넌트 반환 훅 패턴
+
+두 번째 다이얼로그에서는 Recoil 전역 상태 대신, 로컬 state를 기반으로 다이얼로그 상태를 관리하는 방식을 채택했습니다.
+
+또한 다이얼로그 UI 컴포넌트를 전역 layout.tsx 내부에 두는 구조에서 벗어나, 각 사용처에서 훅을 통해 다이얼로그 템플릿 컴포넌트를 제공받고 그 안에 필요한 콘텐츠를 채워 넣는 방식으로 변경했습니다.
 
 ```ts
 export default function useDialog() {
@@ -100,6 +148,7 @@ export default function useDialog() {
       ),
     [isOpen, handleClose],
   )
+  //다이얼로그 상태 관리, ui를 모두 넘겨줍니다. 
   return {
     isOpen,
     onClose: handleClose,
@@ -108,6 +157,46 @@ export default function useDialog() {
   }
 }
 ```
+
+
+```ts
+
+export default function useBodyScrollLock() {
+  // state기반 다이얼로그 상태 관리
+  const [isOpen, setOpen] = useState(false)
+
+  const handleClose = useCallback(() => {
+    setOpen(false)
+  }, [])
+
+  const handleOpen = useCallback(() => {
+    setOpen(true)
+  }, [])
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isOpen])
+
+  return {
+    isOpen,
+    handleClose,
+    handleOpen,
+  }
+}
+
+```
+
+<br>
+
+이때 다이얼로그 UI는 createPortal을 사용해 렌더링하도록 구성했습니다.
 
 ```ts
 export default function Dialog({ children, isOpen, onDimClick, title, buttons, className }: DialogProps) {
@@ -150,41 +239,20 @@ export default function Dialog({ children, isOpen, onDimClick, title, buttons, c
 ```
 
 ```ts
+export default function Portal({ id = 'ModalRoot', children }: Readonly<PortalProps>) {
+  const portalRef = useRef<HTMLDivElement | null>(document.getElementById(id) as HTMLDivElement | null)
 
-export default function useBodyScrollLock() {
-  const [isOpen, setOpen] = useState(false)
-
-  const handleClose = useCallback(() => {
-    setOpen(false)
-  }, [])
-
-  const handleOpen = useCallback(() => {
-    setOpen(true)
-  }, [])
-
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-    }
-
-    return () => {
-      document.body.style.overflow q= ''
-    }
-  }, [isOpen])
-
-  return {
-    isOpen,
-    handleClose,
-    handleOpen,
-  }
+  return portalRef.current ? createPortal(children, portalRef.current) : null
 }
 
 ```
 
+<br>
+
 
 사용 예시는 다음과 같습니다.
+
+useDialog() 훅으로부터 반환된 `Dialog`로 내부 컨텐츠를 감싸고, 버튼 정보와 콜백함수을 props로 넘기는 형태입니다.
 
 ```tsx
 const { onOpen: handleOpenAlert, onClose: handleCloseAlert, Dialog: AlertDialog } = useDialog()
@@ -197,41 +265,55 @@ const { onOpen: handleOpenAlert, onClose: handleCloseAlert, Dialog: AlertDialog 
 </AlertDialog>
 ```
 
-다이얼로그를 쓰는 쪽에서 `Dialog`로 내부 컨텐츠를 감싸고, 버튼 정보와 콜백을 props로 넘기는 형태입니다.
+
 
 <br>
 <br>
 <br>
 
-# 두 번째 다이얼로그의 한계 — 버튼 콜백과 내부 상태의 분리
+## 문제점
 
-이 훅의 문제는 **버튼 콜백과 다이얼로그 내부 컨텐츠의 상태가 공유되지 않는다**는 점이었습니다.
+그러나 해당 방식에서도 치명적인 문제점을 발견했는데요.
 
-`Dialog`는 `useDialog`가 반환하는 컴포넌트이고, 버튼의 `onClick`·`buttons`는 사용처에서 넘깁니다. 반면 입력값·에러 메시지 같은 “내부 상태”는 보통 다이얼로그 컨텐츠를 담당하는 자식 컴포넌트의 `useState`에 있습니다. 그 자식은 `Dialog`의 `children`으로만 들어가기 때문에, 버튼 쪽에서 그 상태를 직접 참조하거나 갱신하려면 props로 계속 넘겨야 합니다. 구조가 복잡해질수록 “버튼이 있는 곳”과 “상태가 있는 곳”이 달라져서 사용 패턴이 어색해졌습니다.
+<br>
+<br>
 
-실제로 리뷰 작성 다이얼로그에서는 아래처럼 쓰이게 됐습니다.
+### 1. 내부 상태값과 버튼 콜백의 스코프가 공유되지 않음
+
+**버튼 콜백과 다이얼로그 내부 컨텐츠의 상태 스코프가 공유되지 않는다**는 점이었습니다.
+
+`Dialog`는 `useDialog`가 반환하는 컴포넌트이고, 버튼의 콜백함수는 `Dialog` props로 넘깁니다. 
+
+다이얼로그의 UX 특성상, 내부 콘텐츠가 버튼의 콜백 함수에 접근해야 하는 경우가 많습니다. 하지만 Dialog가 내부 콘텐츠를 감싸는 구조였기 때문에, 버튼 콜백 함수에서 내부 콘텐츠의 스코프에 접근할 수 없는 문제가 있었습니다.
+
+```ts
+
+  const { onOpen: onReviewInfoOpen, onClose: onReviewInfoClose, Dialog: DetailReviewInfoDialog } = useDialog()
+
+   <DetailReviewInfoDialog title="리뷰 운영방침 안내" buttons={[{ text: '확인', onClick: onReviewInfoClose }]}>
+   //DetailReviewInfo 상태값을 버튼 콜백에 넘겨야하는데...
+   //접근이 불가능...
+        <DetailReviewInfo />
+      </DetailReviewInfoDialog>
+```
+
+<br>
+
+때문에 실제로 프로젝트를 진행하면서, 아래와 같이 useDialog 훅 제작 의도와 다르게 사용되는 사례도 발생했습니다.
+
+
 
 ```tsx
 const { onOpen: onReviewWriteOpen, onClose: onReviewWriteClose, Dialog: ReviewWriteDialog } = useDialog()
+// 다이얼로그 템플릿을 props로 넘겨 사용....
 <DetailReviewWriteBox Dialog={ReviewWriteDialog} onClose={onReviewWriteClose} pid={pid} />
 ```
 
-`DetailReviewWriteBox` 안에서 다시 `useDialog`를 쓰고, “등록” 버튼 콜백에서 API 결과에 따라 실패 메시지를 띄우는 식으로 이중으로 감쌌습니다.
-
 ```tsx
 export default function DetailReviewWriteBox({ Dialog, onClose, pid }: DetailReviewWriteBoxProps) {
-  const { onOpen: onFailOpen, onClose: onFailClose, Dialog: FailDialog } = useDialog()
+  // 다이얼로그 내부에서 사용할 상태값들
   const [comment, setComment] = useState('')
   const [rating, setRating] = useState(5)
-  const [failMessage, setFailMessage] = useState<string | ReactNode>()
-  const { showToast } = useToast()
-  const queryClient = useQueryClient()
-  useEffect(() => {
-    return () => {
-      setComment('')
-      setRating(5)
-    }
-  }, [Dialog])
 
   return (
     <>
@@ -248,7 +330,6 @@ export default function DetailReviewWriteBox({ Dialog, onClose, pid }: DetailRev
             text: '등록',
             color: 'blue-01',
             onClick: async () => {
-             // 콜백 실행
               onClose()
             },
           },
@@ -266,62 +347,343 @@ export default function DetailReviewWriteBox({ Dialog, onClose, pid }: DetailRev
             {GRADE_TEXT[rating - 1]}
           </Typography.Body2>
         </Flex>
-
-        <textarea
-          name="content"
-          value={comment}
-          onChange={(e) => {
-            if (e.target.value.length > 300) {
-              e.target.value = e.target.value.slice(0, 300)
-            }
-            setComment(e.target.value)
-          }}
-          className={cn('textarea')}
-          placeholder="감상평 또는 작가님에게 보내는 응원 메시지를 남겨주세요. (선택)"
-        ></textarea>
-        <Flex direction="row" gap={8} justify="flex-end">
-          <Typography.Body5>{comment.length}</Typography.Body5>
-          <Typography.Body5 c="grey-06">/ 300</Typography.Body5>
-        </Flex>
       </Dialog>
 ```
 
-여기서는 `comment`, `rating`, `failMessage`가 모두 `DetailReviewWriteBox` 안에 있어서 버튼 콜백과 같은 스코프를 쓰기 위해 **Dialog 컴포넌트를 props로 받고**, 그 안에서 한 번 더 `useDialog`로 실패용 다이얼로그를 띄우는 식으로 가게 됐습니다. “다이얼로그 하나로 열고 닫기”만 담당하려던 훅의 의도와는 다르게, “컨테이너 컴포넌트에 Dialog를 넘겨서 그 안에서 상태와 버튼을 같이 다룬다”는 패턴이 되어 버렸습니다.
+Dialog 템플릿과 내부 콘텐츠의 상태값 스코프를 공유하기 위해, Dialog를 내부 콘텐츠 컴포넌트의 props로 전달해야 하는 상황이 발생했습니다.
 
-즉, **버튼과 내부 컨텐츠 상태를 한곳에서 다루기 쉽게** 만들어 주지 못한 것이 두 번째 다이얼로그의 한계였습니다.
+즉, 훅을 호출하는 영역과 실제로 관리되는 영역이 분리되는 문제가 생겼고, 결국 두 번째 다이얼로그 구조도 폐기하게 되었습니다…
+
+<br>
+<br>
+<br>
+<br>
+
+# 세 번째 다이얼로그 — useOverlay + shadcn 조합 패턴
+
+더 이상의 마이그레이션은 없다. 여기서 끝낸다 라는 다짐과 함께 세 번째 다이얼로그를 제작하게 되었습니다.
+
+두 번의 시행착오를 겪으면서, 다이얼로그를 직접 구현하기보다는 이미 잘 만들어진 라이브러리를 사내 서비스에 맞게 커스터마이징하는 편이 더 완성도 높은 컴포넌트를 만드는 방법이라고 판단했습니다.
+
+여러 라이브러리를 검토한 끝에, [토스(Toss) 라이브러리의 useOverlay 훅](https://www.slash.page/ko/libraries/react/use-overlay/src/useOverlay.i18n)과 [shadcn에서 제공하는 다이얼로그 컴포넌트](https://ui.shadcn.com/docs/components/radix/dialog)를 활용해 다이얼로그를 재설계했습니다.
 
 <br>
 <br>
 <br>
 
-# 세 번째 다이얼로그 — useOverlay + shadcn
 
-위 한계를 해결하기 위해 **토스(toss) 라이브러리의 useOverlay 훅**과 **shadcn에서 제공하는 다이얼로그 컴포넌트**를 조합해 다시 설계했습니다.
+## 구현 과정
+
+<br><br>
+
+
+### 1. shadcn 다이얼로그
+
+shadcn은 다이얼로그 UI 컴포넌트를 제공합니다. 기존에는 다이얼로그를 직접 구현해 두었는데, 이번에는 shadcn 다이얼로그를 가져와 커스터마이징해 UI를 구성하기로 했습니다. 라이브러리의 상태 관리 로직을 활용하면 직접 구현·유지보수할 부담을 줄일 수 있기 때문입니다.
+
+공식 문서의 사용 예시는 아래와 같습니다. 
+
+```ts
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Field, FieldGroup } from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+
+export function DialogDemo() {
+  return (
+    <Dialog>
+      <form>
+      // 다이얼로그 트리거 컴포넌트
+        <DialogTrigger asChild>
+          <Button variant="outline">Open Dialog</Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Edit profile</DialogTitle>
+            <DialogDescription>
+              Make changes to your profile here. Click save when you&apos;re
+              done.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DialogClose>
+            <Button type="submit">Save changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </form>
+    </Dialog>
+  )
+}
+
+```
+
+<br>
+
+컴파운드 컴포넌트 패턴으로 다이얼로그 구조를 잡고, `DialogTrigger`로 열기까지 라이브러리가 처리해 주어 그대로 가져다 쓰기 편합니다. 다만 위 예시는 **비제어(Uncontrolled)** 방식입니다. `DialogTrigger`에 의해 내부에서 열림/닫힘이 관리되므로, 부모에서 `open` 상태를 제어하지 않습니다.
+
+저희 서비스에서는 다이얼로그를 **제어 컴포넌트(Controlled)** 형태로 쓰는 편이 더 맞다고 판단했습니다. 토스에서 제공하는 useOverlay 훅을 사용할 예정이었기 때문입니다. 이에 shadcn 다이얼로그가 Radix UI 기반이라는 점을 확인했고, [Radix 공식 문서](https://www.radix-ui.com/primitives/docs/components/dialog#examples)에서 제어 방식 사용 예시를 찾았습니다.
+
+```ts
+import * as React from "react";
+import { Dialog } from "radix-ui";
+
+const wait = () => new Promise((resolve) => setTimeout(resolve, 1000));
+
+export default () => {
+	const [open, setOpen] = React.useState(false);
+
+	return (
+		<Dialog.Root open={open} onOpenChange={setOpen}>
+			<Dialog.Trigger>Open</Dialog.Trigger>
+			<Dialog.Portal>
+				<Dialog.Overlay />
+				<Dialog.Content>
+					<form
+						onSubmit={(event) => {
+							wait().then(() => setOpen(false));
+							event.preventDefault();
+						}}
+					>
+						{/** some inputs */}
+						<button type="submit">Submit</button>
+					</form>
+				</Dialog.Content>
+			</Dialog.Portal>
+		</Dialog.Root>
+	);
+};
+
+
+```
+
+<br>
+
+`open`과 `onOpenChange`를 넘기면 state 기반의 제어 컴포넌트 형식으로 사용할 수 있습니다. 이 방식을 참고해, shadcn 다이얼로그를 한 겹 감싼 래퍼 컴포넌트를 만들고 `open` / `onClose`로 노출을 제어하도록 설계했습니다. 구현한 래퍼는 아래와 같습니다.
+
+```tsx
+'use client'
+
+import type { PropsWithChildren } from 'react'
+import {
+  Dialog as DialogComponent,
+  DialogContent,
+  DialogDescription as DialogDescriptionComponent,
+  DialogHeader,
+  DialogTitle as DialogTitleComponent,
+} from '@/src/common/components/_shadcn/dialog'
+import { cn } from '@/src/common/utils/twMerge'
+
+interface DialogProps {
+  open: boolean
+  onClose: () => void
+  className?: string
+}
+
+function Dialog({ open, onClose, className, children }: PropsWithChildren<DialogProps>) {
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      onClose()
+    }
+  }
+  return (
+    // 외부에서 넘겨받은 상태값과 핸들러를 주입
+    <DialogComponent open={open} onOpenChange={handleOpenChange}>
+      <DialogContent
+        className={cn(
+          'w-[calc(100vw-20px)] max-w-[320px] pt-8 bg-elevated-02 max-h-[calc(100vh-116px)] mb-[58px] flex flex-col',
+          className,
+        )}
+        onClick={onClose}
+      >
+        {children}
+      </DialogContent>
+    </DialogComponent>
+  )
+}
+
+// .. 그 외 컴포넌트 조합에 사용될 다이얼로그 ui 블록들
+
+export { Dialog, DialogTitle, DialogButtonFooter, DialogButton, DialogDescription }
+
+```
+
+<br>
+
+이 래퍼와 `DialogTitle`, `DialogDescription` 등 블록들을 조합해 실제로 노출할 다이얼로그 컴포넌트를 만듭니다. 예를 들어 확인 다이얼로그는 아래처럼 사용할 수 있습니다.
+
+```tsx
+export default function ConfirmDialog({ open, close, message }: ConfirmDialogProps) {
+  return (
+    <Dialog open={open} onClose={close}>
+      <DialogTitle />
+      <DialogDescription>
+        <p className="text-center whitespace-pre-line text-base leading-[24px] text-mono-01">{message}</p>
+      </DialogDescription>
+      <DialogButtonFooter>
+        <DialogButton text="확인" onClick={close} />
+      </DialogButtonFooter>
+    </Dialog>
+  )
+}
+```
+<br>
+<br>
+
+
+shadcn 다이얼로그를 쓰면서 얻은 이점이 하나 더 있었습니다. **웹 접근성**입니다.
+
+사내에서는 다이얼로그에 제목(title)이 있는 경우와 없는 경우가 모두 있었습니다. 그래서 제목이 있을 때만 shadcn의 `DialogTitle`을 사용했는데, 개발 중 콘솔에 에러가 찍히는 것을 발견했습니다.
+
+![다이얼로그웹접근성](/image/다이얼로그웹접근성.png)
+
+에러 내용을 보니 Radix 다이얼로그를 쓸 때는 **반드시 `DialogTitle`을 포함**해야 한다는 요구사항이었습니다. 스크린 리더 사용자를 위해 다이얼로그에 제목이 있어야 한다는 Radix 라이브러리의 접근성 설계 때문입니다.
+
+다만 앞서 말한 대로 제목을 노출하지 않는 다이얼로그도 있었습니다. 이 경우 `VisuallyHidden`을 사용해 해결했습니다. `DialogTitle`을 `VisuallyHidden`으로 감싸면 화면에는 보이지 않으면서 스크린 리더에만 읽히도록 할 수 있습니다.
+
+```tsx
+
+// title이 없으면 시각적으로 숨기고 스크린 리더에만 노출
+function DialogTitle({ title, className }: DialogTitleProps) {
+  if (!title) {
+    return (
+      <VisuallyHidden>
+        <DialogTitleComponent className={cn('text-[21px] leading-[25px] font-bold text-mono-01', className)}>
+          Dialog
+        </DialogTitleComponent>
+      </VisuallyHidden>
+    )
+  }
+
+  return (
+    <DialogHeader>
+      <DialogTitleComponent className={cn('text-[21px] leading-[25px] font-bold text-mono-01 pb-7.5', className)}>
+        {title}
+      </DialogTitleComponent>
+    </DialogHeader>
+  )
+}
+
+```
+
+```tsx
+export default function ConfirmDialog({ open, close, message }: ConfirmDialogProps) {
+  return (
+    <Dialog open={open} onClose={close}>
+    // 제목은 없지만 접근성을 위해 DialogTitle은 포함
+      <DialogTitle />
+      <DialogDescription>
+        <p className="text-center whitespace-pre-line text-base leading-[24px] text-mono-01">{message}</p>
+      </DialogDescription>
+      <DialogButtonFooter>
+        <DialogButton text="확인" onClick={close} />
+      </DialogButtonFooter>
+    </Dialog>
+  )
+}
+```
+
+이렇게 제목 유무에 따라 `DialogTitle`을 보이거나 `VisuallyHidden`으로 감싸는 방식으로, 웹 접근성까지 고려한 다이얼로그 컴포넌트를 구성할 수 있었습니다. 
 
 <br>
 <br>
 <br>
 
-설게 목적
-1. 버튼과 내부 컨텐츠값이 공유 가능
-2. 훅 하나만 가져와서 사용가능하도록 편리함
-3. 
 
-## 설계 방향
 
-**1. Promise 기반 open/close**
+### 2. useOverlay 훅 사용
 
-useOverlay 내부 메서드는 모두 Promise를 반환하도록 설계했습니다. 특정 콜백(예: 확인 버튼 클릭)이 실행된 **이후에** 다이얼로그가 열리고 닫히는 순서가 보장되도록 하기 위함입니다.
+다이얼로그 ui를 만들었으니 노출시킬 유틸함수를 만들어야겠지여.
 
-**2. useOverlay 래핑**
-
-사내 프로젝트에서 다이얼로그 노출에 쓰는 라이브러리를 나중에 바꿀 가능성을 고려해, useOverlay를 한 번 감싼 **별도 useDialog 훅**을 두었습니다. 이렇게 하면 사용처는 useDialog만 쓰고, 내부 구현만 교체할 수 있습니다.
+토스 useOverlay 훅을 채택한 이유는 다음과 같습니다. 
 
 <br>
 <br>
+
+#### a. 간단한 사용방법
+
+useOverlay 훅 사용하기 위해선 프로젝트 전역 루트 layout.tsx OverlayProvider로 감싸주기만 하면 됩니다.
+
+```ts
+//layout.tsx
+import { OverlayProvider } from '@toss/use-overlay';
+
+export default function App({ Component, pageProps }: AppProps) {
+  return (
+    <OverlayProvider>
+      <Component {...pageProps} />
+    </OverlayProvider>
+  );
+}
+
+```
+
+<br>
 <br>
 
-## 다이얼로그를 열고 닫는 훅
+
+#### b. Promise와 함께 사용 가능
+
+`useOverlay` 훅은 다이얼로그를 Promise와 함께 쓸 수 있게 해 줍니다. 예를 들어 `overlay.open`을 호출하는 부분을 Promise로 감싸면, 사용자 인터랙션(확인/취소 등) 결과를 비동기적으로 받을 수 있습니다. 그래서 확인 버튼 클릭 같은 **콜백이 실행된 뒤에** 다이얼로그가 닫히는 순서를 보장할 수 있습니다.
+
+아래처럼 Promise 인스턴스를 만들고, 그 안에서 `overlay.open`을 호출하는 방식으로 사용할 수 있습니다.
+
+```ts
+function Home() {
+  const navigate = useNavigate();
+  const overlay = useOverlay();
+
+  const openAlert = () => {
+    return new Promise<boolean>((resolve) => {
+      overlay.open(({ isOpen, close, exit }) => (
+        <Alert
+          title='개인정보 수집에 동의하십니까?'
+          open={isOpen}
+          onButtonClick={() => {
+            resolve(true);
+            close();
+          }}
+          buttonLabel='동의'
+        />
+      ));
+    });
+  };
+
+    const onClickCreateCardButton = async () => {
+    const isAgreed = await openAlert();
+    
+    if (isAgreed) {
+      navigate('/create-card');
+    } else {
+      alert('동의하지 않으면 카드를 만들 수 없습니다.');
+    }
+  };
+
+  return (
+    <Flex>
+      <Text>Home</Text>
+      <Button onClick={onClickCreateCardButton}>
+        카드 신청하기
+      </Button>
+    </Flex>
+  );
+}
+```
+
+<br>
+
+다만 매번 사용하는 쪽에서 Promise로 감싸는 것이 번거로워서, `useOverlay`를 한 번 더 감싼 커스텀 훅을 만들었습니다. 이 훅의 `open`이 Promise를 반환하도록 해 두고, 호출부는 기존처럼 훅을 사용하면 됩니다.
 
 ```ts
 export const useDialog = () => {
@@ -356,134 +718,62 @@ export const useDialog = () => {
   }
 }
 ```
-
-<br>
-<br>
 <br>
 
-## shadcn 기반 다이얼로그 컴포넌트
+사용처
 
-```tsx
-'use client'
+```ts
+ const dialog = useDialog()
 
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
-import type { PropsWithChildren } from 'react'
-import {
-  Dialog as DialogComponent,
-  DialogContent,
-  DialogDescription as DialogDescriptionComponent,
-  DialogHeader,
-  DialogTitle as DialogTitleComponent,
-} from '@/src/common/components/_shadcn/dialog'
-import type { ColorTokenType } from '@/src/common/types/styleType'
-import { cn } from '@/src/common/utils/twMerge'
-
-interface DialogProps {
-  open: boolean
-  onClose: () => void
-  className?: string
-}
-
-function Dialog({ open, onClose, className, children }: PropsWithChildren<DialogProps>) {
-  const handleOpenChange = (open: boolean) => {
-    if (!open) {
-      onClose()
-    }
-  }
-  return (
-    <DialogComponent open={open} onOpenChange={handleOpenChange}>
-      <DialogContent
-        className={cn(
-          'w-[calc(100vw-20px)] max-w-[320px] pt-8 bg-elevated-02 max-h-[calc(100vh-116px)] mb-[58px] flex flex-col',
-          className,
-        )}
-        onClick={onClose}
-      >
-        {children}
-      </DialogContent>
-    </DialogComponent>
-  )
-}
-interface DialogTitleProps {
-  title?: string
-  className?: string
-}
-
-function DialogTitle({ title, className }: DialogTitleProps) {
-  if (!title) {
-    return (
-      <VisuallyHidden>
-        <DialogTitleComponent className={cn('text-[21px] leading-[25px] font-bold text-mono-01', className)}>
-          Dialog
-        </DialogTitleComponent>
-      </VisuallyHidden>
-    )
-  }
-
-  return (
-    <DialogHeader>
-      <DialogTitleComponent className={cn('text-[21px] leading-[25px] font-bold text-mono-01 pb-7.5', className)}>
-        {title}
-      </DialogTitleComponent>
-    </DialogHeader>
-  )
-}
-interface DialogDescriptionProps {
-  className?: string
-}
-
-function DialogDescription({ children, className }: PropsWithChildren<DialogDescriptionProps>) {
-  return (
-    <DialogDescriptionComponent asChild className={cn('px-7.5 mb-8 overflow-y-auto scrollbar-hide', className)}>
-      <div>{children}</div>
-    </DialogDescriptionComponent>
-  )
-}
-
-interface DialogButtonFooterProps {
-  className?: string
-}
-
-function DialogButtonFooter({ children, className }: PropsWithChildren<DialogButtonFooterProps>) {
-  return (
-    <div className={cn('flex flex-row border-t border-bright-01 [&>button:first-child]:border-l-0', className)}>
-      {children}
-    </div>
-  )
-}
-interface DialogButtonProps {
-  text: string
-  color?: `text-${ColorTokenType}`
-  onClick: () => void
-  className?: string
-}
-function DialogButton({ text, color, onClick, className }: DialogButtonProps) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        'flex-1 h-[56px] px-4 text-center text-[16px] border-l border-bright-01  leading-[20px] break-keep whitespace-pre-line',
-        color || 'text-mono-01',
-        className,
-      )}
-    >
-      {text}
-    </button>
-  )
-}
-
-export { Dialog, DialogTitle, DialogButtonFooter, DialogButton, DialogDescription }
-
+    dialog.open(({ isOpen, close }) => (
+      <ConfirmDialog
+        open={isOpen}
+        close={close}
+        message={'다이얼로그 메시지'}
+      />
 ```
 
 <br>
 <br>
-<br>
 
-## 예시 다이얼로그 컴포넌트
 
-```tsx
+c. 선언적 UI 관리
+
+`useDialog`는 **다이얼로그를 띄우는 시점과 방법**만 담당하고, 각 다이얼로그 컴포넌트는 **어떤 내용을 보여줄지**만 담당합니다. 사용하는 쪽에서는 "이 다이얼로그를 열어라"라고 선언만 해 주면 되고, 열림 상태를 직접 state로 들고 있을 필요가 없습니다. 역할이 나뉘어 있어 선언적으로 구현하기 좋습니다.
+
+호출부에서는 아래처럼 훅으로 열기만 하고, `isOpen`·`close`는 훅이 넘겨 줍니다.
+
+```ts
+// 훅은 띄우는 역할만 담당
+ const dialog = useDialog()
+
+// 열기와 함께 isOpen, close만 전달
+    dialog.open(({ isOpen, close }) => (
+      <ConfirmDialog
+        open={isOpen}
+        close={close}
+        message={'다이얼로그 메시지'}
+      />
+```
+
+
+```ts
+'use client'
+
+import {
+  Dialog,
+  DialogButton,
+  DialogButtonFooter,
+  DialogDescription,
+  DialogTitle,
+} from '@/src/common/components/dialog/DialogComponents'
+
+interface ConfirmDialogProps {
+  open: boolean
+  close: () => void
+  message: string
+}
+// 내부 콘텐츠와 UI는 다이얼로그 컴포넌트만 담당
 export default function ConfirmDialog({ open, close, message }: ConfirmDialogProps) {
   return (
     <Dialog open={open} onClose={close}>
@@ -497,199 +787,64 @@ export default function ConfirmDialog({ open, close, message }: ConfirmDialogPro
     </Dialog>
   )
 }
+
 ```
-
-<br>
-<br>
 <br>
 
-## 사용처
-
-```tsx
-const dialog = useDialog()
-
-const openAdultAuthErrorDialog = () => {
-  dialog.open(({ isOpen, close }) => (
-    <ConfirmDialog open={isOpen} close={close} message={ERROR_MESSAGES.COUPON_ADULT_AUTH_FAIL} />
-  ))
-}
-```
-
-다이얼로그를 두 개 이상 띄워야 하는 경우에는 **useDialog 훅을 필요한 만큼 호출**하면 됩니다. 각 인스턴스가 독립적으로 열고 닫기를 담당하므로, Recoil처럼 key를 늘리거나 하나의 훅으로 여러 모달을 관리할 필요가 없어 사용성이 좋아졌습니다
-혹은 다이얼로그 내부에서 **useDialog 훅을** 호출하는 방법도 가능합니다.
+그래서 한 페이지에서 여러 종류의 다이얼로그를 띄우는 경우에도 `useDialog`는 한 번만 호출하면 됩니다. 같은 `dialog` 인스턴스로 `dialog.open(...)`에 넘기는 컴포넌트만 바꿔 가며 서로 다른 다이얼로그를 열 수 있습니다.
 
 ```ts
-export default function DetailReviewWriteButton({ pid }: DetailReviewWriteButtonProps) {
-  const reviewWriteDialog = useDialog()
+// 훅은 한 번만 호출
+ const dialog = useDialog()
 
-  const handleReviewWriteOpen = () => {
-    reviewWriteDialog.open(({ isOpen, close }) => <DetailReviewWriteBox open={isOpen} close={close} pid={pid} />)
+// 다이얼로그별로 열기 핸들러만 나누어 구현
+  const openGiftFreeCouponDialog = () => {
+    dialog.open(({ isOpen, close }) => <GiftCouponDialog open={isOpen} close={close} content={content} />)
   }
-  const { login } = useAuthRouter()
-  const { isLogin } = useSession()
 
-  return (
-    <Flex
-      direction="row"
-      justify="center"
-      className={cn('wrap-button')}
-      style={{ '--z-detail-review-write-button': zDetailReviewWriteButton }}
-    >
-      <Button
-        variant="solid"
-        size="large"
-        color="blue-01"
-        onClick={() => {
-          if (!isLogin) {
-            login()
-            return
-          }
-          //TODO: 자사무협 기등록된 리뷰 존재하는 경우 안내팝업 로직 추가 필요 (https://jira.mrblue.com/browse/CBQA-393)
-          handleReviewWriteOpen()
-        }}
-        width="100%"
-      >
-        리뷰 작성하기
-      </Button>
-    </Flex>
-  )
-}
+  const openGiftFreeCouponErrorDialog = () => {
+    dialog.open(({ isOpen, close }) => <GiftCouponErrorDialog open={isOpen} close={close} />)
+  }
 
-```
-
-```ts
-
-export default function DetailReviewWriteBox({ open, close, pid }: DetailReviewWriteBoxProps) {
-  const failDialog = useDialog()
-  const [comment, setComment] = useState('')
-  const [rating, setRating] = useState(5)
-  const { showToast } = useToast()
-  const queryClient = useQueryClient()
-  const { mutate } = usePostReviewsMutation()
-  const openFailDialog = (message: string) => {
-    failDialog.open(({ isOpen, close: closeFailDialog }) => (
-      <ConfirmDialog open={isOpen} close={closeFailDialog} message={message} />
+  const openAdultAuthErrorDialog = () => {
+    dialog.open(({ isOpen, close }) => (
+      <ConfirmDialog open={isOpen} close={close} message={ERROR_MESSAGES.COUPON_ADULT_AUTH_FAIL} />
     ))
   }
 
-  const handleSubmit = () => {
-    mutate(
-      {
-        reviewType: 'CONTENT',
-        subdir: pid,
-        comment,
-        rating,
-      },
-      {
-        onSuccess: () => {
-          showToast({ message: REVIEW_TOAST_MESSAGE.write[200], type: 'basic' })
-          queryClient.invalidateQueries({ queryKey: [DETAIL_REVIEW_LIST_KEY] })
-          close()
-        },
-        onError: (error) => {
-          if (!(error instanceof CustomError)) return
-
-          const isRateLimited = error.code === ERROR_CODE.연속_리뷰_작성_제한 || error.status === 429
-
-          if (isRateLimited) {
-            openFailDialog(REVIEW_TOAST_MESSAGE.write[ERROR_CODE.연속_리뷰_작성_제한])
-            return
-          }
-
-          openFailDialog(REVIEW_TOAST_MESSAGE.wait)
-        },
-      },
-    )
-  }
-
-  useEffect(() => {
-    return () => {
-      setComment('')
-      setRating(5)
-    }
-  }, [])
-
-  return (
-    <Dialog open={open} onClose={close}>
-      <DialogTitle />
-      <DialogDescription className={cn('dialog-content')}>
-        <Flex direction="column" gap={10}>
-          <Stars
-            onClick={(point) => {
-              setRating(point)
-            }}
-            point={rating}
-            size={32}
-          />
-          <Typography.Body2 ta="center" c="mono-03">
-            {GRADE_TEXT[rating - 1]}
-          </Typography.Body2>
-        </Flex>
-
-        <textarea
-          name="content"
-          value={comment}
-          onChange={(e) => {
-            if (e.target.value.length > 300) {
-              e.target.value = e.target.value.slice(0, 300)
-            }
-            setComment(e.target.value)
-          }}
-          className={cn('textarea')}
-          placeholder="감상평 또는 작가님에게 보내는 응원 메시지를 남겨주세요. (선택)"
-        ></textarea>
-        <Flex direction="row" gap={4} justify="flex-end">
-          <Typography.Body5>{comment.length}</Typography.Body5>
-          <Typography.Body5 c="grey-06">/ 300</Typography.Body5>
-        </Flex>
-      </DialogDescription>
-      <DialogButtonFooter>
-        <DialogButton text="취소" onClick={close} />
-        <DialogButton text="등록" color="text-blue-01" onClick={handleSubmit} />
-      </DialogButtonFooter>
-    </Dialog>
-  )
-}
-
 ```
 
-<br>
-<br>
-<br>
-
-## 개선 효과
-
-- **웹 접근성**: shadcn 다이얼로그의 접근성(포커스 트랩, 역할·라벨 등)을 그대로 활용할 수 있습니다. 다이얼로그 노출 시 body에 `overflow: hidden`이 적용되어 스크롤이 배경으로 나가지 않아 UX도 개선됩니다.
-- **페이지 이동 시 자동으로 닫힘**: 전역 상태가 아니므로 라우트가 바뀌면 오버레이가 unmount 되면서 다이얼로그도 함께 사라집니다. 뒤로 가기 시 다이얼로그가 남는 문제가 사라졌습니다.
-- **버튼과 내부 상태를 한 스코프에서 사용**: 다이얼로그 UI(제목, 설명, 버튼)와 그 안의 상태(입력값, API 결과 등)를 **같은 컴포넌트**에서 다룹니다. ConfirmDialog처럼 `open`, `close`만 받는 단순 다이얼로그는 물론, 리뷰 작성처럼 내부에 `comment`, `rating` 상태가 있어도 해당 컴포넌트 안에서 버튼 onClick과 상태를 함께 다룰 수 있습니다.
-- **Recoil key 추가 불필요**: 새 화면·새 플로우에서 다이얼로그를 쓸 때 전역 atom에 key를 추가할 필요가 없습니다.
-- **관심사 분리**: useDialog는 "다이얼로그를 띄울지 말지, 언제 닫을지"만 담당하고, **다이얼로그 내부 상태는 알 필요가 없습니다**. 열기/닫기 로직과 다이얼로그 컨텐츠 상태가 분리되어 구조가 명확해졌습니다.
-
-- 토스 라이브러리 동작원리 추가하면 좋음
 
 <br>
 <br>
 <br>
 
-# 정리
 
-- **첫 번째(Recoil)**: 전역 상태라 관리 포인트가 늘고, 페이지 이동 시 다이얼로그가 닫히지 않는 문제가 있었습니다.
-- **두 번째(useDialog)**: 컴포넌트 단위로 열고 닫을 수 있어서 전역 상태 문제는 줄었지만, 버튼 콜백과 다이얼로그 내부 상태가 분리되어 있어서, 상태와 버튼을 같이 써야 하는 경우 컴포넌트 구조가 복잡해지고 의도와 다르게 사용하게 됐습니다.
 
-- **세 번째(useOverlay + shadcn)**: useOverlay를 Promise 기반 useDialog로 한 번 감싼 뒤, shadcn Dialog로 UI를 구성했습니다. 다이얼로그당 useDialog 인스턴스를 두어 열기/닫기만 담당하게 하고, 내부 상태는 각 다이얼로그 컴포넌트에서만 다루도록 해 접근성·UX·상태 공유·관심사 분리 측면에서 만족스러운 형태로 정리했습니다.
+# 마무리
+
+위와 같은 시행착오를 거쳐 최종적으로 현재 형태의 다이얼로그로 정리했습니다. 완성된 다이얼로그 노출 예시는 아래와 같습니다.
+
+![다이얼로그노출예시](/image/다이얼로그노출예시.gif)
 
 <br>
 <br>
+
+
+세 번째 버전인 **shadcn + useOverlay** 기반 다이얼로그의 장점을 정리하면 다음과 같습니다.
+
+| 구분 | 설명 |
+|------|------|
+| **웹 접근성** | shadcn 다이얼로그가 제공하는 접근성(포커스 트랩, 역할·라벨 등)을 그대로 활용할 수 있습니다. 노출 시 `body`에 `overflow: hidden`이 적용되어 배경 스크롤이 막혀 UX도 개선됩니다. |
+| **페이지 이동 시 자동 닫힘** | 전역 상태가 아니어서 라우트가 바뀌면 오버레이가 unmount 되며 다이얼로그도 함께 사라집니다. 뒤로 가기 시 다이얼로그가 남던 문제가 해소되었습니다. |
+| **버튼 핸들러와 내부 상태값이 동일한 스코프 공유** | 다이얼로그 UI(제목, 설명, 버튼)와 그 안의 상태(입력값, API 결과 등)를 **같은 컴포넌트**에서 다룹니다. 로컬 상태는 해당 컴포넌트에서 관리하거나, 외부 API 응답은 props로 넘겨 받아 사용할 수 있습니다. |
+| **key 추가 불필요** | 새 화면·새 플로우에서 다이얼로그를 쓸 때 전역 key를 추가하는 등 별도 작업이 필요 없습니다. |
+| **관심사 분리** | `useDialog`는 “띄울지 말지, 언제 닫을지”만 담당하고 다이얼로그 내부 상태는 알 필요가 없습니다. 열기/닫기 로직과 다이얼로그 콘텐츠·상태가 분리되어 구조가 명확해졌습니다. |
+
+
+<br>
 <br>
 
-<details>
 
-<summary>참고문헌</summary>
 
-<div markdown="1">
-
-(사내 프로젝트 경험 정리)
-
-</div>
-
-</details>
+차후 useOverlay 훅, shadcn dialog 컴포넌트를 딥다이브하고 해당 내용도 공유하는 포스팅을 올려볼 예정입니다. 
