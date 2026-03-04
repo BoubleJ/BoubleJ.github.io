@@ -12,9 +12,10 @@ export default function PostItem({
   link,
   index = 0,
 }: PostItemProps) {
+  const normalizedLink = link.trim().replace(/\s+/g, "-");
   return (
     <Link
-      to={link}
+      to={normalizedLink}
       className={styles.postItemWrapper}
       style={{
         animationDelay: `${index * 0.1}s`,

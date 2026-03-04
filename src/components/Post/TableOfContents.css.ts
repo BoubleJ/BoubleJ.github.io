@@ -1,12 +1,11 @@
-import { style } from "@vanilla-extract/css";
+import { globalStyle, style } from "@vanilla-extract/css";
 
 export const tocWrapper = style({
   position: "sticky",
   top: "140px",
-  maxHeight: "calc(100vh - 160px)",
-  overflowY: "auto",
   padding: "16px 14px",
   marginTop: "100px",
+  minWidth: "260px",
   borderRadius: "12px",
   backgroundColor: "var(--color-codeBg, #f6f8fa)",
   border: "1px solid var(--color-border, #e1e4e8)",
@@ -29,10 +28,33 @@ export const tocTitle = style({
   borderBottom: "1px solid var(--color-border, #e1e4e8)",
 });
 
+export const tocScrollArea = style({
+  maxHeight: "400px",
+  overflowY: "auto",
+});
+
 export const tocList = style({
   listStyle: "none",
   margin: 0,
   padding: 0,
+});
+
+globalStyle(`${tocList} ul`, {
+  listStyle: "none",
+  margin: 0,
+  padding: 0,
+});
+
+globalStyle(`${tocList} > ul > li a`, {
+  paddingLeft: "8px",
+});
+
+globalStyle(`${tocList} > ul > li > ul li a`, {
+  paddingLeft: "20px",
+});
+
+globalStyle(`${tocList} > ul > li > ul > li > ul li a`, {
+  paddingLeft: "32px",
 });
 
 export const tocItem = style({
@@ -56,17 +78,14 @@ export const tocItemLevel1 = style({
 
 export const tocItemLevel2 = style({
   paddingLeft: "12px",
-  borderLeft: "2px solid transparent",
 });
 
 export const tocItemLevel3 = style({
   paddingLeft: "24px",
-  borderLeft: "2px solid var(--color-border, #e1e4e8)",
 });
 
 export const tocItemLevel4 = style({
   paddingLeft: "36px",
-  borderLeft: "2px solid var(--color-border, #e1e4e8)",
 });
 
 export const tocLink = style({
@@ -89,4 +108,10 @@ export const tocLink = style({
     outline: "2px solid var(--color-primary, #0969da)",
     outlineOffset: "2px",
   },
+});
+
+export const tocLinkActive = style({
+  color: "var(--color-primary, #0969da)",
+  backgroundColor: "var(--color-buttonHoverBg, rgba(9,105,218,0.06))",
+  fontWeight: 600,
 });
