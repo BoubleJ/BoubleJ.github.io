@@ -1,5 +1,4 @@
 import { graphql } from "gatsby";
-import { useRef } from "react";
 import CommentWidget from "@/components/Post/CommentWidget";
 import PostContent from "@/components/Post/PostContent";
 import PostHead from "@/components/Post/PostHead";
@@ -26,6 +25,7 @@ export type PostPageItemType = {
   node: {
     html?: string;
     body?: string;
+    tableOfContents?: string | null;
     fields?: {
       readingTime?: {
         text: string;
@@ -49,12 +49,11 @@ export default function PostTemplate({
     node: {
       html,
       body,
+      tableOfContents,
       fields,
       frontmatter: { title, summary, date, categories, thumbnail },
     },
   } = edges[0];
-
-  const contentRef = useRef<HTMLDivElement>(null);
 
   return (
     <Template title={title} description={summary} url={href} image={thumbnail}>
@@ -67,10 +66,10 @@ export default function PostTemplate({
       />
       <div className={styles.postBody}>
         <div className={styles.postBodyContent}>
-          <PostContent ref={contentRef} html={html} body={body} />
+          <PostContent html={html} body={body} />
         </div>
         <aside className={styles.postBodyToc}>
-          <TableOfContents contentRef={contentRef} />
+          <TableOfContents tocHtml={tableOfContents} />
         </aside>
       </div>
       <CommentWidget />
@@ -84,6 +83,7 @@ export const queryMarkdownDataBySlug = graphql`
       edges {
         node {
           html
+          tableOfContents(maxDepth: 3)
           fields {
             readingTime {
               text

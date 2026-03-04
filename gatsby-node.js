@@ -39,7 +39,8 @@ exports.onCreateNode = ({ node, getNode, actions }) => {
   const { createNodeField } = actions;
 
   if (node.internal.type === `MarkdownRemark` || node.internal.type === `Mdx`) {
-    const slug = createFilePath({ node, getNode });
+    const rawSlug = createFilePath({ node, getNode });
+    const slug = rawSlug.trim().replace(/\s+/g, "-");
     createNodeField({ node, name: "slug", value: slug });
 
     // 읽기 시간 계산: MarkdownRemark는 부모 File에서 원문 읽기, Mdx는 rawBody 사용

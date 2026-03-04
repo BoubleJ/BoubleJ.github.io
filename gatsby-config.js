@@ -119,6 +119,16 @@ module.exports = {
               rel: "nofollow",
             },
           },
+          {
+            resolve: "gatsby-remark-autolink-headers",
+            options: {
+              icon: true,
+              className: "autolink-header",
+              offsetY: 80,
+              maintainCase: false,
+              removeAccents: true,
+            },
+          },
         ],
       },
     },
@@ -163,6 +173,16 @@ module.exports = {
                 code: "markdown-code",
                 pre: "markdown-pre",
               },
+            },
+          },
+          {
+            resolve: "gatsby-remark-autolink-headers",
+            options: {
+              icon: true,
+              className: "autolink-header",
+              offsetY: 80,
+              maintainCase: false,
+              removeAccents: true,
             },
           },
         ],

@@ -23,3 +23,12 @@ globalStyle("a:hover", {
   color: vars.color.linkHover,
   cursor: "pointer",
 });
+
+globalStyle(".autolink-header", {
+  opacity: 0,
+  transition: "opacity 0.15s ease",
+});
+
+globalStyle("h1:hover .autolink-header, h2:hover .autolink-header, h3:hover .autolink-header, .autolink-header:focus-visible", {
+  opacity: 1,
+});
