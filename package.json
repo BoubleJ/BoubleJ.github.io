@@ -40,7 +40,7 @@
     "gatsby-remark-prismjs": "^7.15.0",
     "gatsby-remark-smartypants": "^6.15.0",
     "gatsby-source-filesystem": "^5.15.0",
-    "gatsby-transformer-remark": "^6.15.0",
+    "gatsby-transformer-remark": "^6.16.0",
     "gatsby-transformer-sharp": "^5.15.0",
     "prism-themes": "^1.9.0",
     "prismjs": "^1.30.0",
