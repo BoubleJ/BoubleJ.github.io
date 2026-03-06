@@ -26,6 +26,9 @@ export const tocTitle = style({
   marginBottom: "14px",
   paddingBottom: "10px",
   borderBottom: "1px solid var(--color-border, #e1e4e8)",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
 });
 
 export const tocScrollArea = style({
@@ -45,6 +48,12 @@ globalStyle(`${tocList} ul`, {
   padding: 0,
 });
 
+globalStyle(`${tocList} a`, {
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+});
+
 globalStyle(`${tocList} > ul > li a`, {
   paddingLeft: "8px",
 });
@@ -55,37 +64,6 @@ globalStyle(`${tocList} > ul > li > ul li a`, {
 
 globalStyle(`${tocList} > ul > li > ul > li > ul li a`, {
   paddingLeft: "32px",
-});
-
-export const tocItem = style({
-  marginBottom: "2px",
-  selectors: {
-    "&:last-child": {
-      marginBottom: 0,
-    },
-  },
-});
-
-export const tocItemLevel1 = style({
-  paddingLeft: 0,
-  marginTop: "10px",
-  selectors: {
-    "&:first-child": {
-      marginTop: 0,
-    },
-  },
-});
-
-export const tocItemLevel2 = style({
-  paddingLeft: "12px",
-});
-
-export const tocItemLevel3 = style({
-  paddingLeft: "24px",
-});
-
-export const tocItemLevel4 = style({
-  paddingLeft: "36px",
 });
 
 export const tocLink = style({
