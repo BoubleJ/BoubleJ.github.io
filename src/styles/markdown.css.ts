@@ -10,16 +10,16 @@ globalStyle(".markdown-content h1, .markdown-h1", {
 });
 
 globalStyle(".markdown-content h2, .markdown-h2", {
-  marginTop: "20px",
-  marginBottom: "10px",
+  marginTop: "40px",
+  marginBottom: "20px",
   fontSize: "1.5em",
   fontWeight: "bold",
   color: vars.color.text,
 });
 
 globalStyle(".markdown-content h3, .markdown-h3", {
-  marginTop: "10px",
-  marginBottom: "5px",
+  marginTop: "20px",
+  marginBottom: "10px",
   fontSize: "1.25em",
   fontWeight: "bold",
   color: vars.color.text,
