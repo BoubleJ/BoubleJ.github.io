@@ -1,48 +1,66 @@
 ﻿---
 date: "2026-03-05"
-title: "로깅과 비즈니스 로직 분리 작업 (React Children API)"
+title: "로깅과 비즈니스 로직 분리를 통한 선언적 컴포넌트 관리"
 categories: ["React"]
-summary: "GaEventTag 컴포넌트로 로깅을 선언적으로 분리하고, 비즈니스 컴포넌트의 책임을 정리한 리팩토링 사례를 공유합니다."
+summary: "비즈니스 로직과 혼재되어있던 로깅 로직을 분리해 선언적으로 관리한 경험을 공유합니다."
 thumbnail: "/thumbnail/리액트.png"
 ---
 
-# 로깅은 감싸고, 비즈니스는 남긴다
+사내 마케팅팀은 Google Analytics(GA) 를 활용해 앱의 방문자 트래픽과 사용자 행동을 분석하고 있습니다. 이를 위해 프론트엔드에서는 마케팅팀이 GA 로그를 활용할 수 있도록, 사용자 행동에 대한 로깅 로직을 적절한 위치에 구현해주어야 합니다.
 
-서비스가 커질수록 로깅은 점점 정교해집니다. 문제는 그 정교함이 종종 비즈니스 컴포넌트의 인터페이스를 오염시킨다는 점입니다. 이번 글은 `TabMenu`에 섞여 있던 GA 로깅 책임을 `GaEventTag`로 분리해, 컴포넌트 경계를 다시 세운 리팩토링 사례를 정리한 글입니다.
+이번 글은 비즈니스 로직과 혼재되어있던 GA 로깅을 분리해, 선언적으로 로깅을 관리하도록 리팩토링한 과정을 소개해보겠습니다.
 
-## 1. 발단: 왜 이 리팩토링이 필요했나
 
-처음에는 탭 UI에 필요한 데이터와 상태만 전달하면 충분했습니다. 하지만 GA 이벤트 요구사항이 늘어나면서 `TabMenu`는 UI 컴포넌트이면서 동시에 로깅 설정 컴포넌트가 되었습니다.
+# 기존 코드
 
-```tsx
-<HeadingBox
-  id={id}
-  title="무료쿠폰으로 볼 수 있는 작품"
-  link={landingLinks[freeCouponIdx] ?? landingLinks[0]}
-  className={className}
->
+먼저 기존 방식을 살펴보려고 해요. 다음은 더보기 혹은 탭 버튼을 클릭했을 때 GA 이벤트가 기록되도록 구현된 코드입니다.
+
+```ts
+ <HeadingBox
+      id={id}
+      title="관심 장르 주간 랭킹"
+      link={link ?? ''}
+      className={className}
+      gapage="mainPage"
+      gasection="recomContent"
+      gatags={['관심장르주간랭킹', '더보기']}
+     >
   <TabMenu
     data={data}
     state={freeCouponState}
     id={id}
     gaEventKey="mainPage"
     gaEventSubKey="recomContent"
-    gaFnArgs={['무료쿠폰으로볼수있는작품', item]}
+    gaFnArgs={['관심장르주간랭킹', '']}  // 두번째 값은 TabList onclick에서 조작
   />
 </HeadingBox>
+
 ```
 
-이 구조의 본질적인 문제는 다음과 같았습니다.
+유저가 더보기 혹은 탭을 클릭했을 때  GA 이벤트가 로깅되도록 구현한 코드입니다. 이 코드는 다음과 같은 문제점들이 있어요. 
 
-- 비즈니스 props와 로깅 props가 한 컴포넌트 인터페이스에 섞임
-- 로깅 요구사항 변경이 `TabMenu` 타입/제네릭 변경으로 전파됨
-- 기능 수정 없이도 리뷰 범위가 넓어지고, 협업 충돌 가능성이 증가함
+## 문제점
 
-즉, 컴포넌트가 “화면 상태를 제어하는 책임”과 “분석 이벤트를 전송하는 책임”을 동시에 지게 된 것이 핵심 병목이었습니다.
+### 1. 비즈니스 props와 로깅 props가 한 컴포넌트 인터페이스에 섞임
 
-## 2. 기존 구조의 한계
+코드를 보면 각 컴포넌트 props 역할이 빠르게 파악되시나요?? 일단 전 전혀 파악되지 않았습니다. 
 
-기능은 정상이었지만 설계 비용이 계속 누적되고 있었습니다.
+개발자가 신경 쓰는 부분은 로깅이 아니라 비지니스 로직일 때가 많은데, 로깅 관련 코드가 함께 섞여 있었기 비즈니스 로직에 대한 가독성이 저하되는 문제점이 있었습니다.
+
+특히 HeadingBox 컴포넌트는 단순한 더보기 버튼일 뿐인데 역할에 비해 너무 많은 props를 넘기고 있습니다. 
+
+해당 패턴은 로직이 복잡해지거나 로깅이 많아질수록 가독성은 점점 떨어질 수 밖에 없습니다. 
+
+
+
+
+### 2. 로깅 props로 인한 복잡한 제네릭 타입이 강제된 컴포넌트 설계
+
+`TabMenu` 컴포넌트는 아래와 같은 탭 UI를 공통으로 사용하기 위해 만든 컴포넌트인데요
+
+![탭스와이퍼](/image/탭스와이퍼.png)
+
+비즈니스 로직뿐아니라 로깅 props도 같이 넘겨줘야했기 때문에 아래와 같이 제네릭으로 설계되어있었어요. 
 
 ```tsx
 interface TabProps<K extends TGTMEventKey, SubK extends TGTMEventSubKey<K>>
@@ -69,17 +87,115 @@ export default function TabMenu<K extends TGTMEventKey, SubK extends TGTMEventSu
 }
 ```
 
-이처럼 컴포넌트 시그니처에 로깅 타입이 결합되면, 비즈니스 변경이 없더라도 제네릭 추론 맥락을 계속 따라가야 합니다. 특히 `K`와 `SubK`의 관계를 유지한 채 props를 확장해야 해서, 리팩토링·리뷰·온보딩 모두에서 인지 비용이 커집니다.
+코드를 보면 한눈에 봐도 다소 복잡해 보입니다. 또한 사용하는 입장에서는 이 제네릭이 어떤 역할을 하는지 먼저 파악해야 하고, 설령 이해했다 하더라도 해당 코드가 비즈니스 로직과 강하게 결합되어 있지는 않은지, 사용했을 때 예상치 못한 사이드 이펙트가 발생하지는 않을지 노심초사하게 됩니다.
 
-- 로깅 스펙이 추가될수록 `TabMenu`의 공개 인터페이스가 비대해짐
-- 로깅 타입 안정성을 위해 제네릭이 늘어나며 진입 장벽이 높아짐
-- 팀 단위 작업에서 단순 UI 변경에도 로깅 파라미터 컨텍스트를 함께 이해해야 함
+심지어 비즈니스 로직은 제네릭과 결합되어있지도 않습니다. 즉 오로지 로깅 props 때문에 강제로 제네릭 컴포넌트로 사용해야하는거죠. 
 
-결국 “사용하기 쉬운 컴포넌트”가 아니라 “실수하기 쉬운 컴포넌트”가 되기 시작했습니다.
 
-## 3. 해결 전략: `GaEventTag` 도입
+## 3. TabMenu 호출부에서 불가능한 로깅
 
-핵심 전략은 단순합니다. 로깅을 props로 밀어 넣지 않고, 래퍼 컴포넌트로 감쌉니다.
+```tsx
+<TabMenu
+    data={data}
+    state={freeCouponState}
+    id={id}
+    gaEventKey="mainPage"
+    gaEventSubKey="recomContent"
+    gaFnArgs={['관심장르주간랭킹', '']}  // 두번째 값은 TabList onclick에서 조작
+  />
+  ```
+
+TabMenu 컴포넌트의 gaFnArgs props에서 두 번째 배열 요소에는 어떤 탭이 선택되었는지에 대한 로깅 정보가 들어가야하는데요.
+
+하지만 탭 UI를 공통 컴포넌트인 TabMenu로 분리해두었기 때문에, TabMenu를 호출하는 쪽에서는 실제로 어떤 탭이 선택되었는지 알 수 없습니다. 결국 두 번째 배열 요소를 비워둔 채 전달할 수밖에 없었고, 결국 해당 의도를 설명하기 위한 주석까지 남게 되는 부가적인 문제도 발생했습니다.
+
+즉 과도한 공통화로 인해 불편함이 생겨버린거죠. 
+
+## 4. 컴포넌트 내부에서 로깅 필요 유무에 따른 불필요한 분기처리
+
+```ts
+
+interface HeadingBoxProps<
+  T extends ElementType,
+  K extends TGTMEventKey,
+  SubK extends TGTMEventSubKey<K>,
+> extends TOptional<IGTMEventProps<K, SubK>> {
+  id: string;
+  title: string | React.ReactNode;
+  children: React.ReactNode;
+  link?: string;
+  headerChildren?: React.ReactNode;
+  className?: string;
+  as?: T;
+  isOnlyAppRouter?: boolean;
+}
+
+export default function HeadingBox<
+  T extends ElementType,
+  K extends TGTMEventKey,
+  SubK extends TGTMEventSubKey<K>,
+>({
+  id,
+  title,
+  children,
+  link,
+  className,
+  as,
+  isOnlyAppRouter,
+  ...rest
+}: HeadingBoxProps<T, K, SubK>) {
+  const renderLink = () => {
+    if (!link) return null;
+
+    if (rest.gaEventKey && rest.gaEventSubKey && rest.gaFnArgs) {
+      return (
+        <CustomLinkWithGaEvent
+          href={link}
+          className={cn(st['link-icon'])}
+          gaEventKey={rest.gaEventKey}
+          gaEventSubKey={rest.gaEventSubKey}
+          gaFnArgs={rest.gaFnArgs}
+          isOnlyAppRouter={isOnlyAppRouter}
+          {...rest}
+        >
+          <Icon type="arrowRight20" pAlt="더보기" />
+        </CustomLinkWithGaEvent>
+      );
+    }
+
+    return (
+      <CustomLink
+        href={link}
+        className={cn(st['link-icon'])}
+        {...rest}
+        isOnlyAppRouter={isOnlyAppRouter}
+      >
+        <Icon type="arrowRight20" pAlt="더보기" />
+      </CustomLink>
+    );
+  };
+
+  return (
+    <section className={cn(st['wrap-heading'], className)} aria-labelledby={id}>
+      <Heading as={as} id={id} title={title}>
+        {renderLink()}
+      </Heading>
+      {children}
+    </section>
+  );
+}
+```
+
+HeadingBox는 단순히 ‘더보기’ 앵커를 렌더링하는 공통 UI 컴포넌트입니다. 하지만 페이지에 따라 로깅이 필요한 경우도 있고 필요하지 않은 경우도 있기 때문에, 이를 대응하기 위해 로깅 관련 props를 전달할지 여부에 따라 컴포넌트 렌더링을 if 문으로 분기 처리해야 하는 불필요한 복잡함이 존재했습니다.
+
+UI 자체는 동일한데 말이죠. 단지 로깅 여부 때문에 렌더링 로직이 달라지는 구조였던 셈입니다.
+
+# 개선 코드
+
+그래서 비즈니스 로직과 로깅 로직을 서로 분리하고, 가독성 좋은, 선언적 코드로 구현할 수 있을까 고민하다 [토스 기술 블로그](https://toss.tech/article/engineering-note-5)에서 저희와 비슷한 고민을 한 흔적을 발견했습니다. 
+
+그리고 저희도 토스의 방법을 차용해서 `GaEventTag` 이라는 컴포넌트를 새로 만들었어요. 
+
 
 ```tsx
 'use client'
@@ -119,107 +235,127 @@ export default function GaEventTag<P extends GTMEventPage, S extends GTMEventSec
 }
 ```
 
-이 컴포넌트의 설계 포인트는 네 가지입니다.
+[React Children API](https://ko.react.dev/reference/react/Children), [cloneElement API](https://ko.react.dev/reference/react/cloneElement)를 활용해 GaEventTag 가 감싸는 컴포넌트가 단일 엘리먼트인지 판단하고 
 
-- `useGTMEvent(page, section)`으로 로깅 컨텍스트를 UI 컴포넌트 밖으로 이동
-- `Children.only`로 단일 인터랙션 대상만 감싼다는 계약을 강제
-- `cloneElement`로 자식의 클릭 시점에 로깅을 선언적으로 주입
-- 기존 `onClick`을 보존해 비즈니스 동작 회귀를 차단
+cloneElement(child, { onClick: handleClick })으로 자식의 props에 onClick을 덮어쓴 새 엘리먼트를 반환합니다. 
 
-### 인터페이스 변화
+실제 사용 시 GaEventTag 컴포넌트는 
 
-- `TabMenu` Before: 비즈니스 데이터 + 로깅 데이터를 함께 받는 복합 인터페이스
-- `TabMenu` After: UI 상태/데이터 중심 인터페이스로 축소
-- `GaEventTag`: `page`, `section`, `tags`, `children(단일 ReactElement)` 계약 담당
-
-관점이 바뀌면 코드가 단순해집니다. 비즈니스 컴포넌트는 “무엇을 렌더링하고 어떤 상태를 바꾸는지”에 집중하고, 로깅은 “어떤 인터랙션을 추적할지”에 집중합니다.
-
-## 4. 적용 중 제약과 구조 재설계
-
-초기 적용은 `TabMenu`를 통째로 감싸는 방식이었습니다.
-
-```tsx
-<GaEventTag page="mainPage" section="recomContent" tags={['관심장르주간랭킹', item]}>
-  <TabMenu
-    data={data}
-    state={freeCouponState}
-    id={id}
-    gaEventKey="mainPage"
-    gaEventSubKey="recomContent"
-    gaFnArgs={['무료쿠폰으로볼수있는작품', item]}
-  />
+```ts
+<GaEventTag page="mainPage" section="recomContent" ...>
+  <button>클릭</button>
 </GaEventTag>
+
 ```
 
-하지만 `GaEventTag`는 `Children.only` 계약을 사용하기 때문에, 다중 자식을 가진 구조를 그대로 감쌀 수 없습니다. 이 제약을 우회하는 대신, 구조를 의도에 맞게 재정의했습니다.
+이렇게 쓰면 child를 복제해서 onClick을 주입하고 실제 렌더링 결과는 다음과 같습니다.
 
-- 탭 반복 렌더링을 `TabMenu` 내부에서 상위로 끌어올림
-- 이벤트 추적 단위를 “컨테이너”가 아니라 “실제 클릭 요소(Button)”로 맞춤
-- 버튼마다 `GaEventTag`를 명시적으로 배치해 선언성을 높임
 
-```tsx
-<HeadingBox
-  id={id}
-  title="관심 장르 주간 랭킹"
-  link={link ?? ''}
-  className={className}
->
-  <div className={cn(LIST_TAB_CLASS)} role="tablist">
-    {tabList.map((item, index) => {
-      const selected = item === selectedTab
-      return (
-        <GaEventTag
-          key={`${item}Tab`}
-          page="mainPage"
-          section="recomContent"
-          tags={['관심장르주간랭킹', item]}
-        >
-          <Button
-            variant={selected ? 'solid-round' : 'outline-round'}
-            size="xsmall"
-            color={selected ? selectedTabColor : 'bright-01'}
-            className={cn(BTN_TAB_CLASS)}
-            onClick={() => setSelectedTab(item)}
-            id={`${id}Tab${index}`}
-            role="tab"
-            aria-selected={selected}
-            aria-controls={panelId}
+```js
+<button onClick={... GA 로깅이 포함되어있음}>클릭</button>
+```
+
+
+
+## GaEventTag 적용
+
+만들어놓은 GaEventTag를 다음과 같이 적용했어요. 
+
+```ts
+ <div className={cn(LIST_TAB_CLASS)} role="tablist">
+        {tabList.map((item, index) => {
+          const selected = item === selectedTab
+          return (
+            <GaEventTag key={`${item}Tab`} page="mainPage" section="recomContent" tags={['관심장르주간랭킹', item]}>
+              <Button
+                variant={selected ? 'solid-round' : 'outline-round'}
+                size="xsmall"
+                color={selected ? selectedTabColor : 'bright-01'}
+                className={cn(BTN_TAB_CLASS)}
+                onClick={() => setSelectedTab(item)}
+                id={`${id}Tab${index}`}
+                role="tab"
+                aria-selected={selected}
+                aria-controls={panelId}
+              >
+                {item}
+              </Button>
+            </GaEventTag>
+          )
+        })}
+      </div>
+```
+
+위 코드는 기존 `TabMenu` 컴포넌트 내부 ` <TabList data={data} state={state} id={id} initialSlide={initialSlide} {...rest} />` 컴포넌트를 밖으로 꺼낸 형태인데요. 이렇게 외부로 노출시킨 이유는 GaEventTag 컴포넌트는 단일 엘리먼트만(Children.only(children)) 감쌀 수 있기 때문입니다.
+
+또한, 앞서 언급했던 TabMenu 호출부에서 발생했던 로깅 문제를 해결하기 위해, GaEventTag를 반복문 내부에서 사용하도록 구조를 수정했습니다. 이를 통해 각 반복문의 item 값을 로깅 정보로 주입할 수 있도록 했습니다.
+
+
+<br>
+
+
+하지만 여기서 또 다른 문제가 발생했는데요. 앞서 설명한 것처럼 GaEventTag의 자식은 반드시 단일 엘리먼트여야 하는데, HeadingBox 컴포넌트는 내부에서 탭 UI를 감싸는 구조였기 때문에 GaEventTag를 적용하기 어려웠습니다.
+
+그런데 구조를 다시 살펴보니, 사실 HeadingBox가 탭 UI를 감싸고 있을 필요는 없더라구요. 그래서 두 컴포넌트를 부모-자식 관계가 아닌 같은 레벨의 컴포넌트로 사용하도록 구조를 수정했습니다.
+
+
+```ts
+<>
+<GaEventTag page="mainPage" section="recomContent" tags={['관심장르주간랭킹', '더보기']}>
+ <HeadingBox
+      id={id}
+      title="관심 장르 주간 랭킹"
+      link={link ?? ''}
+      className={className}
+   />
+</GaEventTag>
+// 탭 ui 반복문...
+<div className={cn(LIST_TAB_CLASS)} role="tablist">
+        {tabList.map((item, index) => {
+          const selected = item === selectedTab
+          return (
           >
-            {item}
-          </Button>
-        </GaEventTag>
-      )
-    })}
-  </div>
-</HeadingBox>
+           <GaEventTag key={`${item}Tab`} page="mainPage" section="recomContent" tags={['관심장르주간랭킹', item]}>
+
+           //.. 나머지 코드
+</>
+```
+## GaEventTag 이점
+
+GaEventTag을 활용하면서 얻은 이점은 다음과 같습니다. 
+
+### 1. UI 컴포넌트에서 불필요한 로깅 props 제거
+
+기존 HeadingBox에 존재하던 gapage, gasection, gatags와 같은 로깅 관련 props를 제거하고, 컴포넌트가 비즈니스 UI와 관련된 props만 관리되도록 수정되었습니다.
+이 과정에서 로깅을 위해 사용되던 불필요한 제네릭 함수들도 함께 제거할 수 있었고, 컴포넌트 내부에 존재하던 if 분기 로직 역시 정리할 수 있었습니다.
+
+### 2. 로깅의 선언적 관리
+
+앞서 설명한 것처럼 비즈니스 UI는 UI 역할만 담당하고, 로깅은 GaEventTag가 담당하도록 책임을 분리했습니다.
+덕분에 로깅을 컴포넌트 외부에서 선언적으로 관리할 수 있게 되었고, 개발자는 더 이상 비즈니스 로직을 수정할 때 로깅까지 함께 고려할 필요가 없어졌습니다.
+
+
+
+## 보완점
+
+비록 기존보다 개선된 코드지만 아직 아쉬운 부분이 존재합니다.
+
+1. 개발자가 실수로 GaEventTag 컴포넌트 자식으로 다수 엘리먼트를 주입한다면 런타임단계에서 에러가 발생합니다. 
+
+문제는 GaEventTag는 자식 엘리먼트를 알 수 없기때문에 컴파일 단계에선 파악이 불가능합니다. 
+
+2. Heading, 탭 ui 내 동일한 로깅 props가 들어가는 케이스가 있습니다. 동일함에도 개발자가 일일히 로깅 props를 추가해줘야해요.
+
+```ts
+// page, section props가 동일함
+<GaEventTag page="mainPage" section="recomContent" tags={['관심장르주간랭킹', '더보기']}>
+ <HeadingBox
+//..
+ <GaEventTag key={`${item}Tab`} page="mainPage" section="recomContent" tags={['관심장르주간랭킹', item]}>
+              <Button
+
 ```
 
-이 변경은 단순한 코드 이동이 아니라, 이벤트의 소유권을 정확히 정렬한 작업이었습니다. “어디서 클릭이 발생하는가”와 “어디서 로깅을 선언하는가”가 동일한 레이어에 놓이면서 코드 해석 비용이 크게 줄었습니다.
+<br>
 
-## 5. 협업/유지보수 관점에서의 효과
-
-숙련된 프론트엔드 협업 관점에서, 이번 분리는 다음 이점을 만들었습니다.
-
-- 로깅 요구사항 변경이 `TabMenu` 인터페이스 변경으로 전파되지 않음
-- 타입 변경 범위가 축소되어 PR 충돌과 리뷰 부하가 감소함
-- 장애 분석 시 UI 동작 문제와 분석 이벤트 문제를 분리해 추적 가능
-- 공통 래퍼 패턴으로 팀 내 로깅 구현 방식이 표준화됨
-
-React 베스트 프랙티스 관점에서도 일관됩니다.
-
-- 컴포지션으로 횡단 관심사를 확장함
-- 단일 책임 원칙을 컴포넌트 경계에 반영함
-- 기존 핸들러를 보존해 확장 시 회귀 가능성을 낮춤
-- 비즈니스 테스트와 로깅 테스트를 분리 가능한 구조를 확보함
-
-## 6. 결론: 실무 원칙 체크리스트
-
-이번 리팩토링에서 얻은 원칙은 명확합니다.
-
-- 로깅을 비즈니스 컴포넌트 props에 계속 누적하지 않는다.
-- 횡단 관심사는 래퍼/훅으로 선언적으로 분리한다.
-- 추적은 컨테이너가 아니라 실제 인터랙션 단위에서 선언한다.
-- `Children.only` 같은 계약은 우회하지 말고, 구조를 재정의해 해결한다.
-
-로깅은 반드시 필요합니다. 다만 로깅 때문에 핵심 UI 컴포넌트가 복잡해지기 시작했다면, 그 시점이 바로 경계를 다시 그어야 할 타이밍입니다.
-
+위 문제점들을 개선하기 위해 더 나은 방안을 강구하는 것이 숙제일 듯 합니다.
