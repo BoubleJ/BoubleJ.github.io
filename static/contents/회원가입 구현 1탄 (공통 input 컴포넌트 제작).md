@@ -1,6 +1,6 @@
 ---
-date: "2025-12-24"
-title: "공통 input 컴포넌트를 만들어보자"
+date: "2026-03-01"
+title: "회원가입 구현 1탄 (공통 input 컴포넌트 제작) (작성중)"
 categories: ["React"]
 summary: "공통 input 컴포넌트를 만들어보자."
 thumbnail: "/thumbnail/vpc.png"

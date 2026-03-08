@@ -1,12 +1,12 @@
 ---
-date: "2025-12-24"
-title: "리액트 쿼리 SWR 패턴 구현"
+date: "2026-03-01"
+title: "회원가입 구현 3탄 (mermaid 기반 개발자도구) (작성중)"
 categories: ["React"]
 summary: "공통 input 컴포넌트를 만들어보자."
 thumbnail: "/thumbnail/vpc.png"
 ---
 
-서스팬스에 getdataquery를 통해 기존 데이터 fallback ui로 노출되도록 수정
+공통 floatinginput 컴포넌트 제작 과정
 
 <details>
 
