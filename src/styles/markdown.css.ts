@@ -62,6 +62,7 @@ globalStyle(".markdown-content a:hover, .markdown-a:hover", {
 globalStyle(".markdown-content img", {
   maxWidth: "100%",
   height: "auto",
+  margin: "12px 0 6px 0",
 });
 
 globalStyle(".markdown-content table", {
@@ -96,6 +97,7 @@ globalStyle(".markdown-code:not([class*='language-'])", {
 // 코드블록 복사 버튼 스타일
 globalStyle(".markdown-content pre[class*='language-'], .markdown-content pre", {
   position: "relative",
+  margin: "28px 0 10px 0",
 });
 
 globalStyle(".markdown-content .code-copy-button", {
