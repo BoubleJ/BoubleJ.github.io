@@ -15,9 +15,11 @@ thumbnail: "/thumbnail/vpc.png"
 
   const { data, isLoading, isError } = useReviewListInfinityQuery(pid)
 
+  if (isLoading) return <Loading />
+
   if (isError) return <Typography.Body1 ta="center">댓글을 불러오는 중 오류가 발생했습니다.</Typography.Body1>
 
-  if (isLoading) return <Loading />
+
 ```
 
 useSuepseQuery를 활용해 적용하기로 했스비다. 
