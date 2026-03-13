@@ -3,7 +3,7 @@ date: "2026-03-01"
 title: "회원가입 구현 2탄 (react-hoook-form 유효성 검증) (작성중)"
 categories: ["React"]
 summary: "공통 input 컴포넌트를 만들어보자."
-thumbnail: "/thumbnail/vpc.png"
+thumbnail: "/thumbnail/리액트훅폼.jpg"
 ---
 
 공통 floatinginput 컴포넌트 제작 과정

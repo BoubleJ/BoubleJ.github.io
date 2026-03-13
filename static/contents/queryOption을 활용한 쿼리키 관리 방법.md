@@ -3,7 +3,7 @@ date: "2026-03-01"
 title: "queryOption을 활용한 쿼리키 관리 방법 (작성중)"
 categories: ["React"]
 summary: "쿼리 팩토리 패턴 구현."
-thumbnail: "/thumbnail/vpc.png"
+thumbnail: "/thumbnail/리액트쿼리.png"
 ---
 
 

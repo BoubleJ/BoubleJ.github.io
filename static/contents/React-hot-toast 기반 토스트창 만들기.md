@@ -22,9 +22,6 @@ function getNewValue({ type, message, duration, component }: ShowToastProps): To
   }
 }
 
-/**
- * @deprecated useToast은 앞으로 사용하지 않을 예정입니다. v2/Toast를 사용해주세요.
- */
 export default function useToast() {
   const [toast, setToast] = useRecoilState(toastState)
 

@@ -3,7 +3,7 @@ date: "2026-03-01"
 title: "타입가드 함수를 활용한 HTTP 상태 코드 기반 에러 핸들링 시스템 구현 (작성중)"
 categories: ["React"]
 summary: "쿼리 팩토리 패턴 구현."
-thumbnail: "/thumbnail/vpc.png"
+thumbnail: "/thumbnail/타입스크립트.jpg"
 ---
 
 

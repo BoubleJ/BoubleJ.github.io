@@ -3,7 +3,7 @@ date: "2026-03-01"
 title: "회원가입 구현 3탄 (mermaid 기반 개발자도구) (작성중)"
 categories: ["React"]
 summary: "공통 input 컴포넌트를 만들어보자."
-thumbnail: "/thumbnail/vpc.png"
+thumbnail: "/thumbnail/머메이드.png"
 ---
 
 공통 floatinginput 컴포넌트 제작 과정

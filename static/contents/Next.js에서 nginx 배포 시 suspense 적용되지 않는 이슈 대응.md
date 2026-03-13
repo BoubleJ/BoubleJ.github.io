@@ -2,8 +2,8 @@
 date: "2026-03-01"
 title: "Next.js에서 nginx 배포 시 suspense 적용되지 않는 이슈 대응 (작성중)"
 categories: ["React"]
-summary: "쿼리 팩토리 패턴 구현."
-thumbnail: "/thumbnail/vpc.png"
+summary: "Next.js에서 nginx 배포 시 suspense 적용되지 않는 이슈 대응"
+thumbnail: "/thumbnail/NEXT.png"
 ---
 
 suspense를 적용해보았는데요
