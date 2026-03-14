@@ -350,20 +350,3 @@ export default async function ReviewQueryHydrator({
 1. SuspenseQuery 훅 서버, 클라이언트 환경 모두 호출되는 문제 해결
 2. prefetch + HydrationBoundary를 활용한 클라이언트 데이터 즉시 렌더링 가능 -> 초기 로딩 속도 개선 및 불필요한 네트워크 요청 감소
 3. 데이터 즉시 렌더링을 통한 사용자 경험 증대
-
-
-<details>
-
-<summary>참고문헌</summary>
-
-<div markdown="1">
-
-https://velog.io/@junhakjh/useSuspenseQuery-%ED%86%BA%EC%95%84%EB%B3%B4%EA%B8%B01-useSuspenseQuery
-
-https://velog.io/@junhakjh/useSuspenseQuery-%ED%86%BA%EC%95%84%EB%B3%B4%EA%B8%B02-useBaseQuery
-
-https://velog.io/@juhyeon1114/AWS-S3%EC%99%80-Cloudfront%EB%A1%9C-%EC%9B%B9%EC%82%AC%EC%9D%B4%ED%8A%B8-%EB%B0%B0%ED%8F%AC
-
-</div>
-
-</details>

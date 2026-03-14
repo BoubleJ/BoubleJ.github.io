@@ -32,7 +32,7 @@ globalStyle(".markdown-content p, .markdown-p", {
 });
 
 globalStyle(".markdown-content blockquote, .markdown-blockquote", {
-  margin: "10px 0px",
+  margin: "20px 0px",
   padding: "15px",
   borderLeft: `3px solid ${vars.color.blockquoteBorder}`,
   backgroundColor: vars.color.blockquoteBg,
