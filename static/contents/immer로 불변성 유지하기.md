@@ -1,7 +1,7 @@
 ---
 date: "2024-02-21"
 title: "immer로 불변성 유지하기"
-categories: ["React"]
+categories: ["React", "immer"]
 summary: "immer로 불변성 유지하기, produce 사용법, 리듀서·함수형 업데이트에 적용."
 thumbnail: "/thumbnail/immer.png"
 ---

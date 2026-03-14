@@ -1,7 +1,7 @@
 ---
 date: "2023-12-07"
 title: "Call Stack(호출 스택)"
-categories: ["Javascript"]
+categories: ["Javascript", "Stack", "Queue"]
 summary: "호출 스택을 알아보기 전 Stack과 Queue를 먼저 알아보자."
 thumbnail: "/thumbnail/자바스크립트.jpeg"
 ---

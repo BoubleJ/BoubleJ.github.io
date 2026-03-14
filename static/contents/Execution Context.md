@@ -1,7 +1,7 @@
 ---
 date: "2024-06-17"
 title: "Execution Context"
-categories: ["Javascript"]
+categories: ["Javascript", "Execution Context", "Scope"]
 summary: "Execution Context(실행 컨텍스트)를 알아봅시다."
 thumbnail: "/thumbnail/실행컨텍스트.png"
 ---

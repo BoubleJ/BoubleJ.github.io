@@ -1,7 +1,7 @@
 ---
 date: "2026-03-01"
 title: "React-hot-toast 기반 토스트창 만들기 (작성중)"
-categories: ["React"]
+categories: ["React", "React-hot-toast"]
 summary: "React-hot-toast 기반 토스트창 만들기."
 thumbnail: "/thumbnail/React-hot-toast.png"
 ---

@@ -1,7 +1,7 @@
 ---
 date: "2024-02-07"
 title: "CRA와 Vite"
-categories: ["React"]
+categories: ["React", "CRA", "Vite"]
 summary: "CRA와 Vite 비교, HMR·eject·Native ESM, Vite가 빠른 이유."
 thumbnail: "/thumbnail/CRA와VITE.png"
 ---

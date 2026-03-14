@@ -1,7 +1,7 @@
 ---
 date: "2025-03-05"
 title: "Colorzilla Extension에 의한 Next.js 15 hydration 에러"
-categories: ["Next.js"]
+categories: ["Next.js", "Colorzilla"]
 summary: "크롬 익스텐션인 Colorzilla 때문에 에러도 발생하네요."
 thumbnail: "/thumbnail/하이드레이션에러.png"
 ---

@@ -1,7 +1,7 @@
 ---
 date: "2024-01-31"
 title: "console이란"
-categories: ["React"]
+categories: ["React", "console"]
 summary: "브라우저와 Node.js의 console 객체, level별 함수(log, info, warn, error), table·dir·time·count·trace 사용법."
 thumbnail: "/thumbnail/자바스크립트.jpeg"
 ---
