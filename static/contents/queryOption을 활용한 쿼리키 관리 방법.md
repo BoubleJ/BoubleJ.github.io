@@ -1,7 +1,7 @@
 ---
 date: "2026-03-01"
 title: "queryOption을 활용한 쿼리키 관리 방법"
-categories: ["React", "TanStack-Query", "Query-Key", "QueryOption"]
+categories: ["React", "TanStack-Query", "Query-Key", "QueryOption", "Factory-Pattern"]
 summary: "Tanstack-Query의 쿼리 키를 효율적으로 관리하기 위한 인사이트를 공유합니다."
 thumbnail: "/thumbnail/리액트쿼리.png"
 ---
@@ -70,13 +70,13 @@ Query Keys를 제대로 관리하지 않으면 예상치 못한 문제가 생길
 
 ## 문제점
 
-1. 단일 책임 소스(Single Source of Truth) 미준수
+#### 1. 단일 책임 소스(Single Source of Truth) 미준수
 
 같은 리뷰 목록 쿼리인데 `useInfiniteQuery`와 `prefetchInfiniteQuery`에서 `queryKey`·`queryFn`과 같은 쿼리 옵션이 따로 작성되어있어 한쪽만 수정하거나 오타가 나면 캐시 키가 어긋나거나 옵션이 누락될 수 있습니다. 
 
 위 코드처럼 `useInfiniteQuery` 호출 시 같은 데이터를 가져와야 하는데, 호출처마다 queryKey가 달라 의도와 다른 데이터가 렌더링 및 캐싱될 위험이 있습니다.
 
-2. 휴먼에러 위험성
+#### 2. 휴먼에러 위험성
 
 쿼리 옵션이 따로 작성되어 있기 때문에 만약 api 파라미터가 변경될 경우 `useInfiniteQuery`와 `prefetchInfiniteQuery` 둘 다 `queryKey`·`queryFn` 등 옵션을 고쳐야 해서 번거롭고, 그 과정에서 옵션 누락 같은 실수가 나기 쉽습니다.
 
@@ -245,11 +245,26 @@ queryClient.invalidateQueries({
 ```
 queryOptions(infiniteQueryOptions) 을 사용해 쿼리 객체를 관리하면 다음과 같은 이점을 누릴 수 있습니다.
 
-1. 타입 오류의 즉각적인 감지
-queryOptions로 감싸면, staleTime이나 gcTime, select 같은 옵션에 오타가 있을 때 즉시 타입 에러가 표시됩니다.
+#### 1. 쿼리 팩토리(Query factory) 전환
 
-2. 자동 타입 추론
-getQueryData, setQueryData를 사용할 때도 쿼리 함수의 반환 타입에 맞춰 자동으로 정확한 타입 추론이 이뤄집니다.
+기존의 쿼리 키만 관리하는 팩토리에서 한 단계 더 발전하여, 키와 관련된 쿼리 함수, 추가 옵션을 모두 결합하여 관리하는 쿼리 팩토리(Query factory) 로 전환할 수 있습니다. 쿼리 키와 쿼리 함수는 본질적으로 밀접하게 연결되어 있으므로, 함께 관리하는 것이 논리적입니다.
+
+
+
+#### 2. 자동 타입 추론 및 타입 오류의 즉각적인 감지
+queryOptions를 사용하면 쿼리 키가 해당 쿼리 함수와 “동일 객체” 임을 타입스크립트가 인식합니다. 때문에 오탈자 방지는 물론 getQueryData, setQueryData를 사용할 때도 쿼리 함수의 반환 타입에 맞춰 자동으로 정확한 타입 추론이 이뤄집니다.
+
+
+#### 3. 일관된 재사용
+
+하나의 객체로 쿼리 키, 함수, 옵션을 묶어 React Query의 API 전반에서 일관되게 사용할 수 있습니다. 이를 통해 모든 옵션을 한곳에서 관리하며 타입 안전성과 코드의 명확성을 높일 수 있습니다. 또한 관련된 쿼리 로직이 한 곳에 모여 있어 코드의 가독성과 유지보수성이 향상됩니다.
+
+#### 4. 패칭과 프리패칭 간 옵션 공유
+
+동일한 쿼리에 대한 일반 패칭과 프리패칭 사이에 모든 옵션을 일관되게 유지할 수 있어 코드 중복과 불일치를 방지합니다. 
+
+
+
 
 
 # 마무리
