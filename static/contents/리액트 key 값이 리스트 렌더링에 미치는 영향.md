@@ -10,11 +10,11 @@ thumbnail: "/thumbnail/리액트key.png"
 
 # 발단
 
-사내 프로젝트 진행 중 신기한 현상을 발견했습니다.
+프로젝트 진행 중 신기한 현상을 발견했습니다.
 
 ```ts
 
-// 사내 코드를 가져오질 못해 예시 코드로 구현했습니다.
+// 재현코드입니다.
 
 import { getItems } from "../lib/items";
 import Buttons from "../components/Buttons";
