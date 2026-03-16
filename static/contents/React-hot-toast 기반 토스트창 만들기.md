@@ -6,156 +6,9 @@ summary: "React-hot-toast 기반 토스트창 만들기."
 thumbnail: "/thumbnail/React-hot-toast.png"
 ---
 
-기존
-
-```ts
-
-function getNewValue({ type, message, duration, component }: ShowToastProps): Toast {
-  const time = dayjs().valueOf()
-  const endTime = time + duration!
-
-  return {
-    id: time.toString(),
-    duration: endTime,
-    message: component ? ToastComponent[component] : message,
-    type: type!,
-  }
-}
-
-export default function useToast() {
-  const [toast, setToast] = useRecoilState(toastState)
-
-  const isShowToast = toast.length > 0
-
-  const showToast = useCallback(
-    ({ message, component, type = 'basic', duration = 3_000, isForce = true }: ShowToastProps) => {
-      if (!message && !component) throw new Error('message or componentType is required')
-
-      const newValue = getNewValue({ message, type, duration, component })
-
-      if (isForce)
-        setToast((prev) => {
-          const infinityValues = prev.filter((item) => item.duration === Infinity)
-          return [newValue, ...infinityValues]
-        })
-      else setToast((prev) => [...prev, newValue])
-
-      return newValue.id
-    },
-    [],
-  )
-
-  const clearToast = useCallback((ids: string | string[]) => {
-    const deleteToast = (id: string) => {
-      setToast((prev) => prev.filter((item) => item.id !== id))
-    }
-
-    if (Array.isArray(ids)) ids.forEach(deleteToast)
-    else deleteToast(ids)
-  }, [])
-
-  const allClearToast = useCallback(() => {
-    setToast([])
-  }, [])
-
-  return { toast, isShowToast, showToast, clearToast, allClearToast }
-}
-
-```
-
-```ts
-
-const useHarmfulToast = (path: string) => {
-  const isPathShowToast = usePathname().split('/').filter(Boolean).includes(path)
-  const params = useSearchParams()
-  const outLink = params.get('outlink')
-  const [activeToastId, setActiveToastId] = useState<string | undefined>(undefined)
-  const { showToast, clearToast } = useToast()
-  const { harmfulMediaLevel } = useWebContext()
-
-  const resetHarmfulToast = () => {
-    if (activeToastId) {
-      setActiveToastId(undefined)
-      clearToast(activeToastId)
-    }
-  }
-  const updateHarmfulToast = (containsAdultContent: boolean) => {
-    const hasOutLink = outLink?.toLowerCase() === 'ok'
-    const isCurrentToastActive = containsAdultContent && activeToastId
-
-    const isAdultLevel = harmfulMediaLevel === HARMFUL_MEDIA_LEVEL.ADULT
-    const isUnverifiedLevel = harmfulMediaLevel === HARMFUL_MEDIA_LEVEL.UNVERIFIED
-
-    // 토스트창 active 중 or 성인계정 or 미인증계정 이면 토스트창 미노출
-    if (isCurrentToastActive || isAdultLevel || isUnverifiedLevel) return
-    // 로그아웃 or outlink가 아닐 경우 시 토스트창 미노출
-    if (harmfulMediaLevel === HARMFUL_MEDIA_LEVEL.LOGOUT && !hasOutLink) return
-    if (harmfulMediaLevel === HARMFUL_MEDIA_LEVEL.ADULT_OFF && isPathShowToast) return
-
-    // 성인작품 미포함 시 토스트창 미노출
-    if (!containsAdultContent) {
-      resetHarmfulToast()
-      return
-    }
-
-    const msgType = HARMFUL_MEDIA_LEVEL_TOAST[harmfulMediaLevel]
-
-    if (msgType) {
-      if ((msgType === 'iosApp' || msgType === 'androidApp' || typeof msgType === 'object') && !isPathShowToast) {
-        resetHarmfulToast()
-        return
-      }
-      const toastId = showToast({
-        type: 'harmful',
-        component: typeof msgType === 'object' ? msgType[path as keyof typeof msgType] : msgType,
-        duration: Infinity,
-      })
-      setActiveToastId(toastId)
-    }
-  }
-
-  useEffect(() => {
-    if (!activeToastId) return () => {}
-
-    const toastElem = document.getElementById(activeToastId)
-
-    if (!toastElem) return () => {}
-
-    const scrollHandler = () => {
-      requestAnimationFrame(() => {
-        const { scrollTop } = document.documentElement
-        if (scrollTop > 0) {
-          toastElem.classList.add('hide')
-        } else {
-          if (toastElem.classList.contains('absolute')) return
-          toastElem.classList.remove('hide')
-        }
-      })
-    }
-
-    scrollHandler()
-    window.addEventListener('scroll', scrollHandler)
-
-    return () => {
-      window.removeEventListener('scroll', scrollHandler)
-      activeToastId && clearToast(activeToastId)
-    }
-  }, [activeToastId, clearToast])
-
-  return updateHarmfulToast
-}
-
-export default useHarmfulToast
-
-```
-    - 문제점
-        1. 내부에서 어떤 토스트창을 띄울 지 결정함 너무 복잡함…
-        2. 로컬환경에서 2개 노출(순수함수가 아님)
-        3. 유지보수가 너무 힘들고 웹접근성 준수 안됨
-
-
+<!-- 
 ![로컬환경토스트창5중노출](/image/로컬환경토스트창5중노출.png)
-![로컬환경토스트창이중노출](/image/로컬환경토스트창이중노출.png)
+![로컬환경토스트창이중노출](/image/로컬환경토스트창이중노출.png) -->
 
 
 ### shadcn 토스트창 sonner 기반
@@ -205,7 +58,7 @@ https://github.com/emilkowalski/sonner/blob/main/src/styles.css
 }
 ```
 
-![토스트창좌측노출](/image/토스트창좌측노출.png)
+![토스트창좌측노출](/image/토스트창좌측노출.png)
 
 
 
