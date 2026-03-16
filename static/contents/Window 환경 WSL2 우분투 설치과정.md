@@ -62,7 +62,7 @@ Ubuntu는 Linux 배포판 중 하나입니다. Linux는 unix 기반 오픈소스
  wsl --install
 ```
 
-<br>
+ 
 
 네 역시 에러가 뜹니다. 
 
@@ -73,7 +73,7 @@ wsl: WSL 설치가 손상된 것 같습니다(오류 코드: Wsl/CallMsi/Install
 이 프롬프트는 60초 후 시간이 초과됩니다.
 ```
 
-<br>
+ 
 
 빠르게 gpt 한테 물어봅니다. 
 
@@ -110,7 +110,7 @@ dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux 
 
 </details>
 
-<br>
+ 
 
 wsl 설치 후 wsl -intall 하니 정상적으로 설치가 진행됩니다.
 
@@ -144,9 +144,9 @@ ubuntu 터미널창이 열리는 걸 확인할 수 있습니다.
 
 
 
-<br>
-<br>
-<br>
+ 
+ 
+ 
 
 <details>
 

@@ -24,7 +24,7 @@ thumbnail: "/thumbnail/도커.png"
 
 두 개의 환경 변수 파일을 로드합니다.
 
-<br>
+ 
 
 아래 명령어를 실행하니 다음과 같은 에러가 발생했습니다. 
 
@@ -32,7 +32,7 @@ thumbnail: "/thumbnail/도커.png"
  pnpm run infra:up
 ```
 
-<br>
+ 
 
 ```bash
 [+] Running 1/2
@@ -51,7 +51,7 @@ netsh interface ipv4 show excludedportrange protocol=tcp
 
 ```
 
-<br>
+ 
 
 왜 또 심술일까요. 역시 저만 안되는 환경세팅입니다. 
 
@@ -63,7 +63,7 @@ netsh interface ipv4 show excludedportrange protocol=tcp
 net stop winnat #  WinNAT 서비스 중지
 ```
 
-<br>
+ 
 
 그리고 다시 도커 컨테이너를 올려줍니다.
 ```bash
@@ -71,7 +71,7 @@ net stop winnat #  WinNAT 서비스 중지
 pnpm run infra:up
 ```
 
-<br>
+ 
 
 시키는대로 하니까 
 
@@ -90,8 +90,8 @@ pnpm run infra:up
 
 도커 데스크톱에서도 정상적으로 올라온 것을 확인할 수 있습니다.
 
-<br>
-<br>
+ 
+ 
 
 # 원인 분석
 
@@ -125,9 +125,9 @@ net start winnat
 
 
 
-<br>
-<br>
-<br>
+ 
+ 
+ 
 
 <details>
 

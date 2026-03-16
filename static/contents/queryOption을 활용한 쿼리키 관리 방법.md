@@ -10,7 +10,7 @@ thumbnail: "/thumbnail/리액트쿼리.png"
 
 공식문서에서는 다음과 같이 Query Keys를 소개하고 있습니다.
 
-> At its core, TanStack Query manages query caching for you based on query keys. Query keys have to be an Array at the top level, and can be as simple as an Array with a single string, or as complex as an array of many strings and nested objects. As long as the query key is serializable, and unique to the query's data, you can use it! <br><br> https://tanstack.com/query/latest/docs/framework/react/guides/query-keys
+> At its core, TanStack Query manages query caching for you based on query keys. Query keys have to be an Array at the top level, and can be as simple as an Array with a single string, or as complex as an array of many strings and nested objects. As long as the query key is serializable, and unique to the query's data, you can use it!    https://tanstack.com/query/latest/docs/framework/react/guides/query-keys
 
 Query Keys를 제대로 관리하지 않으면 예상치 못한 문제가 생길 수 있습니다. 프로젝트를 진행하면서 쿼리키를 효율적으로 다루기 위해 꾸준히 고민했고, 그 과정에서 얻은 인사이트를 이번 포스팅에서 공유하고자 합니다.
 
@@ -120,7 +120,7 @@ queryClient.invalidateQueries({ queryKey: reviewQueryKeys.lists() });
 
 팩토리 패턴으로 쿼리키를 중앙화하면 쿼리키 오타나 불일치를 사전에 방지할 수 있습니다.
 
-<BR>
+ 
 
 
 ## 쿼리키 옵션 객체 관리
@@ -272,7 +272,7 @@ queryOptions를 사용하면 쿼리 키가 해당 쿼리 함수와 “동일 객
 
 이번 글에서는 `queryOptions`(및 `infiniteQueryOptions`)를 활용해 Query Key뿐만 아니라 쿼리 옵션까지 효율적으로 관리하는 방법을 공유했습니다.
 
-쿼리 키 관리 문제는 사소해 보이지만, 프로젝트가 커질수록 기술 부채로 커질 수 있습니다. `queryOptions`(및 `infiniteQueryOptions`)와 팩토리 패턴을 함께 도입하면서 타입 안전성을 확보하고, 유지보수성을 크게 높일 수 있었습니다.
+쿼리 키 관리 문제는 사소해 보이지만, 프로젝트가 커질수록 기술 부채로 커질 수 있습니다. 이를 방지하고자 `queryOptions`(및 `infiniteQueryOptions`)와 팩토리 패턴을 함께 도입하면서 타입 안전성을 확보하고, 유지보수성을 크게 높일 수 있었습니다.
 
-추가로 TanStack Query의 `useMutation`은 (`setMutationDefaults`)[https://tanstack.com/query/latest/docs/framework/react/guides/mutations#persist-mutations]를 활용해 비슷하게 관리할 수 있습니다. 해당 방법도 추후 정리해 공유할 예정입니다. 
+추가로 TanStack Query의 `useMutation`은 [`setMutationDefaults`](https://tanstack.com/query/latest/docs/framework/react/guides/mutations#persist-mutations)를 활용해 비슷하게 관리할 수 있습니다. 해당 방법도 추후 정리해 공유할 예정입니다. 
 

@@ -38,7 +38,7 @@ https://github.com/vercel/Next.js/discussions/72035
 
 해당 깃허브링크에서 찾을 수 있었습니다.
 
-> I discovered that the cz-shortcut-listen="true" attribute, added by the Colorzilla browser extension, was causing the issue. <br> <br> Colorzilla 브라우저 확장 프로그램에 추가된 cz-shortcut-listen="true" 속성이 문제를 일으키고 있다는 것을 발견했습니다.
+> I discovered that the cz-shortcut-listen="true" attribute, added by the Colorzilla browser extension, was causing the issue.     Colorzilla 브라우저 확장 프로그램에 추가된 cz-shortcut-listen="true" 속성이 문제를 일으키고 있다는 것을 발견했습니다.
 
 Colorzilla 크롬 확장프로그램은 colorzilla extension/add-on라는 기능을 통해 body 태그에 `cz-shortcut-listen="true"` 속성을 주입한다고 합니다.
 
@@ -58,9 +58,9 @@ Colorzilla 크롬 확장프로그램은 colorzilla extension/add-on라는 기능
 
 정상적으로 동작합니다!!
 
-<br>
-<br>
-<br>
+ 
+ 
+ 
 
 <details>
 

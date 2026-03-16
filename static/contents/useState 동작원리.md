@@ -8,7 +8,7 @@ thumbnail: "/thumbnail/useState.png"
 
 비동기적으로 동작하는 useState의 성질로 인한 State 값 업데이트 이슈를 해결하면서 문득 useState의 동작원리에 대해 궁금해졌습니다.
 
-<BR>
+ 
 
 # 함수형 컴포넌트의 상태 관리
 
@@ -18,8 +18,8 @@ thumbnail: "/thumbnail/useState.png"
 
 useState는 이 문제를 **클로저**를 통해 해결합니다.
 
-<br>
-<br>
+ 
+ 
 
 # useState는 어디서 오나?
 
@@ -39,7 +39,7 @@ import { useState } from "react";
 
 모든 리액트 훅들이 여기서부터 만들어진다 생각하면 될 것 같습니다.
 
-<br>
+ 
 
 ## function useState 분석
 
@@ -56,7 +56,7 @@ resolveDispatcher의 리턴 값을 dispatcher에 할당한 뒤 dispatcher의 use
 
 이 안에 우리가 사용하는 state와 setState가 있다는 이야기입니다.
 
-<BR>
+ 
 
 ## resolveDispatcher 함수
 
@@ -78,7 +78,7 @@ function resolveDispatcher() {
 
 resolveDispatcher 함수는 어디선가 ReactCurrentDispatcher 라는 친구를 가져와 ReactCurrentDispatcher의 current 값을 할당받습니다.
 
-<br>
+ 
 
 ## ReactCurrentDispatcher 함수
 
@@ -100,7 +100,7 @@ ReactCurrentDispatcher.current는 **전역**에 선언된 객체의 프로퍼티
 
 즉 리액트가 실제로 클로저를 활용해 함수 외부의 값에 접근하는 사실을 알 수 있습니다.
 
-<br>
+ 
 
 # 정리
 
@@ -108,9 +108,9 @@ ReactCurrentDispatcher.current는 **전역**에 선언된 객체의 프로퍼티
 - 실행 될 때 마다 dispatcher를 선언하고 useState 메소드 실행해서 그 값을 반환합니다.
 - dispatcher는 전역 변수 ReactCurrentDispatcher로부터 가져옵니다.
 
-<br>
-<br>
-<br>
+ 
+ 
+ 
 
 # 그렇다면 setState 함수는 어떻게 상태를 변경시키나?
 
@@ -118,7 +118,7 @@ ReactCurrentDispatcher.current는 **전역**에 선언된 객체의 프로퍼티
 
 > 실제 react로직은 이렇게 단순하지 않습니다. 실제 react 로직은 딥다이브할 용기가 나지않아 여기까지 하겠습니다.
 
-<br>
+ 
 
 ```js
 // React 모듈
@@ -195,13 +195,13 @@ if (_value === undefined) {
 
 이렇게 반환한 배열을 우리는 구조분해할당 문법을 통해 사용하는 것이죠.
 
-<br>
+ 
 
 ### 2. setState(1) 호출
 
 전달 받은 값 인자 1을 react 모듈 상단의 \_value에 할당합니다. 이때 컴포넌트 리렌더링을 trigger합니다.
 
-<br>
+ 
 
 ### 3. setState가 실행되어 리렌더링이 발생
 
@@ -245,8 +245,8 @@ const [state, setState] = useState(0);
 
 그리고 변경된 값은 useState가 가져오는 것이죠.
 
-<br>
-<br>
+ 
+ 
 
 ## 결론
 
@@ -257,11 +257,11 @@ const [state, setState] = useState(0);
 - 변경된 \_value는 useState를 통해 가져오고 그것을 우리가 사용하는 것 입니다. \
 - setState 호출 이후 로직에서도 state의 값은 이전과 동일합니다.
 
-> 위 예시는 react로직을 아주 단순히 표현했을 뿐, 실제와 많이 다릅니다. <br> useState를 여러번 사용해도 각기 다른 상태 값과 갱신 함수를 사용할 수 있는건 단순히 \_value가 아니라 여러 값을 저장하고 있기 때문입니다. <br> 이에 관해서는 딥다이브하기 무서워서 한 발 물러서겠습니다..
+> 위 예시는 react로직을 아주 단순히 표현했을 뿐, 실제와 많이 다릅니다.   useState를 여러번 사용해도 각기 다른 상태 값과 갱신 함수를 사용할 수 있는건 단순히 \_value가 아니라 여러 값을 저장하고 있기 때문입니다.   이에 관해서는 딥다이브하기 무서워서 한 발 물러서겠습니다..
 
-<br>
-<br>
-<br>
+ 
+ 
+ 
 
 <details>
 

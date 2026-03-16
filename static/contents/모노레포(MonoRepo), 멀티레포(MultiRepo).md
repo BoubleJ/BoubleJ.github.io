@@ -52,11 +52,11 @@ thumbnail: "/thumbnail/모노레포.png"
 
 프로젝트 A, B 서비스 디자인이 비슷하여 공통 UI들이 많다면 굳이 UI, 모듈을 새로 만들 필요 없이 프로젝트 사이에서 공유하면 되는데 멀티레포 구조이기 때문에 프로젝트 간 코드 공유가 어려운 문제가 발생합니다. 
 
-<br>
+ 
 
 ## 모노레포
 
-> “A monorepo is a single repository containing muliple distinct projects, with well defined relationships.” <br> “모노레포란 잘 정의된 관계를 가진, 여러개의 독립적인 프로젝트들이 있는 하나의 레포지토리이다.”
+> “A monorepo is a single repository containing muliple distinct projects, with well defined relationships.”   “모노레포란 잘 정의된 관계를 가진, 여러개의 독립적인 프로젝트들이 있는 하나의 레포지토리이다.”
 
 
 - 시스템의 각 서비스를 모두 하나의 리포지토리에서 일괄 관리하는 방법.
@@ -93,7 +93,7 @@ thumbnail: "/thumbnail/모노레포.png"
 - 형상 관리 및 CI 속도 저하
 - 리포지토리의 크기가 크기 때문에, 리파지토리 훅을 기반으로 동작하는 도구들의 속도 감소
 
-<br>
+ 
 
 
 ## 주요 특징 비교
@@ -132,9 +132,9 @@ thumbnail: "/thumbnail/모노레포.png"
 
 
 
-<br>
-<br>
-<br>
+ 
+ 
+ 
 
 <details>
 
