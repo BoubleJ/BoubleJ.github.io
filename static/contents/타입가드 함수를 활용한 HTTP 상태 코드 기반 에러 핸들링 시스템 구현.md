@@ -1,10 +1,16 @@
 ---
 date: "2026-03-01"
-title: "타입가드 함수를 활용한 HTTP 상태 코드 기반 에러 핸들링 시스템 구현 (작성중)"
+title: "타입가드 함수를 활용한 HTTP 상태 코드 기반 에러 핸들링 시스템 구현"
 categories: ["React", "Typescript"]
 summary: "쿼리 팩토리 패턴 구현."
 thumbnail: "/thumbnail/타입스크립트.jpg"
 ---
+
+
+
+
+컴파일 단계에서 
+
 
 ```ts
 function getReviewToastMessage(status: number, action: ReviewInteractionType) {
@@ -47,6 +53,11 @@ function getReviewToastMessage(status: number, action: ReviewInteractionType) {
 ```
 **문제점:** action 종류만큼 분기가 늘어나 OCP를 위반합니다. `REVIEW_TOAST_MESSAGE`에 새로운 action이 추가될 때마다 이 함수도 함께 수정해야 합니다.
 
+
+```ts
+  const res = await postAttendanceApi(id)
+
+```
 
 ```ts
 

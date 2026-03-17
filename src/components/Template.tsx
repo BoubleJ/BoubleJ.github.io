@@ -14,7 +14,10 @@ function Template({ title, description, url, image, children }: TemplateProps) {
     <>
       <Helmet>
         <title>{title}</title>
-
+        <meta
+          name="google-site-verification"
+          content="32VgiXrbX9YRCfnd2p5rqMCm5eNlviCqwzzD5oUo1jw"
+        />
         <meta name="description" content={description} />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta httpEquiv="Content-Type" content="text/html;charset=UTF-8" />
