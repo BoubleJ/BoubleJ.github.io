@@ -1,11 +1,22 @@
 ---
 date: "2026-03-01"
-title: "회원가입 구현 3탄 (mermaid 기반 개발자도구) (작성중)"
-categories: ["React"]
-summary: "공통 input 컴포넌트를 만들어보자."
+title: "DX 개선을 위한 머메이드 디버깅 도구 만들기"
+categories: ["React", "Mermaid"]
+summary: "DX 개선을 위한 머메이드 디버깅 도구 만들기"
 thumbnail: "/thumbnail/머메이드.png"
 ---
 
+회원가입 개편 작업 시 
+
+초기 쿼리스트링으로 관리할까 고민했지만 사용자가 url을 조작했으 경우에 대한 방어코드가 필요했기에 내부 state 값으로 스탭을 관리하는것이 더 좋겠다. 판단
+
+또한 페이지 뒤로가기 기능이 없고 사용자가 페이지 뒤로가기 클릭 시 초기 화면으로 돌아가도록 요청이 있었기에 내부 상태값으로 관리
+
+그러다보니 개발자가 각 스탭을 디버깅하기 위해선 해당 스탭까지의 절차를 다 진행해야햠
+
+예를들어 이메일 회원가입 스탭 4번 디버깅하기 위해선 1,2,3 스탭을 모두 완료한 후 접근가능하고 혹여 페이지 새로고침 시 다시 1단계로 이동하기 때문에 매우 번거로움
+
+이러한 DX 개선을 위해 머메이드 라이브러리 기반 회원가입 및 로그인 개편 전용 디버깅 도구를 만듬
 
 ```tsx
 'use client'
@@ -216,6 +227,8 @@ export default function AuthStepDiagramDevtool<TStep extends number = number>({
       </FormProvider>
       <AuthStepDiagramDevtool title="회원가입" currentStep={step} totalSteps={4} onJumpStep={handleNextStep} />
 ```
+
+![머메이드디버깅도구](/image/머메이드디버깅도구.gif)
 
 <details>
 
