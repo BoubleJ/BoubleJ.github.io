@@ -8,38 +8,56 @@ thumbnail: "/thumbnail/NEXT.png"
 
 # 개요
 
-사내 next 프로젝트 내 페이지 이동 시 스크롤이 유지되는 이슈가 발생했습니다.
+next.js 기반 프로젝트 작업 중 페이지 이동 시 스크롤이 최상단으로 가지 않고 유지되는 이슈를 발견했습니다.
 
-## 재현 환경
+정확한 원인 파악을 위해 Next.js 소스코드를 분석했고, 그 과정에서 확인한 내용을 공유하고자 합니다.
 
-1. GNB Header 가 존재하는 미스터블루 내 모든 next 페이지에서 스크롤을 172px 이하로 내립니다. (172px은 완전판다운로드 배너 높이 + GNB 높이 입니다.)
-2. 이 상태에서 GNB 탭을 통해 페이지를 이동합니다. (꼭 GNB가 아닌 어느 미스터블루 페이지 경로로 라우팅해도 재현됩니다.)
-3. 스크롤이 유지된 채 페이지가 로드됩니다.
+# 이슈 재현
 
+재현코드는 아래와 같습니다.
 
-![next스크롤이슈재현](/image/next스크롤이슈재현.gif)
+```tsx
+// Layout.tsx (일부)
+export default function Layout({ children }: LayoutProps) {
+  return (
+    <div className="min-h-screen bg-gray-50 pt-128">
+      <header className="... fixed w-full z-10 top-0">...</header>
+      <main className="...">
+        <div className="...">{children}</div>
+      </main>
+    </div>
+  );
+}
+```
 
+재현 방법은 레이아웃 상단 여백(`pt-128` 영역)보다 **적게** 스크롤한 상태에서 GNB 탭(Home / About / Dashboard) 등으로 다른 페이지로 이동하면 페이지는 정상적으로 라우팅되지만 **스크롤 위치는 그대로** 유지됩니다.
 
- 
+![스크롤초기화안됨](/image/스크롤초기화안됨.gif)
+
+# 이슈 미재현
+
  
 
 하지만 다음과 같은 조건일 경우 스크롤 이슈가 발생하지 않습니다. 즉 페이지 이동 시 정상적으로 스크롤이 최상단으로 이동합니다.
+
 1. 스크롤을 이동하지 않은 채 페이지 이동
-2. 스크롤을 172px 이상 내린 후 페이지 이동
+2. 스크롤을 128px 이상 내린 후 페이지 이동
 
-![next스크롤이슈재현안됨](/image/next스크롤이슈재현안됨.gif)
+![스크롤초기화됨](/image/스크롤초기화됨.gif)
 
 
- 
- 
 
-해당 이슈를 확인하고, 상술한 172px 구간 어딘가에서 스크롤이 고정되는 문제가 발생한다고 판단해 원인 분석을 시작했습니다. 그 결과, 다음과 같은 원인을 찾아냈습니다.
 
  
  
 
-## 원인
-next 내부 코드를 까보면 아래와 같은 로직이 존재합니다. 참고 [next 코드베이스](https://github.com/vercel/next.js/blob/87fb29ee7143c1e9a4c129585f9546c3f5e0b2b8/packages/next/src/client/components/layout-router.tsx#L151)
+해당 이슈를 확인하고, 상술한 128px 구간 어딘가에서 스크롤이 고정되는 문제가 발생한다고 판단해 원인 분석을 시작했습니다. 그 결과, 다음과 같은 원인을 찾아냈습니다.
+
+ 
+ 
+
+# 원인
+[next 내부 코드](https://github.com/vercel/next.js/blob/87fb29ee7143c1e9a4c129585f9546c3f5e0b2b8/packages/next/src/client/components/layout-router.tsx#L151)를 까보면 아래와 같은 로직이 존재합니다.
 
 ```ts
 function topOfElementInViewport(element: HTMLElement, viewportHeight: number) {
@@ -69,152 +87,105 @@ function topOfElementInViewport(element: HTMLElement, viewportHeight: number) {
 ```
 
 topOfElementInViewport 함수는 엘리먼트와 viewportHeight 를 인자로 받습니다
-인자로 받은 요소와 viewport 거리를 계산해서 rect.top 값이 양수 or 0이면 next는 해당 요소가 아직 viewport내 존재한다 판단해 페이지 이동 시 스크롤을 유지합니다. (불필요한 스크롤 방지를 위한 최적화..)
+
+인자로 받은 요소와 viewport 거리를 계산해서 rect.top 값이 양수 or 0이면 next는 해당 요소가 아직 viewport내 존재한다 판단해 페이지 이동 시 스크롤을 유지합니다. (불필요한 스크롤 방지를 위한 최적화)
+
 rect.top 값이 0보다 작으면 해당 요소가 viewport를 벗어났다 판단해 페이지 이동 시 스크롤 이벤트가 발생합니다.
+
 이때 topOfElementInViewport 함수가 넘겨받는 엘리먼트 인자는 layout 영역이 아닌 page 컨텐츠 영역 최상단 요소 입니다. 
 
  
+## 원인은 layout의 padding top
+
+이제 다시 재현 코드를 살펴보겠습니다.
  
-
-그리고 저희 미스터블루 next 코드는 아래와 같습니다. 
-
-```ts
-//app/(homeLayout)/Layout.tsx
-
-
-export default function HomeLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
-  const isServerShowBanner =
-    ChannelForServer.isAWDevice() && getCookie(makeCookieKey('headerBanner')) === null;
-  const getMargin = () => {
-    let base = LAYOUT_MARGIN_TOP_BASE;
-
-    // 헤더배너가 있을 경우
-    if (isServerShowBanner) {
-      base += HEADER_BANNER_HEIGHT;
-    }
-
-    return base;
-  };
-
-  const marginStyle = {
-    '--margin': `${getMargin()}px`,
-  } as React.CSSProperties;
-
+```tsx
+// Layout.tsx (일부)
+export default function Layout({ children }: LayoutProps) {
   return (
-    <div id="Layout" className={cn(st['wrap-layout'])} style={marginStyle}>
-      <Header isServerShowBanner={isServerShowBanner}>
-        <MainHomeHeaderTop />
-        <HeaderBottom pageType="HOME" />
-      </Header>
-      <Sidebar />
-      {children}
-      <Footer showProposal={true} />
+    <div className="min-h-screen bg-gray-50 pt-128">
+      <header className="... fixed w-full z-10 top-0">...</header>
+      <main className="...">
+        <div className="...">{children}</div>
+      </main>
     </div>
   );
 }
-
-
 ```
 
-```scss
-.wrap-layout {
-  margin-top: var(--margin);
-}
+원인은 바로 ` <div className="min-h-screen bg-gray-50 pt-128">` 프로젝트 전역을 감싸고 있는 layout의  div 태그에 적용된 pt-128 값입니다. 
 
-```
+레이아웃 루트에 `pt-128`이 있어, 기본적으로 page 요소는 화면에서 128px 아래부터 존재하고, 스크롤을 `pt-128` 영역보다 적게 내리면 page 요소의 `rect.top`은 여전히 **0 이상**입니다.
 
-이 코드는 미스터블루 총메인 layout 영역 코드입니다.
-
-완전판 헤더배너와 GNB에 fixed를 줬기 때문에 viewport 영역을 차지하지 않아 해당 공백을 margin으로 대체한 상태입니다.
-
-참고로 장르홈 페이지(웹만소 페이지)에 사용되는 SubLayout.tsx 도 비슷한 구조로 설계되어있습니다. 
-
- 
- 
+이경우 page 요소의 rect.top 값이 양수이므로 next 입장에선 page 요소가 아직 viewport에 존재한다 판단해 페이지 이동 시 스크롤을 유지합니다.
 
 
-브라우저에선 다음과 같은 형태로 노출됩니다. 
+반대로 viewport에 layout padding 값이 사라지면 page 요소가 뷰포트를 벗어났다는 의미이고 rect.top 값이 음수가 되기 때문에 next 입장에선 page 요소가 viewport를 벗어났구나 판단해 페이지 이동 시 스크롤을 최상단으로 끌어올립니다.
 
-![next스크롤이슈](/image/next스크롤이슈.png)
 
-즉 최상단 layout에 상단 완전판다운로드 배너 높이 + GNB 높이 = 172px만큼 margin이 부여되어있는 상태입니다. (완전판 배너가없으면 100px이 적용됩니다.)
+즉, page의 콘텐츠 영역이 뷰포트를 벗어났을 때만 페이지 이동 시 스크롤이 최상단으로 이동하도록 하는 Next.js의 최적화 로직이 원인이었습니다.
 
-화면에 layout margin이 남아있을 경우 page 요소의 rect.top 값이 양수이므로 next 입장에선 page 요소가 아직 viewport에 존재한다 판단해 페이지 이동 시 스크롤을 유지합니다.
 
-반대로  viewport에 layout marign 값이 사라지면 page 요소가 뷰포트를 벗어났다는 의미이고 rect.top 값이 음수가 되기 때문에 next 입장에선 page 요소가 viewport를 벗어났구나 판단해 페이지 이동 시 스크롤을 최상단으로 끌어올립니다.
+
+
+
 
  
- 
-
 ## 해결
-근본적 원인인 page요소가 viewport를 벗어나야하기에 Layout에 margin을 제거하고 page 컴포넌트마다 padding-top을 부여해서 해결했습니다. 
+근본적 원인인 page요소가 viewport를 벗어나야하기에 Layout에 padding-top을 제거하고 page 컴포넌트마다 padding-top을 부여해서 해결했습니다. 
 
-```ts
-export default function Home() {
+
+```tsx
+// 레이아웃: 상단 여백 제거
+<div className="min-h-screen bg-gray-50">
+  <header className="... fixed ...">...</header>
+  <main>{children}</main>
+</div>
+
+// 페이지를 감싸는 ContentWrapper에서만 padding-top 적용
+export default function ContentWrapper({ children }: { children: React.ReactNode }) {
   return (
-    <MainStateProvider>
-      <ContentWrapper>
-        <MainHome />
-      </ContentWrapper>
-    </MainStateProvider>
-  );
-}
-```
-
-
-```ts
-export default function ContentWrapper({ children, pageType }: ContentWrapperProps) {
-  const hostAppChannel = ChannelForServer.getHostAppChannel();
-  const isServerShowBanner =
-    ChannelForServer.isAWDevice() && getCookie(makeCookieKey('headerBanner')) === null;
-  const getPaddingTop = () => {
-    if (hostAppChannel === 'IA' && pageType !== 'HOME') return 0;
-
-    let base = LAYOUT_MARGIN_TOP_BASE;
-
-    // 헤더배너가 있을 경우
-    if (isServerShowBanner) {
-      base += HEADER_BANNER_HEIGHT;
-    }
-
-    return base;
-  };
-
-  const paddingStyle = {
-    '--padding-top': `${getPaddingTop()}px`,
-  } as React.CSSProperties;
-
-  return (
-    <div className={cn('wrap-content')} style={paddingStyle}>
+    <div className="pt-128">
       {children}
     </div>
   );
 }
+
+// 각 페이지
+export default function AboutPage() {
+  return (
+    <ContentWrapper>
+      {/* About 컨텐츠 */}
+    </ContentWrapper>
+  );
+}
 ```
 
- 
- 
 
+ 
 ## 최선인가?
 이슈 자체는 해결됐지만 여러 가지 에러 사항이 남아있습니다.
 
  
 
-
-1. GNB가 존재하는 모든 페이지마다 ContentWrapper로 감싸줘야하는 번거로움이 있습니다.
-2. layout 마진을 제거했기 때문에 특정 페이지 layout에 subTab 과 같은 컴포넌트가 존재한다면 해당 컴포넌트가 화면 최상단에 위치해 header에 가려지는 사이드 이펙트가 존재합니다. 때문에 layout 내 컴포넌트를 page로 옮겨줘야합니다.
+1. next의 `header`가 존재하는 모든 페이지마다 ContentWrapper로 감싸줘야하는 번거로움이 있습니다.
+2. layout 패딩(마진)을 제거했기 때문에 특정 페이지 layout에 subHeader 같은 컴포넌트가 존재한다면 해당 컴포넌트가 화면 최상단에 위치해 header에 가려지는 사이드 이펙트가 존재합니다. 때문에 layout 내 컴포넌트를 page로 옮겨줘야합니다.
 3. 사실상 layout 존재 의의가 퇴색된 코드입니다.
 
 
  
-
 위 에러 사항을 해결하기 위한 더 나은 방안을 강구하는 것이 숙제일 듯 합니다.
 
  
  
+<br>
+<br>
+
  
+<!-- ![next스크롤이슈재현](/image/next스크롤이슈재현.gif) -->
+
+<!-- ![next스크롤이슈재현안됨](/image/next스크롤이슈재현안됨.gif) -->
+
 
 <details>
 
