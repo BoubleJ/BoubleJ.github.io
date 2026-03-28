@@ -1,5 +1,5 @@
 ---
-date: "2026-03-01"
+date: "2025-09-25"
 title: "타입스크립트 제대로 사용하기 (feat. 타입가드 함수)"
 categories: ["React", "Typescript"]
 summary: "타입가드 함수를 활용해 HTTP 상태 코드 기반 에러 핸들링 시스템 구현을 구현해보았습니다."
