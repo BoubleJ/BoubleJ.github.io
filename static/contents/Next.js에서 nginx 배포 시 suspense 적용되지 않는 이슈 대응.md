@@ -1,5 +1,5 @@
 ---
-date: "2026-03-01"
+date: "2026-02-28"
 title: "Next.js에서 nginx 배포 시 스트리밍 적용되지 않는 이슈 대응"
 categories: ["React", "nginx"]
 summary: "Next.js에서 nginx 배포 시 스트리밍이 적용되지 않는 이유를 분석했습니다."

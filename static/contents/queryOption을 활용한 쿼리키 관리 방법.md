@@ -1,5 +1,5 @@
 ---
-date: "2026-03-01"
+date: "2026-01-07"
 title: "queryOption을 활용한 쿼리키 관리 방법"
 categories: ["React", "TanStack-Query", "Query-Key", "QueryOption", "Factory-Pattern"]
 summary: "Tanstack-Query의 쿼리 키를 효율적으로 관리하기 위한 인사이트를 공유합니다."

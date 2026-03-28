@@ -1,5 +1,5 @@
 ---
-date: "2026-03-01"
+date: "2026-01-10"
 title: "Next.js에서 SuspenseQuery를 사용할 때의 문제와 해결과정"
 categories: ["React", "TanStack-Query", "Next.js"]
 summary: "Next.js + SuspenseQuery 사용 시 서버, 클라이언트 모두 api 호출되는 이슈 해결 과정을 공유합니다."
