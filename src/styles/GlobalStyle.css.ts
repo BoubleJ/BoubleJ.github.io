@@ -41,6 +41,26 @@ globalStyle(".autolink-header", {
   transition: "opacity 0.15s ease",
 });
 
+// gatsby-remark-autolink-headers의 `before` 배치 재현.
+// 앵커는 헤딩의 첫 자식으로 삽입되므로, 절대 위치로 헤딩(position:relative) 바깥 왼쪽에 빼내야
+// 인라인 흐름에서 빠져 제목 좌측에 빈 여백이 생기지 않는다.
+globalStyle(".autolink-header.before", {
+  position: "absolute",
+  left: 0,
+  top: 0,
+  bottom: 0,
+  transform: "translateX(-100%)",
+  paddingRight: "4px",
+  display: "inline-flex",
+  alignItems: "center",
+  // 터치 환경엔 hover가 없어 노출될 일이 없고, 본문 밖으로 삐져나가 가로 스크롤이 생기는 것도 막는다
+  "@media": {
+    "(max-width: 768px)": {
+      display: "none",
+    },
+  },
+});
+
 globalStyle(
   "h1:hover .autolink-header, h2:hover .autolink-header, h3:hover .autolink-header, .autolink-header:focus-visible",
   {
