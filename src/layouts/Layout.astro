@@ -1,0 +1,94 @@
+---
+// src/layouts/Layout.astro — Template.tsx(react-helmet) + Layout.tsx + wrapPageElement 통합
+import "prism-themes/themes/prism-ghcolors.min.css"; // gatsby-browser/ssr의 전역 import 재현
+import "@/styles/GlobalStyle.css";
+import Footer from "@/components/Footer/Footer";
+import Header from "@/components/Header/Header";
+import ScrollToTop from "@/components/ScrollToTop/ScrollToTop";
+import { SITE } from "@/consts";
+import {
+  darkTheme as darkThemeClass,
+  lightTheme as lightThemeClass,
+} from "@/styles/theme.css";
+import { container } from "./Layout.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+  url?: string;
+  image?: string;
+  type?: "website" | "article"; // v2-16 B3: 포스트 상세는 article
+  noMeta?: boolean; // 404 재현용: title/description/OG 등 head 메타 전무(canonical만 예외 — 골든 패리티)
+}
+// v2-10(e): image 기본값 = 브랜드 OG 이미지. 포스트 상세는 썸네일을 넘겨 덮어씀. 항상 절대 URL로 변환해 출력.
+const {
+  title = SITE.title,
+  description = SITE.description,
+  url = SITE.siteUrl,
+  image = "/og-image.png",
+  type = "website",
+  noMeta = false,
+} = Astro.props;
+const ogImage = image ? new URL(image, Astro.site).href : "";
+// stripQueryString 동작과 동일. gatsby-plugin-canonical-urls는 퍼센트 인코딩 없이 원문 유니코드로 출력하므로
+// URL 생성 시 자동 인코딩된 non-ASCII 슬러그(한글 등)를 decodeURI로 되돌려 골든과 동일한 형식을 유지 (Task 11)
+const canonical = decodeURI(new URL(Astro.url.pathname, Astro.site).href);
+---
+<html lang="ko">
+  <head>
+    {/* v2-12: 파비콘 — 404 포함 전 페이지 공통 */}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon.png" />
+    {!noMeta && (
+      <>
+        <title>{title}</title>
+        <meta name="google-site-verification" content="32VgiXrbX9YRCfnd2p5rqMCm5eNlviCqwzzD5oUo1jw" />
+        <meta name="description" content={description} />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+        <meta property="og:type" content={type} /> {/* v2-16 B3 */}
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:image" content={ogImage} />
+        <meta property="og:url" content={url} />
+        <meta property="og:site_name" content={SITE.title} /> {/* v2-10: 페이지 title이 아닌 사이트명 고정 */}
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={ogImage} />
+        {/* v2-10(d): twitter:site/creator "@사용자이름" 플레이스홀더는 제거됨 (X 계정 없음) */}
+        <link rel="canonical" href={canonical} />
+        {Astro.url.pathname === "/" && (
+          <script type="application/ld+json" set:html={JSON.stringify({
+            "@context": "https://schema.org", "@type": "WebSite",
+            name: SITE.title, description: SITE.description, url: SITE.siteUrl,
+          })} /> /* v2-10: 사이트명/설명 구조화 데이터 */
+        )}
+      </>
+    )}
+    {noMeta && (
+      <>
+        <meta charset="utf-8" />
+        {/* gatsby-plugin-canonical-urls는 Helmet 사용 여부와 무관하게 전 페이지(404 포함)에
+            canonical을 자동 주입했음 — 골든 패리티를 위해 noMeta에서도 canonical만 유지 */}
+        <link rel="canonical" href={canonical} />
+      </>
+    )}
+  </head>
+  <body>
+    {/* v2-16 A1: 첫 페인트 전에 테마 클래스 적용 — MPA FOUC 제거. vanilla-extract 해시 클래스명을 빌드 시 주입 */}
+    <script is:inline define:vars={{ light: lightThemeClass, dark: darkThemeClass }}>
+      try {
+        const saved = localStorage.getItem("theme");
+        const isDark = saved === "dark" || (!saved && matchMedia("(prefers-color-scheme: dark)").matches);
+        document.body.className = isDark ? dark : light; // define:vars로 주입된 테마 클래스명
+      } catch (_) { document.body.className = light; }
+    </script>
+    <div id="app">
+      <Header client:load pathname={Astro.url.pathname} />
+      <main class={container}><slot /></main>
+      <Footer />
+      <ScrollToTop client:load />
+    </div>
+  </body>
+</html>

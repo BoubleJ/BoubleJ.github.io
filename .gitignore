@@ -1,7 +1,12 @@
 node_modules/
 .cache/
-public
 
 .cursor/
 
 .vscode/
+
+.golden/
+
+dist/
+.astro/
+.superpowers/

@@ -1,0 +1,13 @@
+---
+// src/pages/tag.astro — 기존 /tag 페이지 (Task 10)
+import TagPageClient from "@/components/Tag/TagPageClient";
+import { SITE } from "@/consts";
+import Layout from "@/layouts/Layout.astro";
+import { getSortedPosts, toPostSummary } from "@/lib/posts";
+
+const posts = (await getSortedPosts()).map(toPostSummary);
+---
+
+<Layout title={`${SITE.title} - Tags`} description={SITE.description} url={SITE.siteUrl}>
+  <TagPageClient client:load posts={posts} />
+</Layout>

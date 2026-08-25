@@ -1,0 +1,13 @@
+---
+// src/pages/index.astro — 전체 포스트 목록 (기존 /post 페이지의 역할, 스펙 v2-1)
+import PostPageClient from "@/components/PostList/PostPageClient";
+import { SITE } from "@/consts";
+import Layout from "@/layouts/Layout.astro";
+import { getSortedPosts, toPostSummary } from "@/lib/posts";
+
+const posts = (await getSortedPosts()).map(toPostSummary);
+---
+
+<Layout title={SITE.title} description={SITE.description} url={SITE.siteUrl}>
+  <PostPageClient client:load posts={posts} />
+</Layout>

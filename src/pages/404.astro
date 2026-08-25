@@ -1,0 +1,19 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import {
+  notFoundPageWrapper,
+  notFoundText,
+  notFoundDescription,
+  goToMainButton,
+} from "@/pages-styles/404.css";
+---
+<Layout noMeta>
+  <div class={notFoundPageWrapper}>
+    <div class={notFoundText}>404</div>
+    <div class={notFoundDescription}>
+      찾을 수 없는 페이지입니다. <br />
+      다른 콘텐츠를 보러 가보시겠어요?
+    </div>
+    <a class={goToMainButton} href="/">메인으로</a>
+  </div>
+</Layout>

@@ -1,0 +1,15 @@
+import { style } from "@vanilla-extract/css";
+
+export const container = style({
+  display: "flex",
+  flexDirection: "column",
+  maxWidth: "1200px",
+  margin: "0 auto",
+  width: "100%",
+  paddingTop: "70px",
+  "@media": {
+    "(max-width: 768px)": {
+      paddingTop: "60px",
+    },
+  },
+});

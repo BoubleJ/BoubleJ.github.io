@@ -1,0 +1,210 @@
+---
+date: "2025-08-11"
+title: "웹접근성을 준수해보자"
+categories: ["Web", "React", "웹접근성", "ARIA", "Radix-ui"]
+summary: "프론트엔드 개발 시 놓치기 쉬운 웹접근성을 지키며, 페이지 완성도를 한 단계 끌어올린 경험을 공유합니다."
+thumbnail: "/thumbnail/웹접근성.png"
+---
+
+# 개요
+
+이번 글에선 웹접근성 관련 내용을 공유드리고자 합니다. 
+
+사실 웹 접근성이 중요한 이유는 조금만 검색해봐도 쉽게 찾을 수 있고, AI에게 물어봐도 충분히 잘 설명해줍니다.
+
+하지만 개인적으로는 **“그래서 웹 접근성은 어떻게 지키는 건데?”** 라는 의문이 들 때가 많았습니다. 웹 접근성이 중요하다는 이야기는 많이 접하지만, 실제 개발 과정에서 구체적으로 무엇을 어떻게 해야 하는지는 막연하게 느껴지더라구요.
+
+특히 웹 접근성은 정해진 하나의 공식이 있는 것이 아니라, UI 구조나 사용자 인터랙션, 사용되는 컴포넌트에 따라 고려해야 할 요소가 달라지는 경우가 많습니다. 그래서 개념을 이해하는 것과 실제 코드에 적용하는 것 사이에는 생각보다 큰 간극이 존재한다고 느꼈습니다.
+
+때문에 이번 글에서는 저와 비슷한 고민을 하고 계신 분들에게 조금이나마 도움이 되었음 하는 바람과 함께 웹 접근성을 조금 더 꼼꼼하게 반영했던 사례를 공유드려보고자 합니다. UI에 어떤 접근성 원칙을 적용했고 이를 코드로 어떻게 구현했는지 정리해보았습니다.
+
+물론 이 글에서 소개하는 코드가 정답아닐 수도 있습니다. 다만 웹 접근성을 준수하기 위해 어떤 고민과 시도를 했는지를 공유하는 정도로 가볍게 봐주시면 감사하겠습니다.
+
+
+
+# Case1. 탭 메뉴 컴포넌트
+
+아래와 같은 탭 메뉴 UI가 있습니다. 
+
+![관심장르주간랭킹스와이퍼탭](<./관심장르주간랭킹스와이퍼탭.png>)
+
+이러한 UI에서 어떻게 웹접근성을 준수했는지 알아봅시다.
+
+## 1. role="tablist" 로 탭 컨테이너의 역할 정의
+
+버튼리스트를 감싸는 div 태그에 `role="tablist"` 역할을 부여했는데요.
+
+```tsx
+<div className={cn(LIST_TAB_CLASS)} role="tablist">
+  {tabList.map((item, index) => {
+   <Button
+ //..
+  >
+   {item}
+  </Button>
+```
+
+시각적으로는 단순한 버튼 묶음이지만, 스크린리더에게는 **이 안에 탭들이 있다**는 의미를 전달해야 합니다.  
+이때 `role="tablist"`를 지정하면, 스크린 리더기 입장에서는 이 영역이 **탭 컨트롤들의 리스트**라는 것을 인식하게 됩니다.
+
+## 2. 각 버튼에 role="tab" 부여
+
+```tsx
+<Button
+  //...
+  id={`${id}Tab${index}`}
+  role="tab"
+>
+
+```
+
+해당 UI는 각 버튼을 클릭하면 해당되는 작품리스트가 노출되는 형식입니다. 
+
+즉, 이 UI에서는 버튼들이 서로 상호 배타적인 **탭 역할**을 합니다. 
+
+그래서 각 버튼에 `role="tab"`을 부여해, 단순한 버튼이 아니라 **탭 컴포넌트의 한 항목**이라는 정보를 스크린 리더기에 명확히 전달하도록 했습니다. 
+
+이렇게 구현해 두면 스크린리더는 “탭 1/3, 웹툰, 선택됨”과 같이 읽어줍니다.
+
+## 3. role="tabpanel"과 aria-labelledby로 패널과 탭 연결
+
+```tsx
+const panelId = `${id}Panel`
+const selectedTabId = selectedTabIndex >= 0 ? `${id}Tab${selectedTabIndex}` : undefined
+
+//...
+
+<div id={panelId} role="tabpanel" aria-labelledby={selectedTabId} >
+  {panel}
+</div>
+```
+
+콘텐츠 영역은 `role="tabpanel"`로 선언해, **탭에 의해 제어되는 패널**임을 명시합니다.
+
+`aria-labelledby={selectedTabId}`로 현재 선택된 탭의 `id`를 참조함으로써, 스크린리더는 이 패널을 “(선택된 탭의 레이블)에 대응하는 패널”로 이해합니다.
+
+## 4. aria-controls로 탭 → 패널 방향 링크
+
+```tsx
+<Button
+   //...
+   aria-controls={panelId}
+  >
+aria-controls={panelId}
+```
+
+반대로 탭에서는 `aria-controls`를 통해 **자신이 제어하는 패널의 id**를 알려줍니다.
+
+이로써 탭과 패널은 양방향으로 연결됩니다.
+  - 탭: 나는 이 패널을 제어해
+  - 패널: 나는 이 탭에 의해 라벨링되어 있어
+
+위 패턴 덕분에, 시각 정보 없이도 **어떤 탭을 선택하면, 어떤 콘텐츠가 바뀌는지**를 스크린 리더기가 안정적으로 추론할 수 있습니다.
+
+
+
+## 5. 일관된 시각적·비시각적 정보 전달
+
+탭 UI에서 중요한 것은 어떤 탭이 선택되어 있는지를 모든 사용자에게 **일관되게** 알려주는 것입니다.
+
+```tsx
+  const [selectedTab, setSelectedTab] = useState<ContentType>('웹툰')
+
+//..
+
+const selected = item === selectedTab
+<Button
+  variant={selected ? 'solid-round' : 'outline-round'}
+  color={selected ? 'sub-green-01' : 'bright-01'}
+  ...
+  aria-selected={selected}
+>
+  {item}
+</Button>
+```
+
+위 코드를 통해 시각적·비시각적 접근성을 함께 만족시킬 수 있습니다.
+
+1. 시각적
+   - `selected` 값에 따라 활성 탭과 비활성 탭의 색상·배경이 달라지도록 설계했습니다.  
+   - 사용자는 한눈에 “지금 어떤 탭이 활성화되어 있는지”를 시각적으로 바로 파악할 수 있습니다.
+
+2. 비시각적 (스크린리더)
+   - `aria-selected={selected}`로 동일한 상태 정보를 스크린리더에도 전달합니다.  
+   - 시각적으로 강조된 탭과 스크린리더가 “선택됨”이라고 읽어주는 탭이 일치해, 스크린 리더기 사용자에게도 정확한 탭 활성 상태를 전달할 수 있습니다.
+
+
+
+
+# Case2. 사이드바 웹 접근성
+
+대부분의 웹사이트에서 흔하게 사용하는 UX 요소인 사이드바 역시 웹접근성을 고려해야 합니다.
+
+사이드바 구현을 위해 [shadcn에서 제공하는 Drawer 컴포넌트](https://ui.shadcn.com/docs/components/radix/drawer)를 도입했는데요.
+
+그 과정에서 아래와 같은 웹접근성 에러를 발견했습니다.
+
+## 사이드바 웹접근성 에러
+
+![사이드바웹접근성에러](<./사이드바웹접근성에러.png>)
+
+
+```shell
+Blocked aria-hidden on an element because its descendant retained focus. The focus must not be hidden from assistive technology users. Avoid using aria-hidden on a focused element or its ancestor. Consider using the inert attribute instead, which will also prevent focus. For more details, see the aria-hidden section of the WAI-ARIA specification at https://w3c.github.io/aria/#aria-hidden.
+Element with focus: <button.relative flex size-[25px] items-center justify-center bg-transparent>
+Ancestor with aria-hidden: <div.Layout_wrap-layout__P4KWh>
+```
+
+
+```shell
+ <div class=​"Layout_wrap-layout__P4KWh" style=​"--padding-bottom:​ 0;​ --margin-bottom:​ 40px;​" data-aria-hidden=​"true" aria-hidden=​"true">​…​</div>​
+```
+## 사이드바로 포커스가 이동하지 않은 것이 원인
+
+해당 에러 메시지를 풀어서 보면, **포커스를 가진 요소의 상위 DOM에 `aria-hidden="true"`가 걸려 있는 상태**라는 뜻입니다. 
+
+```tsx
+import * as React from 'react'
+import { Drawer as DrawerPrimitive } from 'vaul'
+import { cn } from '@/src/common/utils/twMerge'
+
+const Drawer = ({ shouldScaleBackground = true, ...props }: React.ComponentProps<typeof DrawerPrimitive.Root>) => (
+  <DrawerPrimitive.Root shouldScaleBackground={shouldScaleBackground} {...props} />
+)
+```
+
+shadcn Drawer 컴포넌트는 `vaul`이라는 UI 라이브러리를 기반으로 만들어졌는데요. 사이드바가 열릴 때 배경 콘텐츠를 숨기기 위한 `aria-hidden` 처리가 `vaul` 내부 로직에 포함되어 있습니다. 이를 통해 사이드바가 열린 동안에는 사용자가 배경 영역에 접근하지 못하도록 막아 주는 방식입니다.
+
+`aria-hidden`이 적용된 영역은 스크린리더 등 보조기기에서 **보이지 않는 영역**으로 간주됩니다. 그 안에 포커스가 남아 있으면 **사용자는 어디에 포커스가 있는지 인지할 수 없고, 조작도 어려운 상태**가 됩니다.
+
+즉, 사이드바 토글 버튼(`button.relative ...`) 클릭 시 사이드바가 열리면서 해당 버튼을 감싸고 있는 래퍼(`Layout_wrap-layout__P4KWh`)는 `aria-hidden="true"`로 처리되었지만, 
+
+포커스는 여전히 토글 버튼에 남아있었기 떄문에 브라우저가 이를 웹접근성 위반 가능성이 높은 상태로 판단하고 경고를 출력한 것입니다.
+
+## 해결 (autofocus)
+
+위 이슈를 해결하기 위해 코드를 아래와 같이 수정했습니다.
+
+
+```tsx
+export default function SidebarProvider({ children }: { children: React.ReactNode }) {
+  return (
+    <Drawer direction="right" autoFocus>
+      {children}
+    </Drawer>
+  )
+}
+
+```
+
+`autoFocus` 옵션을 통해 사이드바가 활성화되면 첫 포커스가 Drawer 내부로 이동하도록 해 더 이상 `aria-hidden="true"`가 걸린 영역 안에 포커스가 남아 있지 않도록 했습니다. 
+
+
+결과적으로 사이드바가 열릴 때 포커스가 Drawer 내부로 이동하도록 변경하여, 스크린리더 사용자도 사이드바 콘텐츠에 온전히 접근할 수 있도록 개선했습니다.
+
+
+# 마무리
+
+제 나름대로 UI에 맞게 웹접근성을 지키기 위해 여러 가지 시도를 해봤는데요.
+
+앞으로도 단순히 UI를 그리는 데서 그치지 않고, 다양한 사용자가 편리하게 이용할 수 있는 웹사이트를 만드는 프론트엔드 개발자가 되기 위해 계속해서 고민하고 노력해야겠습니다.

@@ -1,0 +1,35 @@
+---
+// src/components/Post/CommentWidget.astro — utterances (기존 CommentWidget.tsx 재현)
+// 초기 테마는 저장된 값/시스템 설정으로 판정, 이후 ThemeContext의 "themechange" 이벤트로 실시간 전환 (v2-13 C3)
+import { utterancesWrapper } from "@/components/Post/CommentWidget.css";
+---
+<div class={utterancesWrapper} id="comment-widget"></div>
+<script is:inline>
+  (() => {
+    const dark =
+      localStorage.getItem("theme") === "dark" ||
+      (!localStorage.getItem("theme") && matchMedia("(prefers-color-scheme: dark)").matches);
+
+    const container = document.getElementById("comment-widget");
+    const s = document.createElement("script");
+    s.src = "https://utteranc.es/client.js";
+    s.async = true;
+    s.crossOrigin = "anonymous";
+    s.setAttribute("repo", "BoubleJ/BoubleJ.github.io");
+    s.setAttribute("issue-term", "pathname");
+    s.setAttribute("label", "Comment");
+    s.setAttribute("theme", dark ? "github-dark" : "github-light");
+    container?.appendChild(s);
+
+    // v2-13 C3: ThemeContext.toggleTheme이 dispatch하는 "themechange"를 수신해
+    // utterances iframe에 실시간으로 테마 변경을 postMessage
+    window.addEventListener("themechange", (e) => {
+      const iframe = document.querySelector('iframe.utterances-frame');
+      if (!iframe || !iframe.contentWindow) return;
+      iframe.contentWindow.postMessage(
+        { type: "set-theme", theme: `github-${e.detail.theme}` },
+        "https://utteranc.es",
+      );
+    });
+  })();
+</script>

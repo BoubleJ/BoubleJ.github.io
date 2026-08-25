@@ -30,7 +30,7 @@
     "indentStyle": "space",
     "lineEnding": "lf",
     "lineWidth": 90,
-    "includes": ["**", "!*.md", "!*.yml", "!*.yaml"]
+    "includes": ["**", "!*.md", "!*.yml", "!*.yaml", "!src/content/**"]
   },
 
   "javascript": {
@@ -47,9 +47,8 @@
   },
 
   "linter": {
-    "includes": ["src/**", "app/**"],
+    "includes": ["src/**"],
     "domains": {
-      "next": "recommended",
       "test": "recommended"
     },
     "rules": {

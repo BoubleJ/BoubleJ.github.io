@@ -83,8 +83,8 @@ globalStyle(".markdown-content table th", {
 });
 
 // 코드블록은 Prism.js가 처리하므로 마크다운 스타일에서 제외
-// .markdown-code는 인라인 코드만, .markdown-pre는 Prism이 처리
-globalStyle(".markdown-code:not([class*='language-'])", {
+// 인라인 코드만 대상 — 클래스 부착 없이 래퍼 후손 셀렉터로 커버 (v2-16 A4)
+globalStyle(".markdown-content code:not([class*='language-'])", {
   backgroundColor: vars.color.codeBg,
   padding: "2px 6px",
   borderRadius: "3px",
