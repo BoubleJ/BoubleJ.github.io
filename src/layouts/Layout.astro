@@ -80,8 +80,8 @@ const canonical = decodeURI(new URL(Astro.url.pathname, Astro.site).href);
     <script is:inline define:vars={{ light: lightThemeClass, dark: darkThemeClass }}>
       try {
         const saved = localStorage.getItem("theme");
-        const dark = saved === "dark" || (!saved && matchMedia("(prefers-color-scheme: dark)").matches);
-        document.body.className = dark ? dark : light; // define:vars로 주입된 테마 클래스명
+        const isDark = saved === "dark" || (!saved && matchMedia("(prefers-color-scheme: dark)").matches);
+        document.body.className = isDark ? dark : light; // define:vars로 주입된 테마 클래스명
       } catch (_) { document.body.className = light; }
     </script>
     <div id="app">
