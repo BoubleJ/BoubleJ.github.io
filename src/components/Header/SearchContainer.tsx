@@ -60,7 +60,7 @@ export default function SearchContainer({
               onChange={handleSearchChange}
               onFocus={handleSearchFocus}
               className={styles.searchInput}
-              placeholder="포스트 제목, 요약, 본문으로 검색..."
+              placeholder="궁금한 내용을 검색해보세요"
             />
             <button type="submit" className={styles.searchButton}>
               검색
