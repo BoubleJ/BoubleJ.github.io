@@ -18,6 +18,7 @@ interface Props {
   url?: string;
   image?: string;
   type?: "website" | "article"; // v2-16 B3: 포스트 상세는 article
+  datePublished?: string; // "YYYY-MM-DD" — 포스트 상세에서만 전달, BlogPosting 구조화 데이터용
   noMeta?: boolean; // 404 재현용: title/description/OG 등 head 메타 전무(canonical만 예외 — 골든 패리티)
 }
 // v2-10(e): image 기본값 = 브랜드 OG 이미지. 포스트 상세는 썸네일을 넘겨 덮어씀. 항상 절대 URL로 변환해 출력.
@@ -27,12 +28,32 @@ const {
   url = SITE.siteUrl,
   image = "/og-image.png",
   type = "website",
+  datePublished,
   noMeta = false,
 } = Astro.props;
 const ogImage = image ? new URL(image, Astro.site).href : "";
 // stripQueryString 동작과 동일. gatsby-plugin-canonical-urls는 퍼센트 인코딩 없이 원문 유니코드로 출력하므로
 // URL 생성 시 자동 인코딩된 non-ASCII 슬러그(한글 등)를 decodeURI로 되돌려 골든과 동일한 형식을 유지 (Task 11)
 const canonical = decodeURI(new URL(Astro.url.pathname, Astro.site).href);
+
+// 포스트 상세용 BlogPosting 구조화 데이터. 구글이 글의 제목·작성일·작성자를 명확히 인식하게 한다.
+const blogPosting =
+  type === "article" && datePublished
+    ? {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        headline: title,
+        description,
+        image: ogImage ? [ogImage] : undefined,
+        datePublished,
+        dateModified: datePublished, // 수정일을 따로 관리하지 않으므로 작성일과 동일하게 둔다
+        author: { "@type": "Person", name: SITE.author, url: SITE.siteUrl },
+        publisher: { "@type": "Organization", name: SITE.title, url: SITE.siteUrl },
+        mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
+        url: canonical,
+        inLanguage: "ko",
+      }
+    : null;
 ---
 <html lang="ko">
   <head>
@@ -58,6 +79,9 @@ const canonical = decodeURI(new URL(Astro.url.pathname, Astro.site).href);
         <meta name="twitter:image" content={ogImage} />
         {/* v2-10(d): twitter:site/creator "@사용자이름" 플레이스홀더는 제거됨 (X 계정 없음) */}
         <link rel="canonical" href={canonical} />
+        {blogPosting && (
+          <script type="application/ld+json" set:html={JSON.stringify(blogPosting)} />
+        )}
         {Astro.url.pathname === "/" && (
           <script type="application/ld+json" set:html={JSON.stringify({
             "@context": "https://schema.org", "@type": "WebSite",

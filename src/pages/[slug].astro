@@ -39,6 +39,7 @@ const { Content, headings } = await render(entry);
   url={decodeURI(new URL(Astro.url.pathname, Astro.site).href)}
   image={thumbnail}
   type="article"
+  datePublished={entry.data.date}
 >
   <PostHead client:load title={title} date={date} categories={categories} thumbnail={thumbnail} readingTimeText={readingTimeText} />
   <div class={postBody}>
