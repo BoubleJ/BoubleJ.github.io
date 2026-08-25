@@ -7,8 +7,7 @@ import { vanillaExtractPlugin } from "@vanilla-extract/vite-plugin";
 import remarkSmartypants from "remark-smartypants";
 import rehypeExternalLinks from "rehype-external-links";
 import { rehypeHeadingIds } from "@astrojs/markdown-remark";
-// Task 5 완료 전까지 아래 1줄은 주석 처리
-// import { rehypeAutolinkHeaders } from "./src/lib/rehype-autolink-headers.mjs";
+import { rehypeAutolinkHeaders } from "./src/lib/rehype-autolink-headers.mjs";
 
 export default defineConfig({
   site: "https://boublej.github.io",
@@ -22,7 +21,7 @@ export default defineConfig({
     remarkPlugins: [[remarkSmartypants, { dashes: "oldschool" }]],
     rehypePlugins: [
       rehypeHeadingIds,             // 커스텀 플러그인보다 먼저 id 주입 (Astro 문서 권장 방식)
-      // rehypeAutolinkHeaders,        // Task 5에서 작성
+      rehypeAutolinkHeaders,
       [rehypeExternalLinks, { target: "_blank", rel: ["nofollow", "noopener"] }], // v2-16 B2
     ],
   },
