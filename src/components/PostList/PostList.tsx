@@ -1,5 +1,8 @@
 // src/components/PostList/PostList.tsx
 // v2-8: useInfiniteScroll → 페이지네이션(PER_PAGE=10, ?page= URL 동기화)으로 대체
+// MPA 구조라 필터 변경(카테고리/검색)은 항상 location.assign 풀 리로드를 거치고,
+// 그 새 URL에는 ?page=가 없으므로 "필터 변경 시 1페이지" 는 URL 라이프사이클이 이미 보장한다.
+// 따라서 posts 참조 변화를 감지해 페이지를 리셋하는 effect는 두지 않는다(딥링크 ?page=N 보존을 위해).
 import { useEffect, useRef, useState } from "react";
 import type { PostSummary } from "@/lib/posts";
 import EmptyPostList from "./EmptyPostList";
@@ -29,38 +32,18 @@ export default function PostList({
   posts,
 }: PostListProps) {
   const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const isFirstPostsChange = useRef(true);
   const [page, setPage] = useState(1);
 
   const totalPages = Math.max(1, Math.ceil(posts.length / PER_PAGE));
-  // 렌더 시점의 안전 clamp(state 반영 전 한 프레임 대비) — 실제 state 동기화는 아래 effect들이 담당
-  const currentPage = Math.min(page, totalPages);
+  // totalPages가 줄어(필터/본문 인덱스 로딩 이후) page가 범위를 벗어나는 경우를 대비한 렌더 시점 clamp.
+  // slice·Pagination 표시 모두 이 값을 기준으로 한다.
+  const effectivePage = Math.min(page, totalPages);
 
   // 최초 마운트 시 URL의 ?page= 반영 (location은 클라이언트에서만 접근 가능) — 의도적으로 마운트 시 1회만 실행
   // biome-ignore lint/correctness/useExhaustiveDependencies: 마운트 시점의 totalPages로 초기 페이지만 결정하면 됨
   useEffect(() => {
     setPage(readPageFromUrl(totalPages));
   }, []);
-
-  // posts(필터 결과)가 바뀌면 1페이지로 리셋 (최초 마운트 시에는 건너뜀)
-  // biome-ignore lint/correctness/useExhaustiveDependencies: posts는 본문에서 참조하지 않고 참조 변경 트리거로만 사용
-  useEffect(() => {
-    if (isFirstPostsChange.current) {
-      isFirstPostsChange.current = false;
-      return;
-    }
-    setPage(1);
-    const sp = new URLSearchParams(location.search);
-    if (sp.has("page")) {
-      sp.delete("page");
-      const qs = sp.toString();
-      history.replaceState(
-        null,
-        "",
-        qs ? `${location.pathname}?${qs}` : location.pathname,
-      );
-    }
-  }, [posts]);
 
   const handlePageChange = (next: number) => {
     setPage(next);
@@ -75,7 +58,7 @@ export default function PostList({
     window.scrollTo({ top, behavior: "instant" });
   };
 
-  const visible = posts.slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE);
+  const visible = posts.slice((effectivePage - 1) * PER_PAGE, effectivePage * PER_PAGE);
 
   return (
     <>
@@ -95,7 +78,7 @@ export default function PostList({
         )}
       </div>
       <Pagination
-        currentPage={currentPage}
+        currentPage={effectivePage}
         totalPages={totalPages}
         onPageChange={handlePageChange}
       />
