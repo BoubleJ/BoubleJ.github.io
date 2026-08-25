@@ -1,4 +1,5 @@
-import { keyframes, style } from "@vanilla-extract/css";
+import { globalStyle, keyframes, style } from "@vanilla-extract/css";
+import { darkTheme, lightTheme, vars } from "@/styles/theme.css";
 
 const slideUpFadeIn = keyframes({
   "0%": {
@@ -87,5 +88,21 @@ export const summary = style({
 export const thumbnailImage = style({
   width: "100%",
   height: "200px",
+  objectFit: "cover", // v2-13 C1: 썸네일 비율이 달라도 카드 레이아웃이 깨지지 않도록
   borderRadius: "10px 10px 0 0",
+});
+
+// 검색어 하이라이트 <mark> — 브라우저 기본 대신 테마 토큰 기반으로 라이트/다크 각각 지정 (스펙 v2-6)
+globalStyle(`${lightTheme} ${title} mark, ${lightTheme} ${summary} mark`, {
+  backgroundColor: "#fff3a0",
+  color: vars.color.text,
+  borderRadius: "2px",
+  padding: "0 1px",
+});
+
+globalStyle(`${darkTheme} ${title} mark, ${darkTheme} ${summary} mark`, {
+  backgroundColor: "rgba(255, 214, 51, 0.35)",
+  color: vars.color.text,
+  borderRadius: "2px",
+  padding: "0 1px",
 });

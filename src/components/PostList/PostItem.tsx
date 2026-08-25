@@ -1,8 +1,31 @@
-import { Link } from "gatsby";
-import type { PostFrontmatterType } from "@/types";
+// src/components/PostList/PostItem.tsx
 import * as styles from "./PostItem.css";
 
-type PostItemProps = PostFrontmatterType & { link: string; index?: number };
+interface PostItemProps {
+  title: string;
+  date: string;
+  categories: string[];
+  summary: string;
+  thumbnail: string;
+  link: string;
+  index?: number;
+  searchTerm?: string;
+}
+
+// 대소문자 무시 전체 매칭 <mark> 래핑 (스펙 v2-6)
+const highlight = (text: string, term: string) => {
+  const t = term.trim();
+  if (!t) return text;
+  const parts = text.split(
+    new RegExp(`(${t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "ig"),
+  );
+  return parts.map((part, i) => {
+    if (part.toLowerCase() !== t.toLowerCase()) return part;
+    // biome-ignore lint/suspicious/noArrayIndexKey: 정적으로 한 번 split된 텍스트 조각이라 순서가 바뀌지 않음
+    return <mark key={i}>{part}</mark>;
+  });
+};
+
 export default function PostItem({
   title,
   date,
@@ -11,11 +34,12 @@ export default function PostItem({
   thumbnail,
   link,
   index = 0,
+  searchTerm = "",
 }: PostItemProps) {
   const normalizedLink = link.trim().replace(/\s+/g, "-");
   return (
-    <Link
-      to={normalizedLink}
+    <a
+      href={normalizedLink}
       className={styles.postItemWrapper}
       style={{
         animationDelay: `${index * 0.1}s`,
@@ -28,7 +52,7 @@ export default function PostItem({
       />
 
       <div className={styles.postItemContent}>
-        <div className={styles.title}>{title}</div>
+        <div className={styles.title}>{highlight(title, searchTerm)}</div>
         <div className={styles.date}>{date}</div>
         <div className={styles.category}>
           {categories.map((category) => (
@@ -37,8 +61,8 @@ export default function PostItem({
             </div>
           ))}
         </div>
-        <div className={styles.summary}>{summary}</div>
+        <div className={styles.summary}>{highlight(summary, searchTerm)}</div>
       </div>
-    </Link>
+    </a>
   );
 }
