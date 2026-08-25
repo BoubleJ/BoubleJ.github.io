@@ -19,6 +19,10 @@ export const searchContainer = style({
 export const searchContainerOpen = style({ maxHeight: "200px", opacity: 1 });
 export const searchContainerClosed = style({ maxHeight: 0, opacity: 0 });
 
+// 펼침 애니메이션(0.3s)이 끝난 뒤에만 적용 — 스코프 셀렉트 드롭다운처럼
+// 아코디언 높이를 넘는 오버레이가 잘리지 않도록 클리핑 해제
+export const searchContainerSettled = style({ overflow: "visible" });
+
 export const searchInner = style({
   maxWidth: "1200px",
   margin: "0 auto",

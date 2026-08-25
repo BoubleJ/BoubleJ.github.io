@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import useSearch from "@/hooks/useSearch";
 import ScopeSelect from "./ScopeSelect";
 import * as styles from "./SearchContainer.css";
@@ -19,6 +20,17 @@ export default function SearchContainer({
   onSearchClose,
   initialQuery,
 }: SearchContainerProps) {
+  // 펼침 트랜지션(0.3s) 종료 후 overflow를 풀어 스코프 드롭다운이 잘리지 않게 한다
+  const [isSettled, setIsSettled] = useState(false);
+  useEffect(() => {
+    if (!isSearchOpen) {
+      setIsSettled(false);
+      return;
+    }
+    const timer = setTimeout(() => setIsSettled(true), 300);
+    return () => clearTimeout(timer);
+  }, [isSearchOpen]);
+
   const {
     handleSearchSubmit,
     searchInputRef,
@@ -36,7 +48,7 @@ export default function SearchContainer({
   return (
     <div className={styles.searchPositioner}>
       <div
-        className={`${styles.searchContainer} ${isSearchOpen ? styles.searchContainerOpen : styles.searchContainerClosed}`}
+        className={`${styles.searchContainer} ${isSearchOpen ? styles.searchContainerOpen : styles.searchContainerClosed} ${isSettled ? styles.searchContainerSettled : ""}`}
       >
         <div className={styles.searchInner}>
           <form onSubmit={handleSearchSubmit} className={styles.searchForm}>
