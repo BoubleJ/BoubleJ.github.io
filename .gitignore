@@ -7,3 +7,6 @@ public
 .vscode/
 
 .golden/
+
+dist/
+.astro/
