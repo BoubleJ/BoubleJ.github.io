@@ -122,38 +122,3 @@ export const searchIconButton = style({
     transform: "scale(0.95)",
   },
 });
-
-export const searchIcon = style({
-  width: "20px",
-  height: "20px",
-  color: vars.color.secondary,
-  transition: "color 0.2s",
-  selectors: {
-    [`${searchIconButton}:hover &`]: {
-      color: vars.color.primary,
-    },
-  },
-});
-
-export const searchContainer = style({
-  maxWidth: "1200px",
-  margin: "0 auto",
-  padding: "0 24px",
-  overflow: "hidden",
-  "@media": {
-    "(max-width: 768px)": {
-      padding: "0 16px",
-    },
-  },
-});
-
-export const searchForm = style({
-  display: "flex",
-  gap: "8px",
-  width: "100%",
-  "@media": {
-    "(max-width: 768px)": {
-      flexDirection: "column",
-    },
-  },
-});
