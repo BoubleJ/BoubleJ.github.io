@@ -381,7 +381,7 @@ git commit -m "feat : 콘텐츠를 src/content/posts로 이동 및 MDX 변환"
   - `src/lib/posts.ts`:
     - `getSortedPosts(): Promise<CollectionEntry<"posts">[]>` — date DESC, 동률 시 title DESC(**코드포인트 비교** — Gatsby lodash orderBy와 동일. localeCompare 금지)
     - `formatDate(date: string): string` — `"2024-01-02"` → `"2024.01.02."` (끝 마침표 포함)
-    - `getReadingTimeText(entry): string | undefined` — reading-time에 **파일 원문 전체**(frontmatter 포함) 입력한 `text`
+    - `getReadingTimeText(entry): string | undefined` — reading-time에 **entry.body(본문)만** 입력한 `text` (v2-16 A5)
     - `toPostSummary(entry): PostSummary` — `{ id, slug: "/"+id+"/", title, summary, date(포맷 완료), categories, thumbnail }` (목록/태그 페이지 공용 직렬화)
 
 - [ ] **Step 1: content.config.ts 작성**
