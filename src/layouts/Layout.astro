@@ -1,0 +1,86 @@
+---
+// src/layouts/Layout.astro — Template.tsx(react-helmet) + Layout.tsx + wrapPageElement 통합
+import "prism-themes/themes/prism-ghcolors.min.css"; // gatsby-browser/ssr의 전역 import 재현
+import "@/styles/GlobalStyle.css";
+// TODO(Task 8): Header 연결 — 아직 Gatsby(react-router 대신 `gatsby` Link) 의존이라 비활성화
+// import Header from "@/components/Header/Header";
+import Footer from "@/components/Footer/Footer";
+import ScrollToTop from "@/components/ScrollToTop/ScrollToTop";
+import { container } from "./Layout.css";
+import {
+  lightTheme as lightThemeClass,
+  darkTheme as darkThemeClass,
+} from "@/styles/theme.css";
+import { SITE } from "@/consts";
+
+interface Props {
+  title?: string;
+  description?: string;
+  url?: string;
+  image?: string;
+  type?: "website" | "article"; // v2-16 B3: 포스트 상세는 article
+  noMeta?: boolean; // 404 재현용: head 메타 전무
+}
+// v2-10(e): image 기본값 = 브랜드 OG 이미지. 포스트 상세는 썸네일을 넘겨 덮어씀. 항상 절대 URL로 변환해 출력.
+const {
+  title = SITE.title,
+  description = SITE.description,
+  url = SITE.siteUrl,
+  image = "/og-image.png",
+  type = "website",
+  noMeta = false,
+} = Astro.props;
+const ogImage = image ? new URL(image, Astro.site).href : "";
+const canonical = new URL(Astro.url.pathname, Astro.site); // stripQueryString 동작과 동일
+---
+<html lang="ko">
+  <head>
+    {/* v2-12: 파비콘 — 404 포함 전 페이지 공통 */}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon.png" />
+    {!noMeta && (
+      <>
+        <title>{title}</title>
+        <meta name="google-site-verification" content="32VgiXrbX9YRCfnd2p5rqMCm5eNlviCqwzzD5oUo1jw" />
+        <meta name="description" content={description} />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+        <meta property="og:type" content={type} /> {/* v2-16 B3 */}
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:image" content={ogImage} />
+        <meta property="og:url" content={url} />
+        <meta property="og:site_name" content={SITE.title} /> {/* v2-10: 페이지 title이 아닌 사이트명 고정 */}
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={ogImage} />
+        {/* v2-10(d): twitter:site/creator "@사용자이름" 플레이스홀더는 제거됨 (X 계정 없음) */}
+        <link rel="canonical" href={canonical} />
+        {Astro.url.pathname === "/" && (
+          <script type="application/ld+json" set:html={JSON.stringify({
+            "@context": "https://schema.org", "@type": "WebSite",
+            name: SITE.title, description: SITE.description, url: SITE.siteUrl,
+          })} /> /* v2-10: 사이트명/설명 구조화 데이터 */
+        )}
+      </>
+    )}
+    {noMeta && <meta charset="utf-8" />}
+  </head>
+  <body>
+    {/* v2-16 A1: 첫 페인트 전에 테마 클래스 적용 — MPA FOUC 제거. vanilla-extract 해시 클래스명을 빌드 시 주입 */}
+    <script is:inline define:vars={{ light: lightThemeClass, dark: darkThemeClass }}>
+      try {
+        const saved = localStorage.getItem("theme");
+        const dark = saved === "dark" || (!saved && matchMedia("(prefers-color-scheme: dark)").matches);
+        document.body.className = dark ? dark : light; // define:vars로 주입된 테마 클래스명
+      } catch (_) { document.body.className = light; }
+    </script>
+    <div id="app">
+      {/* TODO(Task 8): Header 연결 — <Header client:load pathname={Astro.url.pathname} /> */}
+      <main class={container}><slot /></main>
+      <Footer />
+      <ScrollToTop client:load />
+    </div>
+  </body>
+</html>

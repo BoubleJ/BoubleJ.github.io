@@ -7,7 +7,7 @@ globalStyle("*", {
   boxSizing: "border-box",
 });
 
-globalStyle("html, body, #___gatsby", {
+globalStyle("html, body, #app", {
   height: "100%",
   backgroundColor: vars.color.background,
   color: vars.color.text,

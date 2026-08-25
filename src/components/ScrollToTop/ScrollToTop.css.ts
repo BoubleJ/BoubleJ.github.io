@@ -1,4 +1,5 @@
 import { style } from "@vanilla-extract/css";
+import { vars } from "@/styles/theme.css";
 
 export const button = style({
   position: "fixed",
@@ -8,8 +9,8 @@ export const button = style({
   height: "48px",
   borderRadius: "50%",
   border: "none",
-  backgroundColor: "var(--color-bg-secondary, #333)",
-  color: "var(--color-text-inverse, #fff)",
+  backgroundColor: vars.color.text,
+  color: vars.color.background,
   cursor: "pointer",
   display: "flex",
   alignItems: "center",
