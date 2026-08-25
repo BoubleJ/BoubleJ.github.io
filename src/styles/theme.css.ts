@@ -21,6 +21,7 @@ export const vars = createThemeContract({
     buttonHoverBg: null,
     inputBorder: null,
     placeholder: null,
+    footerBg: null,
   },
 });
 
@@ -45,6 +46,7 @@ export const lightTheme = createTheme(vars, {
     buttonHoverBg: "#f3f4f6",
     inputBorder: "#e0e0e0",
     placeholder: "#999999",
+    footerBg: "#f6f8fa",
   },
 });
 
@@ -69,5 +71,6 @@ export const darkTheme = createTheme(vars, {
     buttonHoverBg: "#21262d",
     inputBorder: "#30363d",
     placeholder: "#484f58",
+    footerBg: "#161b22",
   },
 });
