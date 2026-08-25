@@ -9,11 +9,15 @@ import * as styles from "@/pages-styles/tag.css";
 
 export default function TagPageClient({ posts }: { posts: PostSummary[] }) {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  // 최초 URL 파싱(딥링크의 ?tags=)이 끝나기 전까지는 PostList에 filterKey=null을 넘겨
+  // 페이지 리셋 로직이 그 최초 값을 "필터 변경"으로 오인해 딥링크의 ?page=를 지우지 않게 한다.
+  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
     const read = () =>
       setSelectedTags(new URLSearchParams(location.search).get("tags")?.split(",") ?? []);
     read();
+    setInitialized(true);
     addEventListener("popstate", read);
     return () => removeEventListener("popstate", read);
   }, []);
@@ -89,7 +93,14 @@ export default function TagPageClient({ posts }: { posts: PostSummary[] }) {
 
       {/* v2-14: 현재 조건의 포스트 개수 — 필터된 전체 기준(페이지 슬라이스 아님) */}
       <p className={postCount}>총 {filteredPosts.length}개의 포스트</p>
-      <PostList posts={filteredPosts} selectedCategory="" searchTerm="" />
+      {/* filterKey: 태그 선택이 바뀌면(popstate로 바뀐 경우 포함) PostList가 1페이지로 리셋한다.
+          initialized 이전엔 null을 넘겨 최초 딥링크(?tags=&page=)의 페이지를 보존한다. */}
+      <PostList
+        posts={filteredPosts}
+        selectedCategory=""
+        searchTerm=""
+        filterKey={initialized ? selectedTags.join(",") : null}
+      />
     </div>
   );
 }
