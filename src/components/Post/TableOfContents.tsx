@@ -83,12 +83,17 @@ export default function TableOfContents({ headings }: TableOfContentsProps) {
     });
 
     // 클릭 시 즉시 활성(스크롤 애니메이션 완료 전 반응성) — 이후 스파이가 이어받음
-    const onHash = () => setActive(decodeURIComponent(location.hash.slice(1)));
-    window.addEventListener("hashchange", onHash);
+    // 해시 이동은 anchor-history.ts가 replaceState로 처리해 hashchange가 발생하지 않으므로 클릭 기반
+    const nav = document.querySelector('nav[aria-label="목차"]');
+    const onNavClick = (e: Event) => {
+      const a = (e.target as Element).closest?.<HTMLAnchorElement>('a[href^="#"]');
+      if (a) setActive(decodeURIComponent(a.hash.slice(1)));
+    };
+    nav?.addEventListener("click", onNavClick);
 
     return () => {
       io.disconnect();
-      window.removeEventListener("hashchange", onHash);
+      nav?.removeEventListener("click", onNavClick);
     };
     // DOM(.markdown-content)만 조회하며 headings prop 값 자체는 참조하지 않음 — 마운트 시 1회 실행
   }, []);
