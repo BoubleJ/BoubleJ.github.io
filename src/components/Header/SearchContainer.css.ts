@@ -57,11 +57,13 @@ export const dropdownOverlayInner = style({
 
 export const searchForm = style({
   display: "flex",
+  alignItems: "center",
   gap: "8px",
   width: "100%",
+  // 모바일에서도 스코프 셀렉트 · 입력창 · 검색 버튼을 한 줄에 유지한다
   "@media": {
     "(max-width: 768px)": {
-      flexDirection: "column",
+      gap: "6px",
     },
   },
 });
@@ -88,6 +90,7 @@ export const scopeSelect = style({
 
 export const searchInput = style({
   flex: 1,
+  minWidth: 0,
   padding: "12px 16px",
   fontSize: "16px",
   border: `2px solid ${vars.color.inputBorder}`,
@@ -110,6 +113,8 @@ export const searchInput = style({
 });
 
 export const searchButton = style({
+  flexShrink: 0,
+  whiteSpace: "nowrap",
   padding: "12px 24px",
   fontSize: "16px",
   fontWeight: 600,
@@ -128,7 +133,7 @@ export const searchButton = style({
   "@media": {
     "(max-width: 768px)": {
       fontSize: "14px",
-      padding: "12px 20px",
+      padding: "12px 14px",
     },
   },
 });

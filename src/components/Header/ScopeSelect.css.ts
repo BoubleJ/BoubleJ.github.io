@@ -12,6 +12,7 @@ export const trigger = style({
   alignItems: "center",
   gap: "6px",
   padding: "12px 12px",
+  whiteSpace: "nowrap",
   fontSize: "16px",
   fontFamily: "inherit",
   border: `2px solid ${vars.color.inputBorder}`,
@@ -27,6 +28,8 @@ export const trigger = style({
   "@media": {
     "(max-width: 768px)": {
       fontSize: "14px",
+      gap: "4px",
+      padding: "12px 8px",
     },
   },
 });
