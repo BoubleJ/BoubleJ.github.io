@@ -41,6 +41,10 @@ export default function PostList({
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const [page, setPage] = useState(1);
   const prevFilterKeyRef = useRef<string | null>(null);
+  // 페이지 링크 href에 현재 쿼리(카테고리/검색어)를 보존하기 위한 값.
+  // SSR에는 location이 없으므로 ""로 시작해 최초 클라이언트 렌더를 SSR과 일치시키고(하이드레이션 불일치 방지),
+  // 마운트 후 실제 쿼리로 갱신한다. 정적 HTML에는 ?page=N 형태의 링크가 남아 크롤러가 따라갈 수 있다.
+  const [currentSearch, setCurrentSearch] = useState("");
 
   const totalPages = Math.max(1, Math.ceil(posts.length / PER_PAGE));
   // totalPages가 줄어(필터/본문 인덱스 로딩 이후) page가 범위를 벗어나는 경우를 대비한 렌더 시점 clamp.
@@ -51,6 +55,7 @@ export default function PostList({
   // biome-ignore lint/correctness/useExhaustiveDependencies: 마운트 시점의 totalPages로 초기 페이지만 결정하면 됨
   useEffect(() => {
     setPage(readPageFromUrl(totalPages));
+    setCurrentSearch(location.search);
   }, []);
 
   // pushState 기반 필터(태그 페이지 등)가 값을 바꾸면 1페이지로 리셋 + URL의 ?page= 제거.
@@ -73,6 +78,7 @@ export default function PostList({
         "",
         qs ? `${location.pathname}?${qs}` : location.pathname,
       );
+      setCurrentSearch(qs ? `?${qs}` : "");
     }
   }, [filterKey]);
 
@@ -84,9 +90,19 @@ export default function PostList({
     else sp.set("page", String(next));
     const qs = sp.toString();
     history.pushState(null, "", qs ? `${location.pathname}?${qs}` : location.pathname);
+    setCurrentSearch(qs ? `?${qs}` : "");
     // 목록 교체와 동시에 스크롤이 일어나면 어지러우므로 smooth 대신 instant 사용(v2-11 무시)
     const top = (wrapperRef.current?.getBoundingClientRect().top ?? 0) + window.scrollY;
     window.scrollTo({ top, behavior: "instant" });
+  };
+
+  // 다른 파라미터는 보존하고 ?page=만 바꾼 링크. 1페이지는 ?page=를 제거한다.
+  const hrefForPage = (target: number): string => {
+    const sp = new URLSearchParams(currentSearch);
+    if (target <= 1) sp.delete("page");
+    else sp.set("page", String(target));
+    const qs = sp.toString();
+    return qs ? `?${qs}` : "?";
   };
 
   const visible = posts.slice((effectivePage - 1) * PER_PAGE, effectivePage * PER_PAGE);
@@ -112,6 +128,7 @@ export default function PostList({
         currentPage={effectivePage}
         totalPages={totalPages}
         onPageChange={handlePageChange}
+        hrefForPage={hrefForPage}
       />
     </>
   );

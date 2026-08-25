@@ -32,9 +32,12 @@ const buttonBase = style({
   fontSize: "14px",
   fontWeight: 500,
   cursor: "pointer",
+  textDecoration: "none",
   transition: "background-color 0.2s, border-color 0.2s, color 0.2s",
+  // <a>로 렌더되므로 전역 a:hover의 링크 색상이 적용되지 않도록 색을 명시한다
   ":hover": {
     backgroundColor: vars.color.buttonHoverBg,
+    color: vars.color.text,
   },
   ":disabled": {
     opacity: 0.4,
@@ -53,6 +56,7 @@ export const pageButtonActive = style({
   color: "#ffffff",
   ":hover": {
     backgroundColor: vars.color.primary,
+    color: "#ffffff",
   },
 });
 
