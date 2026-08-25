@@ -39,6 +39,8 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     setThemeState(newTheme);
     localStorage.setItem("theme", newTheme);
     document.body.className = newTheme === "dark" ? darkTheme : lightTheme;
+    // v2-13 C3: utterances(댓글 iframe) 테마 동기화용 — 수신부는 Task 11에서 구현
+    window.dispatchEvent(new CustomEvent("themechange", { detail: { theme: newTheme } }));
   };
 
   const toggleTheme = () => {

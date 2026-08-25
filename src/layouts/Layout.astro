@@ -2,16 +2,15 @@
 // src/layouts/Layout.astro — Template.tsx(react-helmet) + Layout.tsx + wrapPageElement 통합
 import "prism-themes/themes/prism-ghcolors.min.css"; // gatsby-browser/ssr의 전역 import 재현
 import "@/styles/GlobalStyle.css";
-// TODO(Task 8): Header 연결 — 아직 Gatsby(react-router 대신 `gatsby` Link) 의존이라 비활성화
-// import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
+import Header from "@/components/Header/Header";
 import ScrollToTop from "@/components/ScrollToTop/ScrollToTop";
-import { container } from "./Layout.css";
-import {
-  lightTheme as lightThemeClass,
-  darkTheme as darkThemeClass,
-} from "@/styles/theme.css";
 import { SITE } from "@/consts";
+import {
+  darkTheme as darkThemeClass,
+  lightTheme as lightThemeClass,
+} from "@/styles/theme.css";
+import { container } from "./Layout.css";
 
 interface Props {
   title?: string;
@@ -77,7 +76,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site); // stripQueryString �
       } catch (_) { document.body.className = light; }
     </script>
     <div id="app">
-      {/* TODO(Task 8): Header 연결 — <Header client:load pathname={Astro.url.pathname} /> */}
+      <Header client:load pathname={Astro.url.pathname} />
       <main class={container}><slot /></main>
       <Footer />
       <ScrollToTop client:load />

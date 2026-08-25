@@ -1,28 +1,11 @@
-import { keyframes, style } from "@vanilla-extract/css";
+import { style } from "@vanilla-extract/css";
 import { vars } from "@/styles/theme.css";
 
-const slideDown = keyframes({
-  "0%": {
-    transform: "translateY(-100%)",
-    opacity: 0,
-  },
-  "100%": {
-    transform: "translateY(0)",
-    opacity: 1,
-  },
-});
-
-const slideUp = keyframes({
-  "0%": {
-    transform: "translateY(0)",
-    opacity: 1,
-  },
-  "100%": {
-    transform: "translateY(-100%)",
-    opacity: 0,
-  },
-});
-
+// v2-2 버그 수정: headerVisible/headerHidden에 keyframes(slideDown/slideUp)를 병용하면
+// (a) 최초 렌더에서 isVisible=true로 인해 slideDown이 재생되고
+// (b) 빠른 방향 전환 시 keyframe이 고정 시작값에서 재시작해 점프/깜빡임이 발생했다.
+// transform만 선언하고, 전환은 아래 header의 transition("transform 0.3s ease-in-out, ...")이
+// 현재 계산값에서 목표값으로 보간하도록 위임한다 — 초기 애니메이션 없음 + 연속적인 전환.
 export const header = style({
   position: "fixed",
   top: 0,
@@ -36,15 +19,8 @@ export const header = style({
     "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background-color 0.2s, border-color 0.2s",
 });
 
-export const headerVisible = style({
-  transform: "translateY(0)",
-  animation: `${slideDown} 0.3s ease-out`,
-});
-
-export const headerHidden = style({
-  transform: "translateY(-100%)",
-  animation: `${slideUp} 0.3s ease-out`,
-});
+export const headerVisible = style({ transform: "translateY(0)" });
+export const headerHidden = style({ transform: "translateY(-100%)" });
 
 export const headerContainer = style({
   maxWidth: "1200px",

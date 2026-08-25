@@ -1,14 +1,27 @@
-import { keyframes, style } from "@vanilla-extract/css";
+import { style } from "@vanilla-extract/css";
 import { vars } from "@/styles/theme.css";
 
+// v2-6: 고정 max-height keyframes(0→200px)를 grid-template-rows(0fr↔1fr) transition으로 교체.
+// 콘텐츠(드롭다운 포함) 기반 높이라 200px을 넘는 결과 목록도 잘리지 않는다.
 export const searchContainer = style({
+  display: "grid",
+  gridTemplateRows: "0fr",
+  transition: "grid-template-rows 0.3s ease-out",
+});
+
+export const searchContainerOpen = style({ gridTemplateRows: "1fr" });
+export const searchContainerClosed = style({ gridTemplateRows: "0fr" });
+
+// grid-template-rows 트릭의 필수 자식: overflow hidden + minHeight 0 이어야 0fr일 때 완전히 접힘
+export const searchInner = style({
+  overflow: "hidden",
+  minHeight: 0,
   maxWidth: "1200px",
   margin: "0 auto",
-  padding: "0 24px",
-  overflow: "hidden",
+  padding: "0 24px 16px",
   "@media": {
     "(max-width: 768px)": {
-      padding: "0 16px",
+      padding: "0 16px 16px",
     },
   },
 });
@@ -24,42 +37,24 @@ export const searchForm = style({
   },
 });
 
-const expandSearch = keyframes({
-  "0%": {
-    maxHeight: "0",
-    opacity: 0,
-    paddingTop: "0",
-    paddingBottom: "0",
+export const scopeSelect = style({
+  padding: "12px 8px",
+  fontSize: "16px",
+  border: `2px solid ${vars.color.inputBorder}`,
+  borderRadius: "8px",
+  outline: "none",
+  backgroundColor: vars.color.background,
+  color: vars.color.text,
+  cursor: "pointer",
+  transition: "border-color 0.3s, background-color 0.2s, color 0.2s",
+  ":focus": {
+    borderColor: vars.color.primary,
   },
-  "100%": {
-    maxHeight: "200px",
-    opacity: 1,
-    paddingTop: "16px",
-    paddingBottom: "16px",
+  "@media": {
+    "(max-width: 768px)": {
+      fontSize: "14px",
+    },
   },
-});
-
-const collapseSearch = keyframes({
-  "0%": {
-    maxHeight: "200px",
-    opacity: 1,
-    paddingTop: "16px",
-    paddingBottom: "16px",
-  },
-  "100%": {
-    maxHeight: "0",
-    opacity: 0,
-    paddingTop: "0",
-    paddingBottom: "0",
-  },
-});
-
-export const searchContainerOpen = style({
-  animation: `${expandSearch} 0.3s ease-out forwards`,
-});
-
-export const searchContainerClosed = style({
-  animation: `${collapseSearch} 0.3s ease-out forwards`,
 });
 
 export const searchInput = style({
