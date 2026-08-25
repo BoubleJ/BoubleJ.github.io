@@ -63,7 +63,6 @@ console은 JS 엔진 별로 detail한 기능은 조금씩 다르지만 **디버�
 - 심각한 에러(예상치 못한 에러, 시스템 에러 등)를 출력해야 할 경우 사용합니다.
 
 브라우저에서 각 console을 출력해보면
-![](/image/https://velog.velcdn.com/images/dogmnil2007/post/2353d331-5a86-47b1-805c-9e74ee1d22ac/image.png)
 출력정보의 심각성(level)에 따라 색이 다르게 표시되는 것을 확인할 수 있습니다.
 -> level별 출력 형태 상이
 
@@ -84,7 +83,6 @@ const dog = { type: "dog", name: "puppy", owner: "epik" };
 console.table(dog);
 ```
 
-![](/image/https://velog.velcdn.com/images/dogmnil2007/post/f0cc32ef-7662-448e-af65-00678e3fc5e1/image.png)
 
 ### 2. console.dir
 
@@ -100,7 +98,6 @@ console.dir(dog, { depth: 0 });
 //depth 속성을 통해 출력하고자하는 객체의 깊이를 설정할 수 있습니다.
 ```
 
-![](/image/https://velog.velcdn.com/images/dogmnil2007/post/d2df9ea6-4482-4dc8-838c-bda612405ee5/image.png)
 위 사진과 같이 depth 가 0 이기 때문에 owner 객체 프로퍼티가 출력되지 않습니다.
 
   
@@ -119,7 +116,6 @@ for (let i = 0; i < 10; i++) {
 console.timeEnd("for loop");
 ```
 
-![](/image/https://velog.velcdn.com/images/dogmnil2007/post/f3af3e59-3ee6-4a6c-9d19-dc535b1c94a3/image.png)
 
   
 
@@ -139,7 +135,6 @@ a();
 a();
 ```
 
-![](/image/https://velog.velcdn.com/images/dogmnil2007/post/230d9a6c-9c88-4134-ac68-dc5bd011b56f/image.png)
 
 참고로 console.countReset()은 출력 횟수를 초기화 해줍니다.
 
@@ -153,7 +148,6 @@ console.countReset("a function");
 a();
 ```
 
-![](/image/https://velog.velcdn.com/images/dogmnil2007/post/34754b27-9292-401a-a734-94133187c042/image.png)
 
   
 
@@ -177,7 +171,6 @@ function f3() {
 f1();
 ```
 
-![](/image/https://velog.velcdn.com/images/dogmnil2007/post/9f0271cb-e6ee-4ff2-85b8-27dddf221b41/image.png)
 
   
 
