@@ -1,0 +1,56 @@
+---
+// src/pages/[slug].astro — 기존 src/templates/post_template.tsx 재현 (MDX 버전)
+import type { MarkdownHeading } from "astro";
+import CommentWidget from "@/components/Post/CommentWidget.astro";
+import PostHead from "@/components/Post/PostHead";
+import TableOfContents from "@/components/Post/TableOfContents";
+import Layout from "@/layouts/Layout.astro";
+import { formatDate, getReadingTimeText, getSortedPosts } from "@/lib/posts";
+import {
+  markdownRenderer,
+  postBody,
+  postBodyContent,
+  postBodyToc,
+} from "@/pages-styles/post_template.css";
+import { type CollectionEntry, render } from "astro:content";
+
+interface Props {
+  entry: CollectionEntry<"posts">;
+}
+
+export async function getStaticPaths() {
+  return (await getSortedPosts()).map((entry: CollectionEntry<"posts">) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { title, summary, categories, thumbnail } = entry.data;
+const date = formatDate(entry.data.date);
+const readingTimeText = getReadingTimeText(entry);
+const { Content, headings } = await render(entry);
+---
+<Layout
+  title={title}
+  description={summary}
+  url={new URL(Astro.url.pathname, Astro.site).href}
+  image={thumbnail}
+  type="article"
+>
+  <PostHead client:load title={title} date={date} categories={categories} thumbnail={thumbnail} readingTimeText={readingTimeText} />
+  <div class={postBody}>
+    <div class={postBodyContent}>
+      <div class={`${markdownRenderer} markdown-content`}>
+        <Content />
+      </div>
+    </div>
+    <aside class={postBodyToc}>
+      <TableOfContents client:load headings={headings.filter((h: MarkdownHeading) => h.depth <= 3)} />
+    </aside>
+  </div>
+  <CommentWidget />
+  <div id="reading-progress" aria-hidden="true"></div>
+  <script src="../scripts/code-copy.ts"></script>
+  <script src="../scripts/reading-progress.ts"></script>
+</Layout>

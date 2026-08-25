@@ -30,7 +30,9 @@ const {
   noMeta = false,
 } = Astro.props;
 const ogImage = image ? new URL(image, Astro.site).href : "";
-const canonical = new URL(Astro.url.pathname, Astro.site); // stripQueryString 동작과 동일
+// stripQueryString 동작과 동일. gatsby-plugin-canonical-urls는 퍼센트 인코딩 없이 원문 유니코드로 출력하므로
+// URL 생성 시 자동 인코딩된 non-ASCII 슬러그(한글 등)를 decodeURI로 되돌려 골든과 동일한 형식을 유지 (Task 11)
+const canonical = decodeURI(new URL(Astro.url.pathname, Astro.site).href);
 ---
 <html lang="ko">
   <head>

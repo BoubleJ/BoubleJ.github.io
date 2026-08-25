@@ -35,20 +35,55 @@ const report = (label, missing, extra) => {
 };
 
 const diffSets = (label, a, b) => {
-  const A = new Set(a), B = new Set(b);
-  report(label, [...A].filter((x) => !B.has(x)), [...B].filter((x) => !A.has(x)));
+  const A = new Set(a),
+    B = new Set(b);
+  report(
+    label,
+    [...A].filter((x) => !B.has(x)),
+    [...B].filter((x) => !A.has(x)),
+  );
 };
 
-const isRealPage = (u) => !u.startsWith("/page-data") && !u.startsWith("/~partytown") && !u.startsWith("/dev-404") && !u.startsWith("/offline-plugin");
-const goldenUrls = htmlPages(GOLDEN).filter(isRealPage).filter((u) => !INTENTIONALLY_REMOVED.has(u));
-const distUrls = htmlPages(DIST).filter(isRealPage).filter((u) => !INTENTIONALLY_REMOVED.has(u));
+const isRealPage = (u) =>
+  !u.startsWith("/page-data") &&
+  !u.startsWith("/~partytown") &&
+  !u.startsWith("/dev-404") &&
+  !u.startsWith("/offline-plugin");
+const goldenUrls = htmlPages(GOLDEN)
+  .filter(isRealPage)
+  .filter((u) => !INTENTIONALLY_REMOVED.has(u));
+const distUrls = htmlPages(DIST)
+  .filter(isRealPage)
+  .filter((u) => !INTENTIONALLY_REMOVED.has(u));
 diffSets("페이지 URL 집합", goldenUrls, distUrls); // /post/는 의도적 제거라 골든 쪽에서 걸러냄
+
+// 컨트롤러 룰링 7: title/description 비교 전 HTML 문자 참조를 정규화해
+// &#x27; ≡ &#39; ≡ ' 등 동일 문자를 같게 취급 (numeric/hex/기본 named entity만 디코드하면 충분)
+const NAMED_ENTITIES = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " " };
+const normalizeEntities = (s) =>
+  s.replace(/&(#x[0-9a-fA-F]+|#[0-9]+|[a-zA-Z]+);/g, (m, ref) => {
+    if (ref[0] === "#") {
+      const code =
+        ref[1] === "x" || ref[1] === "X"
+          ? parseInt(ref.slice(2), 16)
+          : parseInt(ref.slice(1), 10);
+      return Number.isNaN(code) ? m : String.fromCodePoint(code);
+    }
+    return NAMED_ENTITIES[ref] ?? m;
+  });
 
 const extract = (html) => ({
   headingIds: [...html.matchAll(/<h[123][^>]*\sid="([^"]+)"/g)].map((m) => m[1]),
-  tocHrefs: [...(html.match(/aria-label="목차"[\s\S]*?<\/nav>/)?.[0] ?? "").matchAll(/href="(#[^"]+)"/g)].map((m) => m[1]),
+  tocHrefs: [
+    ...(html.match(/aria-label="목차"[\s\S]*?<\/nav>/)?.[0] ?? "").matchAll(
+      /href="(#[^"]+)"/g,
+    ),
+  ].map((m) => m[1]),
   title: html.match(/<title[^>]*>([^<]*)<\/title>/)?.[1] ?? "(없음)",
-  canonical: html.match(/rel="canonical"\s+href="([^"]+)"/)?.[1] ?? html.match(/href="([^"]+)"\s+rel="canonical"/)?.[1] ?? "(없음)",
+  canonical:
+    html.match(/rel="canonical"\s+href="([^"]+)"/)?.[1] ??
+    html.match(/href="([^"]+)"\s+rel="canonical"/)?.[1] ??
+    "(없음)",
   description: html.match(/name="description"\s+content="([^"]*)"/)?.[1] ?? "(없음)",
 });
 
@@ -62,7 +97,12 @@ for (const url of goldenUrls) {
   const DESCRIPTION_CHANGED = new Set(["/", "/tag/"]);
   for (const k of ["title", "canonical", "description"]) {
     if (k === "description" && DESCRIPTION_CHANGED.has(url)) continue;
-    if (g[k] !== d[k]) { failed = true; console.log(`✗ ${url} ${k}: 골든='${g[k]}' vs 새 빌드='${d[k]}'`); }
+    const gv = k === "title" || k === "description" ? normalizeEntities(g[k]) : g[k];
+    const dv = k === "title" || k === "description" ? normalizeEntities(d[k]) : d[k];
+    if (gv !== dv) {
+      failed = true;
+      console.log(`✗ ${url} ${k}: 골든='${g[k]}' vs 새 빌드='${d[k]}'`);
+    }
   }
 }
 
