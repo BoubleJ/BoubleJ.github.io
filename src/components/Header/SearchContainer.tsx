@@ -33,41 +33,48 @@ export default function SearchContainer({
   } = useSearch({ isSearchOpen, onSearchClose, initialQuery });
 
   return (
-    <div
-      className={`${styles.searchContainer} ${isSearchOpen ? styles.searchContainerOpen : styles.searchContainerClosed}`}
-    >
-      <div className={styles.searchInner}>
-        <form onSubmit={handleSearchSubmit} className={styles.searchForm}>
-          <select
-            value={scope}
-            onChange={handleScopeChange}
-            className={styles.scopeSelect}
-            aria-label="검색 범위"
-          >
-            <option value="">전체</option>
-            <option value="title">제목</option>
-            <option value="content">본문</option>
-          </select>
-          <input
-            ref={searchInputRef}
-            type="text"
-            value={term}
-            onChange={handleSearchChange}
-            onFocus={handleSearchFocus}
-            className={styles.searchInput}
-            placeholder="포스트 제목, 요약, 본문으로 검색..."
+    <div className={styles.searchPositioner}>
+      <div
+        className={`${styles.searchContainer} ${isSearchOpen ? styles.searchContainerOpen : styles.searchContainerClosed}`}
+      >
+        <div className={styles.searchInner}>
+          <form onSubmit={handleSearchSubmit} className={styles.searchForm}>
+            <select
+              value={scope}
+              onChange={handleScopeChange}
+              className={styles.scopeSelect}
+              aria-label="검색 범위"
+            >
+              <option value="">전체</option>
+              <option value="title">제목</option>
+              <option value="content">본문</option>
+            </select>
+            <input
+              ref={searchInputRef}
+              type="text"
+              value={term}
+              onChange={handleSearchChange}
+              onFocus={handleSearchFocus}
+              className={styles.searchInput}
+              placeholder="포스트 제목, 요약, 본문으로 검색..."
+            />
+            <button type="submit" className={styles.searchButton}>
+              검색
+            </button>
+          </form>
+        </div>
+      </div>
+      {/* 오버레이: 아코디언(overflow hidden) 밖에 두어 잘리지 않고, 레이아웃에도 영향 없음 */}
+      <div className={styles.dropdownOverlay}>
+        <div className={styles.dropdownOverlayInner}>
+          <SearchDropdown
+            isOpen={isSearchOpen && isDropdownOpen}
+            matches={matches}
+            term={term}
+            onSelect={handleResultSelect}
+            onClose={closeDropdown}
           />
-          <button type="submit" className={styles.searchButton}>
-            검색
-          </button>
-        </form>
-        <SearchDropdown
-          isOpen={isDropdownOpen}
-          matches={matches}
-          term={term}
-          onSelect={handleResultSelect}
-          onClose={closeDropdown}
-        />
+        </div>
       </div>
     </div>
   );

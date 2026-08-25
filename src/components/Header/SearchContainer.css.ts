@@ -1,42 +1,52 @@
 import { style } from "@vanilla-extract/css";
 import { vars } from "@/styles/theme.css";
 
-// v2-6: 고정 max-height keyframes(0→200px)를 grid-template-rows(0fr↔1fr) transition으로 교체.
-// 콘텐츠(드롭다운 포함) 기반 높이라 200px을 넘는 결과 목록도 잘리지 않는다.
-export const searchContainer = style({
-  display: "grid",
-  gridTemplateRows: "0fr",
-  transition: "grid-template-rows 0.3s ease-out",
+// 검색 영역 루트: 드롭다운 오버레이의 기준점 (아코디언 밖에 두어 overflow에 안 잘리게)
+export const searchPositioner = style({
+  position: "relative",
+  width: "100%",
 });
 
-export const searchContainerOpen = style({ gridTemplateRows: "1fr" });
-export const searchContainerClosed = style({ gridTemplateRows: "0fr" });
-
-// grid-template-rows 트릭의 필수 자식: overflow hidden + minHeight 0 이어야 0fr일 때 완전히 접힘.
-// 주의: 0fr은 콘텐츠만 접고 padding은 못 접으므로, 세로 padding은 열림 상태에서만 부여한다
-// (안 그러면 닫힘 상태에서 padding 높이만큼 헤더 아래로 삐져나옴).
-export const searchInner = style({
+// 기존 Gatsby 방식의 아코디언: max-height + opacity 슬라이드 (0↔200px).
+// 드롭다운은 오버레이로 분리됐으므로 고정 max-height로 충분하다.
+export const searchContainer = style({
   overflow: "hidden",
-  minHeight: 0,
+  maxHeight: 0,
+  opacity: 0,
+  transition: "max-height 0.3s ease-out, opacity 0.3s ease-out",
+});
+
+export const searchContainerOpen = style({ maxHeight: "200px", opacity: 1 });
+export const searchContainerClosed = style({ maxHeight: 0, opacity: 0 });
+
+export const searchInner = style({
+  maxWidth: "1200px",
+  margin: "0 auto",
+  padding: "0 24px 16px",
+  "@media": {
+    "(max-width: 768px)": {
+      padding: "0 16px 16px",
+    },
+  },
+});
+
+// 드롭다운 오버레이: 문서 흐름 밖(absolute)이라 열려도 레이아웃/스크롤바가 변하지 않는다
+// → 검색어 입력 시 input 너비가 흔들리던 문제 해결
+export const dropdownOverlay = style({
+  position: "absolute",
+  top: "100%",
+  left: 0,
+  right: 0,
+  zIndex: 1000,
+});
+
+export const dropdownOverlayInner = style({
   maxWidth: "1200px",
   margin: "0 auto",
   padding: "0 24px",
-  paddingBottom: 0,
-  transition: "padding-bottom 0.3s ease-out",
-  selectors: {
-    [`${searchContainerOpen} &`]: {
-      paddingBottom: "16px",
-    },
-  },
   "@media": {
     "(max-width: 768px)": {
       padding: "0 16px",
-      paddingBottom: 0,
-      selectors: {
-        [`${searchContainerOpen} &`]: {
-          paddingBottom: "16px",
-        },
-      },
     },
   },
 });

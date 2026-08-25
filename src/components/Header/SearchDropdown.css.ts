@@ -12,6 +12,7 @@ export const dropdown = style({
   borderRadius: "8px",
   backgroundColor: vars.color.background,
   overflow: "hidden",
+  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)", // 오버레이로 콘텐츠 위에 뜨므로 구분용
 });
 
 export const item = style({
