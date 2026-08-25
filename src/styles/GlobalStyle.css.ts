@@ -8,10 +8,22 @@ globalStyle("*", {
 });
 
 globalStyle("html, body, #app", {
-  height: "100%",
   backgroundColor: vars.color.background,
   color: vars.color.text,
   transition: "background-color 0.2s ease, color 0.2s ease",
+});
+
+globalStyle("html, body", {
+  height: "100%",
+});
+
+// #app에 확정 높이(height:100%)를 주면 main(height:100%)이 뷰포트 높이로 고정되어
+// 본문이 넘쳐흐르고 Footer가 콘텐츠 중간에 겹침 — min-height + flex column으로
+// 콘텐츠만큼 늘어나게 하고, 짧은 페이지에서는 Footer(margin-top:auto)가 하단 고정됨
+globalStyle("#app", {
+  display: "flex",
+  flexDirection: "column",
+  minHeight: "100%",
 });
 
 globalStyle("a", {
