@@ -12,16 +12,31 @@ export const searchContainer = style({
 export const searchContainerOpen = style({ gridTemplateRows: "1fr" });
 export const searchContainerClosed = style({ gridTemplateRows: "0fr" });
 
-// grid-template-rows 트릭의 필수 자식: overflow hidden + minHeight 0 이어야 0fr일 때 완전히 접힘
+// grid-template-rows 트릭의 필수 자식: overflow hidden + minHeight 0 이어야 0fr일 때 완전히 접힘.
+// 주의: 0fr은 콘텐츠만 접고 padding은 못 접으므로, 세로 padding은 열림 상태에서만 부여한다
+// (안 그러면 닫힘 상태에서 padding 높이만큼 헤더 아래로 삐져나옴).
 export const searchInner = style({
   overflow: "hidden",
   minHeight: 0,
   maxWidth: "1200px",
   margin: "0 auto",
-  padding: "0 24px 16px",
+  padding: "0 24px",
+  paddingBottom: 0,
+  transition: "padding-bottom 0.3s ease-out",
+  selectors: {
+    [`${searchContainerOpen} &`]: {
+      paddingBottom: "16px",
+    },
+  },
   "@media": {
     "(max-width: 768px)": {
-      padding: "0 16px 16px",
+      padding: "0 16px",
+      paddingBottom: 0,
+      selectors: {
+        [`${searchContainerOpen} &`]: {
+          paddingBottom: "16px",
+        },
+      },
     },
   },
 });
