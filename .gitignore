@@ -5,3 +5,5 @@ public
 .cursor/
 
 .vscode/
+
+.golden/
