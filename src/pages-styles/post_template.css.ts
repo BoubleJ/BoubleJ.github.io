@@ -7,10 +7,10 @@ export const markdownRenderer = style({
   maxWidth: "1200px",
   width: "100%",
   margin: "0 auto",
-  padding: "100px 24px",
+  padding: "40px 24px 100px",
   "@media": {
     "(max-width: 768px)": {
-      padding: "100px 20px",
+      padding: "40px 20px 100px",
     },
   },
 });
