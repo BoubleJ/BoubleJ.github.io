@@ -22,7 +22,25 @@ const htmlPages = (root) => {
     }
   };
   walk(root);
+  // GitHub Pages 404 폴백: Astro는 trailingSlash/format 설정과 무관하게 404 페이지를
+  // 항상 루트의 평평한 404.html로만 출력한다(디렉터리 형식 아님) — 골든(Gatsby)은
+  // /404/index.html도 함께 생성하므로 위 walk에서 이미 잡히지만, 이 평평한 파일만
+  // 존재하는 빌드(dist)에서도 같은 URL을 인식하도록 보강한다.
+  if (fs.existsSync(path.join(root, "404.html")) && !out.includes("/404")) {
+    out.push("/404");
+  }
   return out.map((u) => (u === "/" ? "/" : u + "/")).sort();
+};
+
+// GitHub Pages 404 폴백 보강: /404/index.html이 없으면 루트의 평평한 404.html로 대체 읽기
+const readPageHtml = (root, url) => {
+  const nested = path.join(root, url, "index.html");
+  if (fs.existsSync(nested)) return fs.readFileSync(nested, "utf8");
+  if (url === "/404/") {
+    const flat = path.join(root, "404.html");
+    if (fs.existsSync(flat)) return fs.readFileSync(flat, "utf8");
+  }
+  return fs.readFileSync(nested, "utf8"); // 존재하지 않으면 기존과 동일하게 에러
 };
 
 const report = (label, missing, extra) => {
@@ -89,8 +107,8 @@ const extract = (html) => ({
 
 for (const url of goldenUrls) {
   if (!distUrls.includes(url)) continue;
-  const g = extract(fs.readFileSync(path.join(GOLDEN, url, "index.html"), "utf8"));
-  const d = extract(fs.readFileSync(path.join(DIST, url, "index.html"), "utf8"));
+  const g = extract(readPageHtml(GOLDEN, url));
+  const d = extract(readPageHtml(DIST, url));
   diffSets(`${url} heading id`, g.headingIds, d.headingIds);
   diffSets(`${url} TOC href`, g.tocHrefs, d.tocHrefs);
   // v2-10: 사이트 공통 description은 의도적으로 변경됨 — 목록/태그 페이지는 description 비교 제외

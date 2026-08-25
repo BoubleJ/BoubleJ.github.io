@@ -8,6 +8,6 @@ import { getSortedPosts, toPostSummary } from "@/lib/posts";
 const posts = (await getSortedPosts()).map(toPostSummary);
 ---
 
-<Layout title={`${SITE.title} - Tags`} description={SITE.description} url={SITE.siteUrl} image="">
+<Layout title={`${SITE.title} - Tags`} description={SITE.description} url={SITE.siteUrl}>
   <TagPageClient client:load posts={posts} />
 </Layout>

@@ -34,7 +34,7 @@ const { Content, headings } = await render(entry);
 <Layout
   title={title}
   description={summary}
-  url={new URL(Astro.url.pathname, Astro.site).href}
+  url={decodeURI(new URL(Astro.url.pathname, Astro.site).href)}
   image={thumbnail}
   type="article"
 >
