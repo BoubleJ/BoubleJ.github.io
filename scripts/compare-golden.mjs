@@ -15,11 +15,14 @@ const htmlPages = (root) => {
     for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
       const p = path.join(dir, e.name);
       if (e.isDirectory()) walk(p);
-      else if (e.name === "index.html") out.push("/" + path.relative(root, dir).split(path.sep).join("/"));
+      else if (e.name === "index.html") {
+        const rel = path.relative(root, dir);
+        out.push(rel === "" ? "/" : "/" + rel.split(path.sep).join("/"));
+      }
     }
   };
   walk(root);
-  return out.map((u) => (u === "/." ? "/" : u + "/")).sort();
+  return out.map((u) => (u === "/" ? "/" : u + "/")).sort();
 };
 
 const report = (label, missing, extra) => {
