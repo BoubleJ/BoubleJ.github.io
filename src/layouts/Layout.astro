@@ -18,7 +18,7 @@ interface Props {
   url?: string;
   image?: string;
   type?: "website" | "article"; // v2-16 B3: 포스트 상세는 article
-  noMeta?: boolean; // 404 재현용: head 메타 전무
+  noMeta?: boolean; // 404 재현용: title/description/OG 등 head 메타 전무(canonical만 예외 — 골든 패리티)
 }
 // v2-10(e): image 기본값 = 브랜드 OG 이미지. 포스트 상세는 썸네일을 넘겨 덮어씀. 항상 절대 URL로 변환해 출력.
 const {
@@ -66,7 +66,14 @@ const canonical = decodeURI(new URL(Astro.url.pathname, Astro.site).href);
         )}
       </>
     )}
-    {noMeta && <meta charset="utf-8" />}
+    {noMeta && (
+      <>
+        <meta charset="utf-8" />
+        {/* gatsby-plugin-canonical-urls는 Helmet 사용 여부와 무관하게 전 페이지(404 포함)에
+            canonical을 자동 주입했음 — 골든 패리티를 위해 noMeta에서도 canonical만 유지 */}
+        <link rel="canonical" href={canonical} />
+      </>
+    )}
   </head>
   <body>
     {/* v2-16 A1: 첫 페인트 전에 테마 클래스 적용 — MPA FOUC 제거. vanilla-extract 해시 클래스명을 빌드 시 주입 */}
