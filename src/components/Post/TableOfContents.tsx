@@ -1,56 +1,55 @@
-import { useEffect } from "react";
+import type { MarkdownHeading } from "astro";
 import * as styles from "./TableOfContents.css";
 
 interface TableOfContentsProps {
-  tocHtml?: string | null;
+  headings: MarkdownHeading[];
 }
 
-const updateActiveTocLink = () => {
-  if (typeof window === "undefined") return;
+interface TocNode {
+  heading: MarkdownHeading;
+  children: TocNode[];
+}
 
-  const tocNav = document.querySelector<HTMLElement>('nav[aria-label="목차"]');
-  if (!tocNav) return;
+const buildTree = (headings: MarkdownHeading[]): TocNode[] => {
+  const items = headings.filter((h) => h.depth <= 3);
+  const root: TocNode[] = [];
+  const stack: { depth: number; nodes: TocNode[] }[] = [{ depth: 0, nodes: root }];
 
-  const { hash } = window.location;
-  const links = tocNav.querySelectorAll<HTMLAnchorElement>("a[href^='#']");
+  for (const h of items) {
+    while (stack.length > 1 && h.depth <= stack[stack.length - 1].depth) stack.pop();
+    const node: TocNode = { heading: h, children: [] };
+    stack[stack.length - 1].nodes.push(node);
+    stack.push({ depth: h.depth, nodes: node.children });
+  }
 
-  links.forEach((link) => {
-    if (!link.classList.contains(styles.tocLink)) {
-      link.classList.add(styles.tocLink);
-    }
-
-    if (hash && link.hash === hash) {
-      link.classList.add(styles.tocLinkActive);
-    } else {
-      link.classList.remove(styles.tocLinkActive);
-    }
-  });
+  return root;
 };
 
-export default function TableOfContents({ tocHtml }: TableOfContentsProps) {
-  useEffect(() => {
-    if (typeof window === "undefined") return;
+const TocList = ({ nodes }: { nodes: TocNode[] }) => (
+  <ul>
+    {nodes.map((n) => (
+      <li key={n.heading.slug}>
+        <a className={styles.tocLink} href={`#${encodeURIComponent(n.heading.slug)}`}>
+          {n.heading.text}
+        </a>
+        {n.children.length > 0 && <TocList nodes={n.children} />}
+      </li>
+    ))}
+  </ul>
+);
 
-    updateActiveTocLink();
+export default function TableOfContents({ headings }: TableOfContentsProps) {
+  const tree = buildTree(headings);
 
-    const handleHashChange = () => {
-      updateActiveTocLink();
-    };
-
-    window.addEventListener("hashchange", handleHashChange);
-
-    return () => {
-      window.removeEventListener("hashchange", handleHashChange);
-    };
-  }, []);
-
-  if (!tocHtml) return null;
+  if (tree.length === 0) return null;
 
   return (
     <nav aria-label="목차" className={styles.tocWrapper}>
       <div className={styles.tocTitle}>목차</div>
       <div className={styles.tocScrollArea}>
-        <div className={styles.tocList} dangerouslySetInnerHTML={{ __html: tocHtml }} />
+        <div className={styles.tocList}>
+          <TocList nodes={tree} />
+        </div>
       </div>
     </nav>
   );
