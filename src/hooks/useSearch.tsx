@@ -42,13 +42,24 @@ export default function useSearch({
   // 검색창 첫 포커스 시 1회 fetch 후 메모리 캐시(같은 fetch가 동시에 여러 번 나가지 않도록 Promise 자체를 캐시)
   const indexPromiseRef = useRef<Promise<IndexedPost[]> | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // 사용자가 직접 입력·범위 변경을 했을 때만 결과 드롭다운을 연다.
+  // /?search= 프리필로 term이 채워지는 경우엔 열지 않아야 검색 결과 목록을 가리지 않는다.
+  const isUserEditingRef = useRef(false);
 
+  // 첫 open이 /?search= 프리필로 자동으로 일어난 것인지 구분한다 (사용자가 아이콘을 누른 게 아님)
+  const hasOpenedRef = useRef(false);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: initialQuery는 첫 open 판별용으로만 읽는다
   useEffect(() => {
-    if (isSearchOpen && searchInputRef.current) {
-      searchInputRef.current.focus();
-    }
     if (!isSearchOpen) {
       setIsDropdownOpen(false);
+      return;
+    }
+    const isPrefillOpen = !hasOpenedRef.current && Boolean(initialQuery);
+    hasOpenedRef.current = true;
+    // 검색 아이콘을 직접 눌러 연 경우에만 포커스를 준다.
+    // 프리필로 자동으로 열릴 땐 포커스를 뺏지 않는다(모바일 키보드가 올라오는 문제).
+    if (!isPrefillOpen) {
+      searchInputRef.current?.focus();
     }
   }, [isSearchOpen]);
 
@@ -98,6 +109,7 @@ export default function useSearch({
   // biome-ignore lint/correctness/useExhaustiveDependencies: runSearch는 term/scope에서 파생되어 재생성돼도 동작에 영향 없음
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (!isUserEditingRef.current) return;
     debounceRef.current = setTimeout(() => {
       runSearch(term, scope);
     }, DEBOUNCE_MS);
@@ -107,10 +119,12 @@ export default function useSearch({
   }, [term, scope]);
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    isUserEditingRef.current = true;
     setTerm(e.target.value);
   };
 
   const handleScopeChange = (value: string) => {
+    isUserEditingRef.current = true;
     setScope(value as SearchScope);
   };
 
@@ -128,6 +142,11 @@ export default function useSearch({
 
   const handleSearchSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    // 이동 전에 예약된 디바운스 검색을 취소하고 드롭다운을 닫는다
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    isUserEditingRef.current = false;
+    setIsDropdownOpen(false);
+    searchInputRef.current?.blur();
     submitSearch(searchInputRef.current?.value ?? term, scope);
     onSearchClose();
   };
