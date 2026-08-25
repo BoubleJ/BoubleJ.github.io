@@ -4,7 +4,7 @@ export const tocWrapper = style({
   position: "sticky",
   top: "140px",
   padding: "16px 14px",
-  marginTop: "100px",
+  marginTop: "40px", // 본문 상단 패딩(markdownRenderer 40px)과 정렬 — PC/모바일 공통
   minWidth: "260px",
   borderRadius: "12px",
   backgroundColor: "var(--color-codeBg, #f6f8fa)",
