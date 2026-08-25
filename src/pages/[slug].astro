@@ -12,6 +12,8 @@ import {
   postBodyContent,
   postBodyToc,
 } from "@/pages-styles/post_template.css";
+// 본문 요소 스타일 + 복사 버튼 + 다크모드 Prism 오버라이드 (Gatsby에서는 PostContent.tsx가 import — 전환 시 유실됐던 것)
+import "@/styles/markdown.css";
 import { type CollectionEntry, render } from "astro:content";
 
 interface Props {
