@@ -1,4 +1,5 @@
 import useSearch from "@/hooks/useSearch";
+import ScopeSelect from "./ScopeSelect";
 import * as styles from "./SearchContainer.css";
 import SearchDropdown from "./SearchDropdown";
 
@@ -39,16 +40,7 @@ export default function SearchContainer({
       >
         <div className={styles.searchInner}>
           <form onSubmit={handleSearchSubmit} className={styles.searchForm}>
-            <select
-              value={scope}
-              onChange={handleScopeChange}
-              className={styles.scopeSelect}
-              aria-label="검색 범위"
-            >
-              <option value="">전체</option>
-              <option value="title">제목</option>
-              <option value="content">본문</option>
-            </select>
+            <ScopeSelect value={scope} onChange={handleScopeChange} />
             <input
               ref={searchInputRef}
               type="text"

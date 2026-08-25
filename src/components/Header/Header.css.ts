@@ -122,3 +122,8 @@ export const searchIconButton = style({
     transform: "scale(0.95)",
   },
 });
+
+// 검색 열림 상태의 아이콘 버튼 하이라이트 (Home 활성 표시와 같은 맥락의 활성 피드백)
+export const searchIconButtonActive = style({
+  backgroundColor: vars.color.buttonHoverBg,
+});

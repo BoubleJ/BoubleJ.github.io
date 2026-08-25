@@ -49,9 +49,10 @@ const Header = ({ pathname }: HeaderProps) => {
           ))}
           <button
             type="button"
-            className={styles.searchIconButton}
+            className={`${styles.searchIconButton} ${isSearchOpen ? styles.searchIconButtonActive : ""}`}
             onClick={handleSearchIconClick}
             aria-label="검색"
+            aria-pressed={isSearchOpen}
           >
             <SearchIcon />
           </button>

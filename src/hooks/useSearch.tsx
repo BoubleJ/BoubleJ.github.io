@@ -110,8 +110,8 @@ export default function useSearch({
     setTerm(e.target.value);
   };
 
-  const handleScopeChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    setScope(e.target.value as SearchScope);
+  const handleScopeChange = (value: string) => {
+    setScope(value as SearchScope);
   };
 
   const closeDropdown = () => setIsDropdownOpen(false);
