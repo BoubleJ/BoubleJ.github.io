@@ -1,6 +1,8 @@
 ---
 // src/pages/[slug].astro — 기존 src/templates/post_template.tsx 재현 (MDX 버전)
 import type { MarkdownHeading } from "astro";
+import CheckIcon from "@/assets/icons/check.svg";
+import CopyIcon from "@/assets/icons/copy.svg";
 import CommentWidget from "@/components/Post/CommentWidget.astro";
 import PostHead from "@/components/Post/PostHead";
 import TableOfContents from "@/components/Post/TableOfContents";
@@ -54,6 +56,9 @@ const { Content, headings } = await render(entry);
   </div>
   <CommentWidget />
   <div id="reading-progress" aria-hidden="true"></div>
+  {/* 복사 버튼은 code-copy.ts가 런타임에 주입하므로 아이콘을 빌드 타임에 template으로 심어두고 복제해 쓴다 */}
+  <template id="icon-copy"><CopyIcon /></template>
+  <template id="icon-check"><CheckIcon /></template>
   <script src="../scripts/code-copy.ts"></script>
   <script src="../scripts/reading-progress.ts"></script>
   <script src="../scripts/anchor-history.ts"></script>

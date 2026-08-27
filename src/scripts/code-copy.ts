@@ -1,7 +1,15 @@
 // src/scripts/code-copy.ts — PostContent.tsx의 복사 버튼 로직 바닐라 이식 (React/createRoot 의존 제거)
-// SVG는 기존 src/components/icon/CopyIcon.tsx / CheckIcon.tsx의 path를 그대로 옮김
-const COPY_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="복사"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
-const CHECK_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="확인"><path d="M20 6L9 17l-5-5"></path></svg>`;
+// 아이콘은 [slug].astro가 Astro SVG 컴포넌트로 <template>에 심어둔 것을 복제해 쓴다
+// (src/assets/icons/*.svg가 단일 원본 — 마크업을 이 파일에 문자열로 중복하지 않는다)
+const iconTemplate = (id: string) =>
+  document.getElementById(id) as HTMLTemplateElement | null;
+const copyIcon = iconTemplate("icon-copy");
+const checkIcon = iconTemplate("icon-check");
+
+const paintIcon = (host: HTMLElement, template: HTMLTemplateElement | null) => {
+  if (!template) return;
+  host.replaceChildren(template.content.cloneNode(true));
+};
 
 const root = document.querySelector(".markdown-content");
 if (root) {
@@ -16,7 +24,7 @@ if (root) {
     const icon = document.createElement("span");
     icon.className = "code-copy-icon";
     icon.setAttribute("aria-hidden", "true");
-    icon.innerHTML = COPY_SVG;
+    paintIcon(icon, copyIcon);
     btn.appendChild(icon);
 
     btn.addEventListener("click", async () => {
@@ -37,7 +45,7 @@ if (root) {
         }
         btn.classList.add("copied");
         btn.setAttribute("aria-label", "복사 완료");
-        icon.innerHTML = CHECK_SVG;
+        paintIcon(icon, checkIcon);
       } catch {
         btn.setAttribute("aria-label", "복사 실패");
       }
@@ -45,7 +53,7 @@ if (root) {
         if (!btn.isConnected) return;
         btn.classList.remove("copied");
         btn.setAttribute("aria-label", "코드 복사");
-        icon.innerHTML = COPY_SVG;
+        paintIcon(icon, copyIcon);
       }, 1500);
     });
 
