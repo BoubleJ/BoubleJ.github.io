@@ -17,6 +17,14 @@ globalStyle("html, body", {
   height: "100%",
 });
 
+// 본문 글꼴. 라틴 폰트를 앞에 두어 U+2026(…)이 베이스라인에 놓이게 한다 —
+// CJK 폰트는 동아시아 조판 관습대로 말줄임표를 세로 가운데에 그리기 때문.
+// 한글은 뒤쪽 한국어 폰트로 폴백된다. 웹폰트는 받지 않는다(시스템 폰트만).
+globalStyle("html", {
+  fontFamily:
+    '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif',
+});
+
 // #app에 확정 높이(height:100%)를 주면 main(height:100%)이 뷰포트 높이로 고정되어
 // 본문이 넘쳐흐르고 Footer가 콘텐츠 중간에 겹침 — min-height + flex column으로
 // 콘텐츠만큼 늘어나게 하고, 짧은 페이지에서는 Footer(margin-top:auto)가 하단 고정됨

@@ -11,8 +11,8 @@ export const dropdown = style({
   border: `1px solid ${vars.color.border}`,
   borderRadius: "8px",
   backgroundColor: vars.color.background,
-  // 결과 5개 이상이면 리스트 내부 스크롤 (아이템 74px 기준 4.5개 노출 — 잘린 항목으로 스크롤 가능함을 암시)
-  maxHeight: "336px",
+  // 결과 5개 이상이면 리스트 내부 스크롤 (아이템 76px 기준 4.5개 노출 — 잘린 항목으로 스크롤 가능함을 암시)
+  maxHeight: "342px",
   overflowX: "hidden",
   overflowY: "auto",
   boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)", // 오버레이로 콘텐츠 위에 뜨므로 구분용
