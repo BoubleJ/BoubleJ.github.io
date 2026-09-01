@@ -58,6 +58,36 @@ export default function TableOfContents({ headings }: TableOfContentsProps) {
       ].map((a) => [decodeURIComponent(a.hash.slice(1)), a]),
     );
 
+    // 목차가 길면 tocScrollArea에 스크롤이 생기므로 활성 링크를 이 영역 안으로 끌어옴
+    const scrollArea = document.querySelector<HTMLElement>(
+      `nav[aria-label="목차"] .${styles.tocScrollArea}`,
+    );
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    // scrollIntoView는 페이지까지 함께 움직이므로 컨테이너 scrollTop만 직접 보정
+    const revealInScrollArea = (a: HTMLAnchorElement) => {
+      if (!scrollArea || scrollArea.scrollHeight <= scrollArea.clientHeight) return;
+
+      const areaRect = scrollArea.getBoundingClientRect();
+      const linkRect = a.getBoundingClientRect();
+      const margin = 8;
+
+      let delta = 0;
+      if (linkRect.top < areaRect.top + margin) {
+        delta = linkRect.top - (areaRect.top + margin);
+      } else if (linkRect.bottom > areaRect.bottom - margin) {
+        delta = linkRect.bottom - (areaRect.bottom - margin);
+      }
+      if (delta === 0) return;
+
+      scrollArea.scrollTo({
+        top: scrollArea.scrollTop + delta,
+        behavior: prefersReducedMotion ? "auto" : "smooth",
+      });
+    };
+
     let activeId = "";
     const setActive = (id: string) => {
       if (id === activeId) return;
@@ -65,6 +95,8 @@ export default function TableOfContents({ headings }: TableOfContentsProps) {
       links.forEach((a, key) => {
         a.classList.toggle(styles.tocLinkActive, key === id);
       });
+      const active = links.get(id);
+      if (active) revealInScrollArea(active);
     };
 
     // 고정 헤더(70px)+여유를 rootMargin 상단 -80px로 보정, 하단 -60%로 "화면 상단부에 있는 헤딩"을 현재 섹션으로 판정
