@@ -1,6 +1,7 @@
 // src/lib/posts.ts
 
 import readingTime from "reading-time";
+import { getImage } from "astro:assets";
 import { type CollectionEntry, getCollection } from "astro:content";
 
 export interface PostSummary {
@@ -34,12 +35,18 @@ export const getReadingTimeText = (
   entry: CollectionEntry<"posts">,
 ): string | undefined => (entry.body ? readingTime(entry.body).text : undefined); // 예: "9 min read"
 
-export const toPostSummary = (p: CollectionEntry<"posts">): PostSummary => ({
+// 목록 카드는 564x200 이라 2배 밀도까지 감안해 1200 폭 webp 하나로 충분합니다
+export const toPostSummary = async (
+  p: CollectionEntry<"posts">,
+): Promise<PostSummary> => ({
   id: p.id,
   slug: `/${p.id}/`,
   title: p.data.title,
   summary: p.data.summary,
   date: formatDate(p.data.date),
   categories: p.data.categories,
-  thumbnail: p.data.thumbnail,
+  thumbnail: (await getImage({ src: p.data.thumbnail, format: "webp", width: 1200 })).src,
 });
+
+export const toPostSummaries = (posts: CollectionEntry<"posts">[]) =>
+  Promise.all(posts.map(toPostSummary));

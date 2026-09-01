@@ -15,10 +15,12 @@ const stripMdx = (raw: string) =>
 
 export async function GET() {
   const posts = await getSortedPosts();
-  const index = posts.map((p: CollectionEntry<"posts">) => ({
-    ...toPostSummary(p),
-    body: stripMdx(p.body ?? ""),
-  }));
+  const index = await Promise.all(
+    posts.map(async (p: CollectionEntry<"posts">) => ({
+      ...(await toPostSummary(p)),
+      body: stripMdx(p.body ?? ""),
+    })),
+  );
   return new Response(JSON.stringify(index), {
     headers: { "Content-Type": "application/json" },
   });

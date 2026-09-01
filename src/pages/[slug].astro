@@ -16,6 +16,7 @@ import {
 } from "@/pages-styles/post_template.css";
 // 본문 요소 스타일 + 복사 버튼 + 다크모드 Prism 오버라이드 (Gatsby에서는 PostContent.tsx가 import — 전환 시 유실됐던 것)
 import "@/styles/markdown.css";
+import { getImage } from "astro:assets";
 import { type CollectionEntry, render } from "astro:content";
 
 interface Props {
@@ -34,16 +35,20 @@ const { title, summary, categories, thumbnail } = entry.data;
 const date = formatDate(entry.data.date);
 const readingTimeText = getReadingTimeText(entry);
 const { Content, headings } = await render(entry);
+// 헤더 배경은 전폭이라 1200 폭 webp 하나면 됩니다.
+const headImage = await getImage({ src: thumbnail, format: "webp", width: 1200 });
+// OG 는 크롤러 호환을 위해 원본 포맷(png/jpg)을 그대로 넘깁니다.
+const ogImage = thumbnail.src;
 ---
 <Layout
   title={title}
   description={summary}
   url={decodeURI(new URL(Astro.url.pathname, Astro.site).href)}
-  image={thumbnail}
+  image={ogImage}
   type="article"
   datePublished={entry.data.date}
 >
-  <PostHead client:load title={title} date={date} categories={categories} thumbnail={thumbnail} readingTimeText={readingTimeText} />
+  <PostHead client:load title={title} date={date} categories={categories} thumbnail={headImage.src} readingTimeText={readingTimeText} />
   <div class={postBody}>
     <div class={postBodyContent}>
       <div class={`${markdownRenderer} markdown-content`}>

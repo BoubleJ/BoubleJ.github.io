@@ -3,9 +3,9 @@
 import PostPageClient from "@/components/PostList/PostPageClient";
 import { SITE } from "@/consts";
 import Layout from "@/layouts/Layout.astro";
-import { getSortedPosts, toPostSummary } from "@/lib/posts";
+import { getSortedPosts, toPostSummaries } from "@/lib/posts";
 
-const posts = (await getSortedPosts()).map(toPostSummary);
+const posts = await toPostSummaries(await getSortedPosts());
 ---
 
 <Layout title={SITE.title} description={SITE.description} url={SITE.siteUrl}>

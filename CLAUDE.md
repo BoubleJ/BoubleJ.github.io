@@ -6,7 +6,8 @@ Astro 기반 개인 기술 블로그입니다.
 
 - 포스트는 `src/content/posts/<제목>/index.mdx` 에 둡니다.
 - 이미지는 포스트 디렉터리 안에 두고 `![alt](<./파일명.png>)` 로 참조합니다.
-- 공용 썸네일은 `public/thumbnail/` 에 둡니다.
+- 썸네일도 포스트 디렉터리 안에 `thumbnail.png` 로 두고 `./thumbnail.png` 로 참조합니다. `src/content.config.ts` 의 `image()` 스키마가 webp 변환과 해시를 붙입니다.
+- GIF 도 마찬가지로 포스트 디렉터리에 둡니다. 파이프라인을 태워도 애니메이션이 유지되고 용량이 30% 정도 줄어듭니다.
 - URL 슬러그는 디렉터리명의 공백을 `-` 로 바꾼 값입니다. `src/content.config.ts` 의 `generateId` 가 결정합니다.
 - 검증은 `npx astro build` 로 합니다. MDX 문법 오류는 여기서 잡힙니다.
 
@@ -66,7 +67,7 @@ date: "2026-09-01"
 title: "제목"
 categories: ["React", "Next.js"]
 summary: "한 줄 요약입니다. ~를 공유합니다 또는 ~를 분석했습니다 로 끝냅니다."
-thumbnail: "/thumbnail/파일명.png"
+thumbnail: "./thumbnail.png"
 ---
 ```
 
