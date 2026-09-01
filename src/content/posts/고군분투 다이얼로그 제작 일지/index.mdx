@@ -10,7 +10,6 @@ thumbnail: "./thumbnail.png"
 
 대규모 프로젝트의 요구사항에 적절히 대응 가능하면서, 유지보수가 용이한 다이얼로그를 만들기 위해 여러 시도를 거쳤습니다. 그 과정에서 다양한 시행착오를 겪었고, 세 차례의 마이그레이션을 통해 최종적인 형태를 완성할 수 있었습니다. 이번 글에서는 그 과정에서 겪었던 문제점과 개선 과정을 공유하고자 합니다.
 
-
 # 첫 번째 다이얼로그 — Recoil 전역 상태
 
 첫 번째 방법은 Recoil 전역 상태를 사용해 다이얼로그를 관리하는 방식이었습니다.
@@ -49,7 +48,6 @@ export const modalState = atom<{
 })
 ```
 
-
 사용 예시는 다음과 같습니다.
 ```ts
 // 노출 시키고 싶은 다이얼로그 key값을 인자로 넘겨줍니다.
@@ -57,19 +55,15 @@ export const modalState = atom<{
   const { onClose, onOpen } = useModal('SIDEBAR')
 ```
 
-
 ## 문제점
 
 이 방식에는 두 가지 문제점이 존재했습니다. 
-
-
 
 ### 1. 모달을 쓰는 페이지마다 Recoil key를 추가해야 함
 
 새로운 화면에서 다이얼로그를 띄우기 위해서는 ModalState 타입과 modalState의 default 객체에 항목을 하나씩 추가해야 했습니다.
 
 사용처가 늘어날수록 atom의 키 값도 계속 증가했고, 각 키가 어떤 역할을 하는지 한눈에 파악하기 어려워지면서 유지보수성이 저하되는 문제가 발생했습니다.
-
 
 ```ts
 export const modalState = atom<{
@@ -94,19 +88,13 @@ export type ModalState =
 
 ```
 
-
-
 ### 2. 페이지 이동 시 다이얼로그가 닫히지 않음
 
 다이얼로그를 Recoil 전역 상태로 관리하고 있었기 때문에, 다이얼로그가 열린 상태에서 뒤로 가기와 같은 페이지 이동이 발생해도 Recoil 상태값이 갱신되지 않는 문제가 있었습니다.
 
 그 결과, 페이지가 변경되었음에도 다이얼로그가 닫히지 않고 그대로 남아있는 버그가 발생했습니다.
 
-{/* ![다이얼로그안닫힘.gif](/image/다이얼로그안닫힘.gif) */}
-
-
 이런 이유로 전역 상태 기반 첫 번째 다이얼로그를 폐기 처분하고, 두 번째 다이얼로그를 만들게 됐습니다.
-
 
 # 두 번째 다이얼로그 — 로컬 state 기반 컴포넌트 반환 훅 패턴
 
@@ -169,14 +157,9 @@ const { onOpen: handleOpen, onClose: handleClose, Dialog: AlertDialog } = useDia
 </AlertDialog>
 ```
 
-
-
-
-
 ## 문제점
 
 그러나 해당 방식에서도 치명적인 문제점을 발견했는데요.
-
 
 ### 1. 내부 상태값과 버튼 콜백의 스코프가 공유되지 않음
 
@@ -198,8 +181,6 @@ const { onOpen: handleOpen, onClose: handleClose, Dialog: AlertDialog } = useDia
 ```
 
 때문에 실제로 프로젝트를 진행하면서, 아래와 같이 useDialog 훅 제작 의도와 다르게 사용되는 사례도 발생했습니다.
-
-
 
 ```tsx
 const { onOpen: onReviewWriteOpen, onClose: onReviewWriteClose, Dialog: ReviewWriteDialog } = useDialog()
@@ -260,10 +241,7 @@ Dialog 템플릿과 내부 콘텐츠의 상태값 스코프를 공유하기 위�
 
 여러 라이브러리를 검토한 끝에, [토스(Toss) 라이브러리의 useOverlay 훅](https://www.slash.page/ko/libraries/react/use-overlay/src/useOverlay.i18n)과 [shadcn에서 제공하는 다이얼로그 컴포넌트](https://ui.shadcn.com/docs/components/radix/dialog)를 활용해 다이얼로그를 재설계했습니다.
 
-
 ## 구현 과정
-
-
 
 ### 1. shadcn 다이얼로그
 
@@ -317,7 +295,6 @@ export function DialogDemo() {
 
 ```
 
-
 컴파운드 컴포넌트 패턴으로 다이얼로그 구조를 잡고, `DialogTrigger`로 열기까지 라이브러리가 처리해 주어 그대로 가져다 쓰기 편합니다. 다만 위 예시는 **비제어(Uncontrolled)** 방식입니다. `DialogTrigger`에 의해 내부에서 열림/닫힘이 관리되므로, 부모에서 `open` 상태를 제어하지 않습니다.
 
 저희 서비스에서는 다이얼로그를 **제어 컴포넌트(Controlled)** 형태로 쓰는 편이 더 맞다고 판단했습니다. 토스에서 제공하는 useOverlay 훅을 사용할 예정이었기 때문입니다. 이에 shadcn 다이얼로그가 Radix UI 기반이라는 점을 확인했고, [Radix 공식 문서](https://www.radix-ui.com/primitives/docs/components/dialog#examples)에서 제어 방식 사용 예시를 찾았습니다.
@@ -352,9 +329,7 @@ export default () => {
 	);
 };
 
-
 ```
-
 
 `open`과 `onOpenChange`를 넘기면 state 기반의 제어 컴포넌트 형식으로 사용할 수 있습니다. 이 방식을 참고해, shadcn 다이얼로그를 한 겹 감싼 래퍼 컴포넌트를 만들고 `open` / `onClose`로 노출을 제어하도록 설계했습니다. 구현한 래퍼는 아래와 같습니다.
 
@@ -384,7 +359,6 @@ function Dialog({ open, onClose, className, children }: PropsWithChildren<Dialog
 export { Dialog, DialogTitle, DialogButtonFooter, DialogButton, DialogDescription }
 
 ```
-
 
 이 래퍼와 `DialogTitle`, `DialogDescription` 등 블록들을 조합해 실제로 노출할 다이얼로그 컴포넌트를 만듭니다. 예를 들어 확인 다이얼로그는 아래처럼 사용할 수 있습니다.
 
@@ -458,14 +432,11 @@ export default function ConfirmDialog({ open, close, message }: ConfirmDialogPro
 
 이렇게 제목 유무에 따라 `DialogTitle`을 보이거나 `VisuallyHidden`으로 감싸는 방식으로, 웹 접근성까지 고려한 다이얼로그 컴포넌트를 구성할 수 있었습니다. 
 
-
-
 ### 2. useOverlay 훅 사용
 
 다이얼로그 ui를 만들었으니 노출시킬 유틸함수를 만들어야겠지여.
 
 토스 useOverlay 훅을 채택한 이유는 다음과 같습니다. 
-
 
 #### a. 간단한 사용방법
 
@@ -484,7 +455,6 @@ export default function App({ Component, pageProps }: AppProps) {
 }
 
 ```
-
 
 #### b. Promise와 함께 사용 가능
 
@@ -533,8 +503,6 @@ function Home() {
   );
 }
 ```
-
-
 
 다만 매번 사용하는 쪽에서 Promise로 감싸는 것이 번거로워서, `useOverlay`를 한 번 더 감싼 커스텀 훅을 만들었습니다. 이 훅의 `open`이 Promise를 반환하도록 해 두고, 호출부는 기존처럼 훅을 사용하면 됩니다.
 
@@ -585,8 +553,6 @@ export const useDialog = () => {
       />
 ```
 
-
-
 c. 선언적 UI 관리
 
 `useDialog`는 **다이얼로그를 띄우는 시점과 방법**만 담당하고, 각 다이얼로그 컴포넌트는 **어떤 내용을 보여줄지**만 담당합니다. 사용하는 쪽에서는 "이 다이얼로그를 열어라"라고 선언만 해 주면 되고, 열림 상태를 직접 state로 들고 있을 필요가 없습니다. 역할이 나뉘어 있어 선언적으로 구현하기 좋습니다.
@@ -606,7 +572,6 @@ c. 선언적 UI 관리
         message={'다이얼로그 메시지'}
       />
 ```
-
 
 그래서 한 페이지에서 여러 종류의 다이얼로그를 띄우는 경우에도 `useDialog`는 한 번만 호출하면 됩니다. 같은 `dialog` 인스턴스로 `dialog.open(...)`에 넘기는 컴포넌트만 바꿔 가며 서로 다른 다이얼로그를 열 수 있습니다.
 
@@ -631,11 +596,9 @@ c. 선언적 UI 관리
 
 ```
 
-
 # 마무리
 
 위와 같은 시행착오를 거쳐 최종적으로 현재 형태의 다이얼로그로 정리했습니다. 
-
 
 세 번째 버전인 **shadcn + useOverlay** 기반 다이얼로그의 장점을 정리하면 다음과 같습니다.
 
@@ -646,11 +609,5 @@ c. 선언적 UI 관리
 | **버튼 핸들러와 내부 상태값이 동일한 스코프 공유** | 다이얼로그 UI(제목, 설명, 버튼)와 그 안의 상태(입력값, API 결과 등)를 **같은 컴포넌트**에서 다룹니다. 로컬 상태는 해당 컴포넌트에서 관리하거나, 외부 API 응답은 props로 넘겨 받아 사용할 수 있습니다. |
 | **key 추가 불필요** | 새 화면·새 플로우에서 다이얼로그를 쓸 때 전역 key를 추가하는 등 별도 작업이 필요 없습니다. |
 | **관심사 분리** | `useDialog`는 “띄울지 말지, 언제 닫을지”만 담당하고 다이얼로그 내부 상태는 알 필요가 없습니다. 열기/닫기 로직과 다이얼로그 콘텐츠·상태가 분리되어 구조가 명확해졌습니다. |
-
-
-
-
-
-
 
 차후 useOverlay 훅, shadcn dialog 컴포넌트를 딥다이브하고 해당 내용도 공유하는 포스팅을 올려볼 예정입니다. 
