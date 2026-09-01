@@ -24,7 +24,13 @@ export default function PostHeadInfo({
       </button>
       <div className={styles.title}>{title}</div>
       <div className={styles.postData}>
-        <div>{categories.join(" / ")}</div>
+        <div className={styles.categoryList}>
+          {categories.map((category) => (
+            <span key={category} className={styles.categoryItem}>
+              {category}
+            </span>
+          ))}
+        </div>
         <div className={styles.postMetaRight}>
           <div>{date}</div>
           {readingTimeText && (

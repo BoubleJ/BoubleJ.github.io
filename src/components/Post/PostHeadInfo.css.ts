@@ -36,6 +36,31 @@ export const postData = style({
   },
 });
 
+export const categoryList = style({
+  display: "flex",
+  flexWrap: "wrap",
+  gap: "6px",
+});
+
+// 헤더는 brightness(0.25) 썸네일 위라 배경이 어둡습니다. 흰 테두리와 반투명 배경으로 칩을 세웁니다.
+export const categoryItem = style({
+  padding: "3px 8px",
+  borderRadius: "4px",
+  border: "1px solid rgba(255, 255, 255, 0.45)",
+  backgroundColor: "rgba(255, 255, 255, 0.14)",
+  fontSize: "14px",
+  fontWeight: 700,
+  lineHeight: 1.5,
+  whiteSpace: "nowrap",
+  "@media": {
+    "(max-width: 768px)": {
+      padding: "2px 6px",
+      fontSize: "13px",
+      fontWeight: 500,
+    },
+  },
+});
+
 export const postMetaRight = style({
   display: "flex",
   alignItems: "center",
