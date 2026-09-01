@@ -46,24 +46,17 @@ export default function useSearch({
   // /?search= 프리필로 term이 채워지는 경우엔 열지 않아야 검색 결과 목록을 가리지 않는다.
   const isUserEditingRef = useRef(false);
 
-  // 첫 open이 /?search= 프리필로 자동으로 일어난 것인지 구분한다 (사용자가 아이콘을 누른 게 아님)
-  const hasOpenedRef = useRef(false);
-  // biome-ignore lint/correctness/useExhaustiveDependencies: initialQuery는 첫 open 판별용으로만 읽는다
+  // 프리필은 더 이상 아코디언을 열지 않으므로 열림은 항상 사용자가 아이콘을 누른 결과입니다.
   useEffect(() => {
     if (!isSearchOpen) {
       setIsDropdownOpen(false);
       return;
     }
-    const isPrefillOpen = !hasOpenedRef.current && Boolean(initialQuery);
-    hasOpenedRef.current = true;
-    // 검색 아이콘을 직접 눌러 연 경우에만 포커스를 준다.
-    // 프리필로 자동으로 열릴 땐 포커스를 뺏지 않는다(모바일 키보드가 올라오는 문제).
-    if (!isPrefillOpen) {
-      searchInputRef.current?.focus();
-    }
+    searchInputRef.current?.focus();
   }, [isSearchOpen]);
 
-  // /?search= 프리필 (Header 마운트 시 전달됨): 아코디언이 열릴 때 입력값·범위를 채운다.
+  // /?search= 프리필 (Header 마운트 시 전달됨): 닫힌 상태에서도 값을 채워두어
+  // 사용자가 검색창을 열면 직전 검색어가 그대로 남아 있게 한다.
   useEffect(() => {
     if (!initialQuery) return;
     setTerm(initialQuery.term);
@@ -130,6 +123,16 @@ export default function useSearch({
 
   const closeDropdown = () => setIsDropdownOpen(false);
 
+  // input 안의 x 버튼 — 입력값만 비우고 포커스를 돌려준다. 목록은 그대로 두고
+  // 사용자가 새 검색어를 치거나 빈 채로 제출하면 그때 이동한다.
+  const clearTerm = () => {
+    isUserEditingRef.current = true;
+    setTerm("");
+    setMatches([]);
+    setIsDropdownOpen(false);
+    searchInputRef.current?.focus();
+  };
+
   const submitSearch = (value: string, currentScope: SearchScope) => {
     const trimmed = value.trim();
     if (trimmed) {
@@ -168,6 +171,7 @@ export default function useSearch({
     handleScopeChange,
     handleSearchFocus,
     closeDropdown,
+    clearTerm,
     handleResultSelect,
   };
 }

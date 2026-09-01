@@ -3,7 +3,13 @@
 import { useEffect, useState } from "react";
 import type { PostSummary } from "@/lib/posts";
 // 페이지 제목/개수 스타일은 기존 post.css.ts 이동본에서 — 실제 export명 사용
-import { pageTitle, postCount, postsPage } from "@/pages-styles/post.css";
+import {
+  pageTitle,
+  pageTitleSearch,
+  postCount,
+  postsPage,
+  searchTermMark,
+} from "@/pages-styles/post.css";
 import PostList from "./PostList";
 
 interface SearchIndexEntry {
@@ -35,6 +41,11 @@ export default function PostPageClient({ posts }: { posts: PostSummary[] }) {
     }
   }, []);
 
+  // 검색 범위를 문구로 풀어 쓴다. 본문에서만 걸린 글은 카드에 하이라이트가 남지 않으므로
+  // 어떤 범위로 찾았는지 여기서라도 밝혀야 결과를 납득할 수 있다.
+  const scopeLabel =
+    scope === "title" ? "제목과 요약에서 " : scope === "content" ? "본문에서 " : "";
+
   const term = search.trim().toLowerCase();
   const inTitle = (p: PostSummary) =>
     (p.title ?? "").toLowerCase().includes(term) ||
@@ -51,9 +62,19 @@ export default function PostPageClient({ posts }: { posts: PostSummary[] }) {
 
   return (
     <div className={postsPage}>
-      <h2 className={pageTitle}>모든 포스트</h2>
+      <h2 className={`${pageTitle} ${search ? pageTitleSearch : ""}`}>
+        {search ? (
+          <>
+            <span className={searchTermMark}>{search}</span> 검색 결과
+          </>
+        ) : (
+          "모든 포스트"
+        )}
+      </h2>
       {/* v2-14: 현재 조건의 포스트 개수 — 필터된 전체 기준(페이지 슬라이스 아님) */}
-      <p className={postCount}>총 {filtered.length}개의 포스트</p>
+      <p className={postCount}>
+        {scopeLabel}총 {filtered.length}개의 포스트
+      </p>
       <PostList posts={filtered} selectedCategory={category} searchTerm={search} />
     </div>
   );

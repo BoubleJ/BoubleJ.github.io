@@ -88,10 +88,46 @@ export const scopeSelect = style({
   },
 });
 
-export const searchInput = style({
+// input 안에 x 버튼을 얹기 위한 래퍼. flex 폭 계산은 여기서 받는다
+export const searchInputWrapper = style({
+  position: "relative",
   flex: 1,
   minWidth: 0,
-  padding: "12px 16px",
+  display: "flex",
+});
+
+// x 는 input 오른쪽 안쪽에 겹쳐 둔다
+export const clearTermButton = style({
+  position: "absolute",
+  top: "50%",
+  right: "10px",
+  transform: "translateY(-50%)",
+  display: "grid",
+  placeItems: "center",
+  width: "22px",
+  height: "22px",
+  padding: 0,
+  border: "none",
+  borderRadius: "50%",
+  background: "transparent",
+  color: vars.color.secondary,
+  cursor: "pointer",
+  transition: "color 0.15s ease, background-color 0.15s ease",
+  ":hover": {
+    color: vars.color.text,
+    backgroundColor: vars.color.buttonHoverBg,
+  },
+  ":focus-visible": {
+    outline: `2px solid ${vars.color.primary}`,
+    outlineOffset: "1px",
+  },
+});
+
+export const searchInput = style({
+  width: "100%",
+  minWidth: 0,
+  // 오른쪽은 x 버튼 자리를 비워둔다
+  padding: "12px 38px 12px 16px",
   fontSize: "16px",
   border: `2px solid ${vars.color.inputBorder}`,
   borderRadius: "8px",

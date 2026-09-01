@@ -18,13 +18,27 @@ export const pageTitle = style({
   fontSize: "36px",
   fontWeight: 700,
   margin: "0 0 12px 0",
-  color: "#24292e",
+  color: vars.color.text,
   "@media": {
     "(max-width: 768px)": {
       fontSize: "28px",
-      margin: "0 0 10px 0",
     },
   },
+});
+
+// 검색 결과 제목은 "모든 포스트"보다 한 단계 작게 둔다
+export const pageTitleSearch = style({
+  fontSize: "28px",
+  "@media": {
+    "(max-width: 768px)": {
+      fontSize: "22px",
+    },
+  },
+});
+
+// 제목 안에서 검색어만 강조 — 어떤 조건으로 걸러진 목록인지 한눈에 보이게
+export const searchTermMark = style({
+  color: vars.color.primary,
 });
 
 // v2-14: 필터된 전체 포스트 개수 표시 — 작은 보조 텍스트

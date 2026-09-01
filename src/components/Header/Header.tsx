@@ -17,15 +17,14 @@ const Header = ({ pathname }: HeaderProps) => {
   const { toggleTheme } = useTheme();
   const [initialQuery, setInitialQuery] = useState<InitialSearchQuery | null>(null);
 
-  // v2-6 Step 8: /?search= 프리필 — 마운트 시 location.search에 search가 있으면
-  // 아코디언을 열고(useHeader는 항상 false로 시작하므로 토글 1회로 충분) input 값·scope를 채운다.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: 마운트 1회만 실행할 의도(handleSearchIconClick는 토글용 안정적 콜백)
+  // /?search= 프리필 — 검색어와 범위만 input에 채워두고 아코디언은 닫힌 채로 둡니다.
+  // 검색 결과 페이지에서 현재 조건은 본문 제목이 밝히므로 헤더까지 펼칠 이유가 없고,
+  // 펼침 트랜지션이 진입할 때마다 재생되어 어색했습니다. 사용자가 열면 검색어가 그대로 남아 있습니다.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const search = params.get("search");
     if (search) {
       setInitialQuery({ term: search, scope: params.get("scope") ?? "" });
-      handleSearchIconClick();
     }
   }, []);
 

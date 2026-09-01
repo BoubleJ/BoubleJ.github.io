@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import CloseIcon from "@/components/icon/CloseIcon";
 import useSearch from "@/hooks/useSearch";
 import ScopeSelect from "./ScopeSelect";
 import * as styles from "./SearchContainer.css";
@@ -42,6 +43,7 @@ export default function SearchContainer({
     handleScopeChange,
     handleSearchFocus,
     closeDropdown,
+    clearTerm,
     handleResultSelect,
   } = useSearch({ isSearchOpen, onSearchClose, initialQuery });
 
@@ -53,15 +55,27 @@ export default function SearchContainer({
         <div className={styles.searchInner}>
           <form onSubmit={handleSearchSubmit} className={styles.searchForm}>
             <ScopeSelect value={scope} onChange={handleScopeChange} />
-            <input
-              ref={searchInputRef}
-              type="text"
-              value={term}
-              onChange={handleSearchChange}
-              onFocus={handleSearchFocus}
-              className={styles.searchInput}
-              placeholder="궁금한 내용을 검색해보세요"
-            />
+            <div className={styles.searchInputWrapper}>
+              <input
+                ref={searchInputRef}
+                type="text"
+                value={term}
+                onChange={handleSearchChange}
+                onFocus={handleSearchFocus}
+                className={styles.searchInput}
+                placeholder="궁금한 내용을 검색해보세요"
+              />
+              {term && (
+                <button
+                  type="button"
+                  className={styles.clearTermButton}
+                  onClick={clearTerm}
+                  aria-label="검색어 지우기"
+                >
+                  <CloseIcon size={14} />
+                </button>
+              )}
+            </div>
             <button type="submit" className={styles.searchButton}>
               검색
             </button>
