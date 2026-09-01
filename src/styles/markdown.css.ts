@@ -39,6 +39,10 @@ globalStyle(".markdown-content blockquote, .markdown-blockquote", {
   color: vars.color.blockquoteText,
 });
 
+globalStyle(".markdown-content details", {
+  margin: "20px 0", // 인용문과 동일한 간격 — 앞뒤 문단에 붙어 보이지 않도록
+});
+
 globalStyle(".markdown-content ol, .markdown-content ul, .markdown-ol, .markdown-ul", {
   marginLeft: "20px",
   padding: "5px 0",
@@ -89,6 +93,7 @@ globalStyle(".markdown-content code:not([class*='language-'])", {
   padding: "2px 6px",
   borderRadius: "3px",
   fontSize: "85%",
+  overflowWrap: "anywhere", // 긴 Tailwind 클래스가 본문에 들어와도 가로 스크롤이 생기지 않도록
   fontFamily:
     'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace',
   color: vars.color.codeColor,
