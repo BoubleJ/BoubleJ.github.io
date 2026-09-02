@@ -69,6 +69,18 @@ globalStyle(".markdown-content img", {
   margin: "12px 0 6px 0",
 });
 
+// 세로로 긴 이미지는 본문 폭을 그대로 채우면 화면 몇 개 분량으로 늘어난다.
+// 원본은 그대로 두고 표시 크기만 줄여 고해상도 화면의 선명함을 지킨다.
+// img-sm: 모바일·태블릿 스크린샷. 실제 기기로 보는 비율에 가깝게.
+globalStyle(".markdown-content .img-sm img", {
+  maxWidth: "360px",
+});
+
+// img-md: 세로로 긴 데스크톱 화면. 글자가 읽힐 만큼은 남긴다.
+globalStyle(".markdown-content .img-md img", {
+  maxWidth: "560px",
+});
+
 globalStyle(".markdown-content table", {
   borderCollapse: "collapse",
   width: "100%",
