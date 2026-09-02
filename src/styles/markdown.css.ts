@@ -206,3 +206,16 @@ globalStyle(
 globalStyle(`body.${darkTheme} .token.constant`, {
   color: "#6cb6ff",
 });
+
+// 머메이드 다이어그램 — mermaid.ts가 pre.language-mermaid를 이 요소로 교체한다.
+// 넓은 다이어그램은 본문이 아니라 이 안에서만 가로 스크롤한다.
+globalStyle(".markdown-content .mermaid-diagram", {
+  margin: "20px 0",
+  overflowX: "auto",
+  textAlign: "center",
+});
+
+globalStyle(".markdown-content .mermaid-diagram svg", {
+  maxWidth: "100%",
+  height: "auto",
+});

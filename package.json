@@ -27,6 +27,7 @@
     "astro": "^7.2.6",
     "hast-util-from-html": "^2.0.3",
     "hast-util-to-string": "^3.0.1",
+    "mermaid": "^11.17.2",
     "prism-themes": "^1.9.0",
     "prismjs": "^1.30.0",
     "react": "^19.2.8",

@@ -13,7 +13,8 @@ const paintIcon = (host: HTMLElement, template: HTMLTemplateElement | null) => {
 
 const root = document.querySelector(".markdown-content");
 if (root) {
-  root.querySelectorAll("pre").forEach((pre) => {
+  // 머메이드 블록은 mermaid.ts가 다이어그램으로 교체하므로 복사 버튼을 달지 않는다
+  root.querySelectorAll("pre:not(.language-mermaid)").forEach((pre) => {
     if (pre.querySelector(".code-copy-button")) return;
 
     const btn = document.createElement("button");
