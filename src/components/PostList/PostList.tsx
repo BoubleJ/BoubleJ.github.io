@@ -38,7 +38,6 @@ export default function PostList({
   posts,
   filterKey,
 }: PostListProps) {
-  const wrapperRef = useRef<HTMLDivElement | null>(null);
   const [page, setPage] = useState(1);
   const prevFilterKeyRef = useRef<string | null>(null);
   // 페이지 링크 href에 현재 쿼리(카테고리/검색어)를 보존하기 위한 값.
@@ -91,9 +90,9 @@ export default function PostList({
     const qs = sp.toString();
     history.pushState(null, "", qs ? `${location.pathname}?${qs}` : location.pathname);
     setCurrentSearch(qs ? `?${qs}` : "");
+    // a태그 기본 이동을 preventDefault로 막고 pushState로 URL만 바꾸므로 브라우저가 스크롤을 올려주지 않는다.
     // 목록 교체와 동시에 스크롤이 일어나면 어지러우므로 smooth 대신 instant 사용(v2-11 무시)
-    const top = (wrapperRef.current?.getBoundingClientRect().top ?? 0) + window.scrollY;
-    window.scrollTo({ top, behavior: "instant" });
+    window.scrollTo({ top: 0, behavior: "instant" });
   };
 
   // 다른 파라미터는 보존하고 ?page=만 바꾼 링크. 1페이지는 ?page=를 제거한다.
@@ -109,7 +108,7 @@ export default function PostList({
 
   return (
     <>
-      <div className={styles.postListWrapper} ref={wrapperRef}>
+      <div className={styles.postListWrapper}>
         {visible.length === 0 ? (
           <EmptyPostList searchTerm={searchTerm} selectedCategory={selectedCategory} />
         ) : (
