@@ -8,6 +8,7 @@
     "astro"
   ],
   "scripts": {
+    "prepare": "lefthook install",
     "develop": "astro dev",
     "start": "astro dev",
     "build": "astro build",
