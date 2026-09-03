@@ -7,7 +7,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 
-const POSTS = "src/content/posts";
+const POSTS = "src/content";
 const IMG = "public/image";
 const usage = new Map(); // 이미지 파일명 → Set<포스트 폴더>
 

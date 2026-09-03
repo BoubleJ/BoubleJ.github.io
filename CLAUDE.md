@@ -4,7 +4,7 @@ Astro 기반 개인 기술 블로그입니다.
 
 ## 구조
 
-- 포스트는 `src/content/posts/<제목>/index.mdx` 에 둡니다.
+- 포스트는 `src/content/<제목>/index.mdx` 에 둡니다.
 - 이미지는 포스트 디렉터리 안에 두고 `![alt](<./파일명.png>)` 로 참조합니다.
 - 썸네일도 포스트 디렉터리 안에 `thumbnail.png` 로 두고 `./thumbnail.png` 로 참조합니다. `src/content.config.ts` 의 `image()` 스키마가 webp 변환과 해시를 붙입니다.
 - GIF 도 마찬가지로 포스트 디렉터리에 둡니다. 파이프라인을 태워도 애니메이션이 유지되고 용량이 30% 정도 줄어듭니다.
@@ -136,7 +136,7 @@ thumbnail: "./thumbnail.png"
 기존 태그 목록은 아래 명령으로 확인합니다.
 
 ```bash
-grep -h '^categories:' src/content/posts/*/index.mdx | grep -o '"[^"]*"' | sort | uniq -c | sort -rn
+grep -h '^categories:' src/content/*/index.mdx | grep -o '"[^"]*"' | sort | uniq -c | sort -rn
 ```
 
 ## MDX 주의사항

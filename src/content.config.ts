@@ -4,7 +4,7 @@ import { defineCollection, z } from "astro:content";
 const posts = defineCollection({
   loader: glob({
     pattern: "*/index.mdx",
-    base: "./src/content/posts",
+    base: "./src/content",
     generateId: ({ entry }) =>
       entry
         .replace(/\/index\.mdx$/, "")

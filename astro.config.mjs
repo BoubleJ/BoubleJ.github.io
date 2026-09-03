@@ -16,7 +16,7 @@ const SITE_URL = "https://boublej.github.io";
 // 사이트맵 <lastmod>용 슬러그 → 작성일 맵.
 // astro.config는 Astro 런타임 밖이라 astro:content(getCollection)를 쓸 수 없어
 // frontmatter의 date를 파일에서 직접 읽는다. 슬러그 규칙은 content.config.ts의 generateId와 동일.
-const POSTS_DIR = "./src/content/posts";
+const POSTS_DIR = "./src/content";
 const postDateBySlug = new Map();
 for (const dirent of fs.readdirSync(POSTS_DIR, { withFileTypes: true })) {
   if (!dirent.isDirectory()) continue;
