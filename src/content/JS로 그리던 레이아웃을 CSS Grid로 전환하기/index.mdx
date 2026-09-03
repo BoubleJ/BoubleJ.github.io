@@ -1,0 +1,552 @@
+---
+date: "2026-09-03"
+title: "JS로 그리던 레이아웃을 CSS Grid로 전환하기"
+categories: ["CSS", "CSS-Grid", "Layout", "React"]
+summary: "뷰포트 폭에 따라 달라지는 레이아웃 배치를 JS로 계산하던 코드를 CSS Grid만으로 처리하도록 리팩토링한 과정을 공유합니다."
+thumbnail: "./thumbnail.png"
+---
+화면을 그릴 때 CSS로 처리할 수 있다면 가급적 CSS로 해결하는 것이 좋습니다. 
+
+그 이유는 브라우저가 화면을 그리는 순서를 보면 알 수 있는데요.
+
+<div class="img-md">
+
+![브라우저 렌더링 파이프라인](./브라우저렌더링파이프라인.png)
+
+</div>
+
+브라우저 렌더링 과정을 간략하게 보면 아래 순서입니다.
+
+1. HTML을 파싱해 DOM을 만들고 CSS를 파싱해 CSSOM을 만듭니다.
+2. 이 둘을 합쳐 화면에 그려질 요소만 남긴 Render Tree를 만듭니다.
+3. 각 요소에 최종 적용될 스타일 값을 확정합니다. 미디어 쿼리를 여기서 평가합니다. (Style)
+4. 확정된 스타일로 각 요소의 크기와 위치를 계산합니다. Grid와 같은 배치 알고리즘이 도는 곳입니다. (Layout)
+5. 계산된 위치에 픽셀을 채웁니다. (Paint)
+6. 나눠 그린 레이어를 합쳐 최종 화면을 만듭니다. (Composite)
+
+&lt;br /&gt;
+
+여기서 볼 곳은 JavaScript의 위치입니다. 
+
+DOM과 CSSOM 양쪽에 화살표가 걸려 있죠. JS는 이 둘을 읽고 바꿀 수 있고 둘 중 하나를 바꾸면 Render Tree 단계가 다시 돕니다. 즉 자바스크립트로 인해 ui가 변경될 경우 렌더트리를 다시 생성하고 style -&gt; layout -&gt; paint -&gt; composite 단계를 다시 수행합니다.
+
+
+
+반대로 css만으로 ui를 바꾸면 렌더트리부터 다시 도는 일이 없습니다. DOM이 그대로니 렌더트리를 다시 만들 필요가 없고 JS도 실행되지 않아요. 브라우저는 바뀐 스타일에 걸리는 단계만 다시 계산합니다. 같은 화면 변화를 만들어도 거쳐야 하는 단계 자체가 줄어드는 것이죠.
+
+# 발단
+
+## 화면 구조
+
+제가 구현해야 했던 화면은 카드 목록 사이에 배너 줄이 끼어드는 리스트 화면이었는데요. 간단하게 도식화하면 아래와 같습니다.
+
+```
+1줄   카드  카드  카드  카드  카드
+2줄   카드  카드  카드  카드  카드
+3줄   [-------- 배너 줄 --------]   ← 전체 폭을 차지합니다
+4줄   카드  카드  카드  카드  카드
+5줄   카드  카드  카드  카드  카드
+6줄   카드  카드  카드  카드  카드
+7줄   카드  카드  카드  카드  카드
+8줄   [-------- 배너 줄 --------]
+9줄   카드  카드  카드  카드  카드   ← 배너를 다 쓰고 나면 카드만 이어집니다
+```
+
+그리고 이 리스트 페이지에는 아래 규칙이 존재했습니다.
+
+1. 첫 배너 줄은 카드 2줄 뒤에 들어갑니다.
+2. 그 뒤로는 카드 4줄마다 배너 줄이 들어갑니다.
+3. 렌더링할 배너가 없으면  카드만 노출시킵니다.
+4. 뷰포트 너비에 따라 열 개수가 2개에서 5개까지 달라집니다.
+
+4번이 핵심이었는데요. 열 개수가 화면너비(475px 768px 1024px)에 따라 바뀌면서  카드가 배너 줄 위아래로 옮겨가야 합니다.
+
+만약 화면너비가 1024px -&gt; 475px 로 줄어들었을 경우 리스트 배열 상태는 다음과 같이 변해야합니다.
+
+```
+1024px 이상 (5열)
+
+1줄   a   b   c   d   e
+2줄   f   g   h   i   j
+3줄   [--- 배너 줄 ---]
+4줄   k   l   m   n   o
+5줄   p   q   r   s   t
+
+
+475px 이상 (3열)
+
+1줄   a   b   c
+2줄   d   e   f
+3줄   [배너 줄]
+4줄   g   h   i
+5줄   j   k   l
+6줄   m   n   o
+7줄   p   q   r
+8줄   s   t
+```
+
+
+
+화면 너비가 1024px -&gt; 475px로 좁아지면서 1,2 줄에는 a부터 f까지만 들어가고 나머지 g h i j 는 배너 줄 아래로 내려갑니다. 배너 줄은 3번 줄에 그대로 있고요.
+
+
+
+## 기존 구현
+
+처음 이 화면을 만들 때는 CSS로 풀 수 없다고 판단했습니다. a부터 t까지가 하나의 배열인데 그 사이에 다른 배열의 데이터가 끼어들 수 있을까 싶었거든요. 방법이 떠오르지 않더군요.
+
+그래서 자바스크립트로 구현했는데요. 제가 구현한 방법(안티패턴...)을 간략히 보면
+
+
+
+`window.innerWidth`로 렌더링할 열 개수를 반환하고 카드 배열을 구간별로 잘라 `카드 섹션 → 배너 → 카드 섹션 → 배너` 순서의 DOM을 명시적으로 만들고 있었습니다. 일종의 하드코딩이죠.
+
+```ts
+// utils/index.ts — 뷰포트 너비 별 첫 구간 카드 개수 (열 개수 × 2줄)
+export const sliceFirstLine = () => {
+  if (typeof window === 'undefined') return 4
+  const width = window.innerWidth
+  if (width >= 1024) return 10
+  if (width >= 768) return 8
+  if (width >= 475) return 6
+  return 4
+}
+
+export const sliceRestLine = () => sliceFirstLine() * 2
+
+export const getFirstLineContentList = (content: CardContent[]) =>
+  content.slice(0, sliceFirstLine())
+
+export const getRestLineContentList = (content: CardContent[]) =>
+  content.slice(sliceFirstLine())
+```
+
+이 유틸을 훅에서 resize 이벤트마다 배열 세 개를 다시 자르도록 했습니다.
+
+```tsx
+// hooks/use-slice-content.tsx
+export default function useSliceContent(content, banner) {
+  const [firstLineContentList, setFirstLineContentList] = useState(content)
+  const [restLineContentList, setRestLineContentList] = useState(content)
+  const [repeatContentCount, setRepeatContentCount] = useState(0)
+
+  useEffect(() => {
+    const sliceContentCount = () => {
+      setFirstLineContentList(getFirstLineContentList(content))
+      setRepeatContentCount(getRepeatCount(content))
+      setRestLineContentList(getRestLineContentList(content))
+    }
+    sliceContentCount()
+    window.addEventListener('resize', sliceContentCount)
+    return () => window.removeEventListener('resize', sliceContentCount)
+  }, [content])
+  // ...
+}
+```
+
+컴포넌트는 잘라낸 구간을 섹션 DOM으로 반복해서 렌더링 시켰습니다.
+
+```tsx
+// card-list.tsx
+<div className={cn('wrap')}>
+  <CardSection content={firstLineContentList} />
+  <BannerSwiperList banners={banner.slice(0, 3)} />
+  {Array.from({ length: repeatContentCount }, (_, index) => {
+    const slicedContent = restLineContentList.slice(
+      index * sliceRestLine(),
+      (index + 1) * sliceRestLine(),
+    )
+    return (
+      <Fragment key={`section${index}`}>
+        <CardSection content={slicedContent} />
+        {repeatBannerCount - index > 0 && (
+          <BannerSwiperList banners={banner.slice((index + 1) * 3, (index + 2) * 3)} />
+        )}
+      </Fragment>
+    )
+  })}
+</div>
+```
+
+
+
+# 문제
+
+기능상 문제는 없었지만 아쉬운 부분이 존재했는데요
+
+### 1. resize 이벤트마다 JS가 렌터트리를 다시 그림
+
+브라우저 창 폭을 드래그로 줄이면 resize 이벤트가 연달아 발생합니다. 이벤트가 발생할 때마다 `window.innerWidth`를 읽고 배열 세 개를 다시 자르고 setState를 호출하고 섹션 DOM을 다시 만듭니다.
+
+문제는 이 과정에서 카드 컴포넌트 트리가 통째로 unmount되고 다시 mount된다는 점입니다. 카드 하나하나가 이미지와 텍스트를 가진 컴포넌트라 개수가 30개만 되어도 오래된 디바이스에선 성능 문제를 일으키기엔 충분한 작업입니다.
+
+### 2. Hydration 에러
+
+`sliceFirstLine`은 서버에서 `typeof window === 'undefined'` 분기를 타서 항상 4를 반환합니다. 서버는 뷰포트 폭을 알 수 없으니까요. 그래서 1024px 이상 디바이스에서 페이지 최초 접근 시 서버가 보낸 2열 기준 HTML이 먼저 그려지고 hydration이 끝난 뒤 5열로 다시 그려집니다.
+
+카드 위치가 눈에 보이게 한 번 바뀌니 레이아웃 시프트가 발생합니다.
+
+### 3. 복잡한 자바스크립트 로직
+
+이 페이지 렌더링 방법을 알기 위해선 3개 파일을 열어봐야했습니다.
+
+- utils의 slice 함수 다섯 개
+- 훅의 state 세 개와 resize 리스너
+- 컴포넌트의 `index * sliceRestLine()` 인덱스 계산
+
+만약 배너 간격을 4줄에서 5줄로 바꾸라는 요구사항이 들어온다면 세 곳 모두를 고쳐야 합니다.
+
+# 해결
+
+이 문제를 해결하기 위해 CSS 기반 렌더링으로 리팩토링했는데요.
+
+사용한 문법은 css grid입니다.
+
+카드와 배너를 하나의 CSS Grid 컨테이너에 넣고 배치는 그리드가 처리하도록 바꿨습니다. 어떤 속성을 썼고 어떤 원리를 이용한 건지 순서대로 보겠습니다.
+
+## CSS Grid의 자동 배치
+
+Grid 컨테이너는 열을 먼저 선언하고 그 안에 자식 요소를 채웁니다.
+
+```scss
+.card-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+```
+
+이렇게 선언하면 자식 요소들이 DOM 순서대로 왼쪽 위부터 빈 칸을 채웁니다. 이 동작을 자동 배치(auto placement)라고 부릅니다. 줄 개수는 선언하지 않아도 자식 수에 맞춰 늘어나요.
+
+열 개수는 미디어 쿼리로 바꿉니다.
+
+```scss
+@media (min-width: 475px)  { .card-list { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 768px)  { .card-list { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 1024px) { .card-list { grid-template-columns: repeat(5, 1fr); } }
+```
+
+여기까지는 카드만 있는 목록이면 끝납니다. 문제는 배너 줄이죠. 배너 줄은 한 칸이 아니라 한 줄 전체를 차지해야 하고 정해진 줄 번호에 있어야 합니다.
+
+## grid-column: 1 / -1 로 배너 줄이 한 줄 전체를 차지한다
+
+먼저 폭부터 해결합니다.
+
+```scss
+.banner-row {
+  grid-column: 1 / -1;
+}
+```
+
+`grid-column`은 요소가 몇 번 라인에서 시작해 몇 번 라인에서 끝날지 지정하는 속성입니다. 여기서 헷갈리기 쉬운 게 있는데요. Grid에서 숫자는 칸 번호가 아니라 라인 번호입니다.
+
+> 그리드 라인이란? <br /> 칸과 칸을 나누는 선입니다. 열이 5개면 라인은 왼쪽 끝부터 오른쪽 끝까지 6개가 생깁니다.
+
+```
+라인:  1     2     3     4     5     6
+       │ 카드 │ 카드 │ 카드 │ 카드 │ 카드 │
+```
+
+그래서 `1 / -1`은 1번 라인에서 시작해 마지막 라인에서 끝나라는 뜻이 됩니다. `-1`이 뒤에서 첫 번째 라인을 가리키니까요.
+
+이 값을 쓰면 미디어 쿼리로 열 개수가 2개에서 5개로 바뀌어도 배너 줄은 항상 전체 폭을 차지합니다. 열 개수를 알 필요가 없어요. 여기서 JS가 한 번 빠집니다.
+
+## grid-row로 줄 번호를 먼저 차지한다
+
+다음은 위치입니다. 배너 줄이 3번 줄과 8번 줄에 있어야 하는데 DOM 순서로는 이걸 맞출 수 없습니다. 카드가 몇 개씩 들어가는지가 열 개수에 따라 달라지니까요.
+
+여기서 쓴 게 `grid-row`입니다.
+
+```tsx
+<li className={cn('banner-row')} style={{ gridRow: 3 }}>
+```
+
+`grid-row`로 줄 번호를 지정하면 그 요소는 자동 배치가 아니라 명시적 배치(explicit placement)가 됩니다. 그리고 그리드 배치 알고리즘은 명시적 배치를 먼저 처리한 뒤에 자동 배치를 진행해요.
+
+순서를 정리하면 이렇습니다.
+
+1. `grid-row: 3`을 가진 배너 줄이 3번 줄을 차지합니다.
+2. 카드들이 DOM 순서대로 1번 줄부터 빈 칸을 채웁니다.
+3. 3번 줄은 이미 차 있으니 카드는 4번 줄로 넘어갑니다.
+
+DOM에서 배너가 카드 뒤에 있어도 화면에서는 3번 줄에 나타납니다.
+
+열 개수가 바뀔 때도 마찬가지입니다. 카드에 번호를 붙여서 보면 이렇게 동작해요.
+
+```
+5열 (1024px 이상)              3열 (475px 이상)
+
+1줄    1   2   3   4   5       1줄    1   2   3
+2줄    6   7   8   9  10       2줄    4   5   6
+3줄   [---- 배너 줄 ----]      3줄   [-- 배너 줄 --]
+4줄   11  12  13  14  15       4줄    7   8   9
+5줄   16  17  18  19  20       5줄   10  11  12
+```
+
+5열에서 배너 줄 위에 있던 7번부터 10번 카드가 3열에서는 배너 줄 아래로 내려갑니다. 배너 줄은 두 경우 모두 3번 줄에 그대로 있고요. 이 재배치를 그리드가 처리하니 JS는 개입하지 않습니다.
+
+## 배너 줄 번호는 배너 인덱스만의 함수다
+
+이제 `grid-row`에 넣을 숫자만 구하면 됩니다.
+
+첫 배너 줄은 카드 2줄 뒤니까 3번 줄입니다. 그 다음은 카드 4줄과 배너 1줄이 반복되니 5줄 주기로 8번 13번 18번이 되죠. 공식으로 쓰면 이렇습니다.
+
+```ts
+const FIRST_BLOCK_ROWS = 2 // 첫 배너 줄 위에 들어가는 카드 줄 수
+const REST_BLOCK_ROWS = 4  // 배너 줄 사이에 들어가는 카드 줄 수
+
+export function getBannerGridRow(bannerRowIndex: number) {
+  return FIRST_BLOCK_ROWS + 1 + bannerRowIndex * (REST_BLOCK_ROWS + 1)
+}
+```
+
+입력이 배너 인덱스 하나뿐입니다. 뷰포트 폭도 열 개수도 들어가지 않아요. 창 폭이 바뀌어도 이 값은 달라지지 않으니 resize 리스너가 필요 없습니다.
+
+배너를 다 쓰고 난 뒤도 따로 처리하지 않아도 됩니다. 배너 줄이 없으면 명시적 배치로 차지하는 줄도 없으니 카드 자동 배치가 그대로 이어지거든요. 기존 구현의 `repeatBannerCount - index > 0` 같은 조건 분기가 사라집니다.
+
+## 완성된 코드
+
+배치 규칙은 SCSS 한 곳에만 있습니다.
+
+```scss
+// card-list.module.scss
+.card-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 16px;
+  row-gap: 24px;
+  width: 100%;
+
+  .banner-row {
+    grid-column: 1 / -1;
+    min-width: 0;
+    max-width: 1200px;
+  }
+}
+
+@media (min-width: 475px)  { .card-list { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 768px)  { .card-list { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 1024px) { .card-list { grid-template-columns: repeat(5, 1fr); } }
+```
+
+컴포넌트는 카드와 배너를 각각 그리고 배치에는 관여하지 않습니다.
+
+```tsx
+// card-list.tsx
+export default function CardList({ content, banner }: CardListProps) {
+  const columns = useGridColumns()
+  const bannerRows = chunkBanners(banner).slice(0, getMaxBannerRowCount(content.length, columns))
+
+  return (
+    <ul className={cn('card-list')}>
+      {content.map((item, index) => (
+        <CardItem key={`${item.id} ${index}`} item={item} />
+      ))}
+      {bannerRows.map((banners, index) => (
+        <li
+          key={`banner-row${index}`}
+          className={cn('banner-row')}
+          style={{ gridRow: getBannerGridRow(index) }}
+        >
+          <BannerSwiperList banners={banners} />
+        </li>
+      ))}
+    </ul>
+  )
+}
+```
+
+카드는 자기 위치를 모르고 배너 줄은 자기 줄 번호만 받습니다. 카드와 배너를 하나의 배열로 합치지도 않아요.
+
+## 남아 있던 JS 제거하기
+
+위 코드에 `useGridColumns`가 아직 있습니다. 열 개수를 여전히 JS로 읽고 있는 건데요. 왜 필요했을까요?
+
+배너 줄은 `grid-row`로 줄 번호가 고정되어 있습니다. 그 위를 채울 카드가 부족하면 빈 줄이 생겨요. 5열에서 카드가 4장이면 카드는 1번 줄에서 끝나는데 배너는 3번 줄을 고집하거든요.
+
+```
+1줄   a   b   c   d   .
+2줄   .   .   .   .   .   ← 줄 전체가 빕니다
+3줄   [--- 배너 줄 ---]
+```
+
+자동 배치였다면 배너가 카드 바로 다음 줄에 붙었을 겁니다. `grid-row`로 줄을 먼저 차지하게 만든 대가예요.
+
+이걸 막으려면 배너 줄을 아예 그리지 않아야 하고 그 판단에 열 개수가 필요합니다. CSS는 이미 만들어진 요소를 숨길 수는 있지만 요소를 만들지 않는 선택은 할 수 없거든요.
+
+```ts
+// 배너 줄 위 카드 블록이 가득 찰 때만 배너 줄을 그립니다
+export function getMaxBannerRowCount(contentCount: number, columns: number) {
+  const firstBlockCount = FIRST_BLOCK_ROWS * columns
+  if (contentCount < firstBlockCount) return 0
+  return Math.floor((contentCount - firstBlockCount) / (REST_BLOCK_ROWS * columns)) + 1
+}
+```
+
+열 개수를 읽는 훅은 resize 대신 `matchMedia`로 만들었습니다.
+
+```tsx
+// hooks/use-grid-columns.tsx
+const GRID_COLUMN_QUERIES = [
+  { columns: 5, query: '(min-width: 1024px)' },
+  { columns: 4, query: '(min-width: 768px)' },
+  { columns: 3, query: '(min-width: 475px)' },
+]
+const DEFAULT_COLUMNS = 2
+
+function subscribe(onStoreChange: () => void) {
+  const mediaQueryLists = GRID_COLUMN_QUERIES.map(({ query }) => window.matchMedia(query))
+  mediaQueryLists.forEach((list) => list.addEventListener('change', onStoreChange))
+  return () => {
+    mediaQueryLists.forEach((list) => list.removeEventListener('change', onStoreChange))
+  }
+}
+
+function getColumns() {
+  return GRID_COLUMN_QUERIES.find(({ query }) => window.matchMedia(query).matches)?.columns
+    ?? DEFAULT_COLUMNS
+}
+
+export default function useGridColumns() {
+  return useSyncExternalStore(subscribe, getColumns, () => DEFAULT_COLUMNS)
+}
+```
+
+resize 이벤트는 폭이 1px 바뀔 때마다 발생하지만 `matchMedia`의 change 이벤트는 브레이크포인트를 넘는 순간에만 발생합니다. 400px에서 1100px까지 드래그해도 change는 세 번만 발생해요.
+
+### 카드가 정말 그렇게 적게 내려올까요?
+
+여기까지 만들고 나서 전제를 확인해보기로 했습니다. 이 코드는 카드가 부족한 경우를 막으려고 있는 건데 그런 경우가 실제로 있는지는 확인한 적이 없었거든요.
+
+빈 줄이 생기려면 카드가 얼마나 적어야 하는지부터 계산했습니다. 5열일 때 카드가 가장 많이 필요하니 그 기준으로 봅니다.
+
+```
+1번째 배너 줄 (3번 줄)  : 위에 카드 2줄  → 카드 10장
+2번째 배너 줄 (8번 줄)  : 위에 카드 6줄  → 카드 30장
+```
+
+백엔드에 문의했더니 카드가 30개 미만으로 내려오는 경우는 없다는 답을 받았습니다. 배너는 3개씩 묶여 한 줄이 되니 배너 6개까지는 카드가 항상 받쳐줍니다.
+
+그래서 `useGridColumns`와 `getMaxBannerRowCount`를 지웠습니다. `matchMedia` 구독도 같이 사라졌어요.
+
+```tsx
+// card-list.tsx
+export default function CardList({ content, banner }: CardListProps) {
+  const bannerRows = chunkBanners(banner)
+
+  return (
+    <ul className={cn('card-list')}>
+      {content.map((item, index) => (
+        <CardItem key={`${item.id} ${index}`} item={item} />
+      ))}
+      {bannerRows.map((banners, index) => (
+        <li
+          key={`banner-row${index}`}
+          className={cn('banner-row')}
+          style={{ gridRow: getBannerGridRow(index) }}
+        >
+          <BannerSwiperList banners={banners} />
+        </li>
+      ))}
+    </ul>
+  )
+}
+```
+
+### 배너가 안 내려오는 경우
+
+같이 물어보니 배너는 내려오지 않을 때가 있다고 했습니다. 그런데 이건 따로 처리하지 않아도 됩니다.
+
+```ts
+chunkBanners([]) // → []
+```
+
+`bannerRows`가 빈 배열이라 `li.banner-row`가 하나도 만들어지지 않습니다. `grid-row`로 줄을 차지하는 요소가 없으니 카드가 1번 줄부터 끝까지 자동 배치로 이어지고 중간에 빈 줄도 생기지 않아요.
+
+기존 구현이었다면 `repeatBannerCount - index > 0` 같은 분기로 막아야 했던 자리입니다.
+
+### 최종적으로 남은 JS
+
+
+| 코드                 | 하는 일                      | 뷰포트 폭을 읽는가 |
+| ------------------ | ------------------------- | ---------- |
+| `chunkBanners`     | 배너 배열을 3개씩 나눕니다           | 읽지 않습니다    |
+| `getBannerGridRow` | `grid-row`에 넣을 줄 번호를 만듭니다 | 읽지 않습니다    |
+
+
+두 함수 모두 렌더할 때 한 번 실행되고 끝납니다. 창 폭이 바뀌어도 다시 돌지 않아요. 뷰포트 폭을 읽는 코드는 남지 않았습니다.
+
+# 검증
+
+## 전후 비교
+
+
+| 항목        | 이전 구현                                                            | 새 구현                                                                      |
+| --------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| 배치 규칙 위치  | slice 유틸 5개 + 훅 state 3개 + 컴포넌트 인덱스 계산                           | SCSS 한 곳과 줄 번호 공식 하나                                                      |
+| 창 폭 변경 시  | resize마다 innerWidth를 읽고 배열을 다시 자르고 setState를 호출해 섹션 DOM을 다시 만듭니다 | 브라우저가 Style과 Layout만 다시 계산합니다. JS가 실행되지 않고 React 리렌더도 발생하지 않습니다           |
+| SSR       | 서버가 2열 기준으로 잘라 그리고 넓은 화면에서는 hydration 후 다시 배치됩니다                 | 카드 DOM이 뷰포트 폭과 무관하니 서버와 브라우저 결과가 같습니다                                     |
+| DOM 구조    | 섹션 `ul` 여러 개와 배너 wrapper의 반복                                     | 단일 `ul` 그리드                                                               |
+| 배너를 다 쓴 뒤 | `repeatBannerCount - index > 0` 분기                               | 처리하지 않아도 됩니다                                                              |
+| 무한 스크롤    | 다시 자를 배열이 계속 커집니다                                                | `gridRow`가 인덱스만의 함수라 카드를 뒤에 붙이면 됩니다                                       |
+| 삭제한 코드    | —                                                                | resize 리스너, `useSliceContent` 훅, slice 유틸 5개, 섹션 컴포넌트, `useGridColumns` 훅 |
+
+
+## 측정 조건
+
+정말로 재mount가 사라졌는지 확인해봤습니다.
+
+두 버전을 각각 프로덕션 빌드로 띄웠습니다. 이전 구현은 리팩토링 커밋 전 상태를 `git worktree add --detach` 로 별도 폴더에 꺼내 빌드했고 새 구현은 작업 트리를 그대로 빌드했어요. 개발 서버는 React 개발 빌드의 부가 처리가 섞이니 쓰지 않았습니다.
+
+두 서버가 같은 데이터를 받는지도 먼저 확인했습니다. 렌더 비용은 화면에 그려지는 카드와 배너 개수에 비례하니 개수가 다르면 코드 차이가 아니라 데이터 차이를 재게 되거든요. 두 페이지의 DOM을 조회해 카드 30개와 배너 3개로 같다는 걸 확인했습니다.
+
+> 여기서 한 번 막혔는데요. Next.js의 rewrites는 빌드 시점 환경 변수로 `routes-manifest.json`에 고정됩니다. 환경 변수를 빼고 빌드하면 두 빌드가 서로 다른 백엔드를 바라보게 되니 같은 환경 설정으로 빌드해야 합니다.
+
+부하는 창 폭 변경으로 줬습니다. 이번 리팩토링이 바꾼 게 창 폭 변화에 대한 반응이니까요. CDP 기반 브라우저 자동화 도구로 뷰포트 폭을 400px과 1100px 사이에서 50px 단위로 두 번 왕복시켰습니다. resize 이벤트 57회와 브레이크포인트 교차 12회가 발생했어요.
+
+계측은 React DevTools 훅으로 했습니다. React가 커밋할 때마다 호출하는 `onCommitFiberRoot` 콜백을 이용해 구간 안의 커밋을 전부 기록하고 렌더 횟수와 mount 횟수 그리고 파이버 인스턴스 수를 모았습니다.
+
+한 가지 밝혀둘 것이 있습니다. 측정한 새 구현에는 `useGridColumns`가 아직 들어 있었습니다. 훅을 지운 뒤로는 브레이크포인트를 넘어도 React 리렌더가 발생하지 않으니 실제 차이는 아래 수치보다 큽니다.
+
+## 결과
+
+
+| 지표                     | 이전 구현  | 새 구현   | 변화   |
+| ---------------------- | ------ | ------ | ---- |
+| 총 렌더 횟수                | 47,327 | 14,995 | -68% |
+| 컴포넌트 mount 횟수          | 11,864 | 2,567  | -78% |
+| 리렌더 횟수                 | 35,463 | 12,428 | -65% |
+| 카드 하위 컴포넌트의 파이버 인스턴스 수 | 1,212  | 134    | -89% |
+
+
+mount 횟수와 파이버 인스턴스 수의 차이가 큽니다. 이전 구현은 창 폭이 바뀔 때마다 배열을 다시 잘라 섹션을 다시 만드니 카드 트리가 unmount와 mount를 반복했고 이 수치가 그걸 그대로 보여줍니다.
+
+새 구현에 남은 리렌더는 대부분 페이지의 다른 컴포넌트에서 나왔습니다. 두 버전에 공통으로 있는 것들이라 차이만큼이 이번 리팩토링의 결과예요.
+
+# 마치며
+
+배치 로직을 JS에서 CSS로 옮기면서 달라진 점은 세 가지입니다.
+
+1. **창 폭 변경 비용이 없어졌습니다.** 배치를 CSS가 맡으면서 창 폭이 바뀌어도 JS가 실행되지 않습니다. 브레이크포인트를 넘을 때도 마찬가지입니다. 앞의 측정에서 mount 횟수가 78% 줄어든 것이 이 부분입니다.
+2. **첫 렌더 결과가 뷰포트 폭에 영향받지 않습니다.** 서버가 만든 HTML과 브라우저가 그린 결과가 같으니 hydration 직후 카드 위치가 바뀌지 않습니다.
+3. **규칙이 한 곳에만 있습니다.** 배너 간격을 바꾸려면 상수 두 개만 고치면 됩니다.
+
+`grid-column: 1 / -1`과 `grid-row` 두 속성이 한 일을 다시 보면 각각 열 개수와 무관하게 전체 폭을 차지하는 것 그리고 줄 번호를 먼저 차지해 뒤따르는 자동 배치를 밀어내는 것입니다. 뷰포트 폭에 따라 요소를 재배치해야 하는 화면이라면 JS로 폭을 재기 전에 이 두 가지로 표현할 수 있는지 먼저 확인해볼 만합니다.
+
+<details>
+
+<summary>참고문헌</summary>
+
+<div markdown="1">
+
+https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout/Grid_layout_using_line-based_placement
+
+https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout/Auto-placement_in_grid_layout
+
+https://developer.mozilla.org/en-US/docs/Web/API/Window/matchMedia
+
+https://react.dev/reference/react/useSyncExternalStore
+
+</div>
+
+</details>
+
