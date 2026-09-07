@@ -39,6 +39,7 @@ const { Content, headings } = await render(entry);
 const headImage = await getImage({ src: thumbnail, format: "webp", width: 1200 });
 // OG 는 크롤러 호환을 위해 원본 포맷(png/jpg)을 그대로 넘깁니다.
 const ogImage = thumbnail.src;
+const tocHeadings = headings.filter((h: MarkdownHeading) => h.depth <= 3);
 ---
 <Layout
   title={title}
@@ -56,7 +57,7 @@ const ogImage = thumbnail.src;
       </div>
     </div>
     <aside class={postBodyToc}>
-      <TableOfContents client:load headings={headings.filter((h: MarkdownHeading) => h.depth <= 3)} />
+      <TableOfContents client:load headings={tocHeadings} />
     </aside>
   </div>
   <CommentWidget />

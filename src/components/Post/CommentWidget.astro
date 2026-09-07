@@ -25,7 +25,7 @@ import { utterancesWrapper } from "@/components/Post/CommentWidget.css";
     // utterances iframe에 실시간으로 테마 변경을 postMessage
     window.addEventListener("themechange", (e) => {
       const iframe = document.querySelector('iframe.utterances-frame');
-      if (!iframe || !iframe.contentWindow) return;
+      if (!iframe?.contentWindow) return;
       iframe.contentWindow.postMessage(
         { type: "set-theme", theme: `github-${e.detail.theme}` },
         "https://utteranc.es",
