@@ -230,9 +230,64 @@ className={cn(
 
 ![대안3-리뷰작성](<./키보드감지-3안-리뷰작성.gif>)
 
-안내 다이얼로그의 여백도 정확히 돌아왔습니다.
+안내 다이얼로그에도 위아래 여백이 그대로 적용됩니다.
 
 ![대안3-운영방침](<./키보드감지-3안-운영방침.gif>)
+
+## input 이라고 다 키보드를 띄우지는 않는다
+
+`:has(textarea):focus-within` 방법을 적용한 뒤 모든 것이 해결된 줄 알았던 찰나... 아니나 다를까 다른 다이얼로그에서도 사이드 이펙트를 발견했습니다. 
+
+바로 다이얼로그 내부에 라디오버튼 혹은 체크박스가 존재할때인데요. 
+
+아래 gif는 신고 사유를 라디오 버튼으로 고르는 다이얼로그입니다. 
+
+![신고 다이얼로그 여백 사라짐](<./신고다이얼로그-여백없음.gif>)
+
+보시다시피 위아래 여백이 사라진 모습을 확인할 수 있습니다. 
+
+
+<br />
+
+
+이유는 라디오 버튼과 체크박스도 `input` 이기 때문인데요.
+
+1. `:has(input)` : 라디오 버튼도 `input[type=radio]` 라서 조건에 부합합니다.
+2. `:focus-within` : Radix 포커스 트랩이 열리는 순간 첫 항목에 포커스를 주니 조건이 성립합니다.
+
+두 조건이 모두 성립하니 다이얼로그 최대 높이가 `100dvh` 로 올라갑니다. 디자인 시스템이 정한 위아래 여백 50px 규칙이 풀리는 것이죠.
+
+### 가상키보드를 띄우는 input 타입만 걸러낸다
+
+가상키보드는 텍스트를 입력받는 `input` 에서만 올라옵니다. 라디오와 체크박스는 같은 `input` 이지만 탭해도 키보드가 올라오지 않죠. 그래서 두 타입을 조건에서 제외했습니다.
+
+```tsx
+className={cn(
+  'w-[calc(100vw-20px)] max-w-[320px] pt-8 bg-elevated-02 flex flex-col',
+  'max-h-[calc(100vh-100px)] supports-[height:100dvh]:max-h-[calc(100dvh-100px)]',
+  // 키보드를 띄우지 않는 radio 와 checkbox 는 조건에서 제외합니다.
+  'has-[textarea]:focus-within:max-h-[100vh]',
+  'has-[input:not([type=radio]):not([type=checkbox])]:focus-within:max-h-[100vh]',
+  'supports-[height:100dvh]:has-[textarea]:focus-within:max-h-[100dvh]',
+  'supports-[height:100dvh]:has-[input:not([type=radio]):not([type=checkbox])]:focus-within:max-h-[100dvh]',
+  className,
+)}
+```
+
+최종 정리본은 아래와 같습니다.
+
+
+| 다이얼로그 안의 요소            | 가상키보드 | 조건     | 최대 높이         |
+| ---------------------- | ----- | ------ | ------------- |
+| `textarea`             | 노출    | 성립     | `100dvh`      |
+| `input[type=text]`     | 노출    | 성립     | `100dvh`      |
+| `input[type=radio]`    | 미노출   | 성립 안 함 | 기본값 (여백 50px) |
+| `input[type=checkbox]` | 미노출   | 성립 안 함 | 기본값 (여백 50px) |
+
+
+신고 다이얼로그에 위아래 여백이 생겼고 항목이 많으면 본문에서 스크롤됩니다. 디자인 시스템이 정해둔 두 번째 규칙 그대로 동작하는 것이죠.
+
+![신고 다이얼로그 스크롤](<./신고다이얼로그-스크롤.gif>)
 
 ## 포커스는 있는데 키보드는 없는 경우도 있지 않나요?
 
