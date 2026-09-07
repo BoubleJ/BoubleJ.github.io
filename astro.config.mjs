@@ -1,14 +1,14 @@
 // astro.config.mjs
 import fs from "node:fs";
 import path from "node:path";
-import { defineConfig } from "astro/config";
-import react from "@astrojs/react";
+import { rehypeHeadingIds, unified } from "@astrojs/markdown-remark";
 import mdx from "@astrojs/mdx";
+import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import { vanillaExtractPlugin } from "@vanilla-extract/vite-plugin";
-import remarkSmartypants from "remark-smartypants";
+import { defineConfig } from "astro/config";
 import rehypeExternalLinks from "rehype-external-links";
-import { rehypeHeadingIds, unified } from "@astrojs/markdown-remark";
+import remarkSmartypants from "remark-smartypants";
 import { rehypeAutolinkHeaders } from "./src/lib/rehype-autolink-headers.mjs";
 
 const SITE_URL = "https://boublej.github.io";
@@ -22,7 +22,9 @@ for (const dirent of fs.readdirSync(POSTS_DIR, { withFileTypes: true })) {
   if (!dirent.isDirectory()) continue;
   const file = path.join(POSTS_DIR, dirent.name, "index.mdx");
   if (!fs.existsSync(file)) continue;
-  const date = fs.readFileSync(file, "utf-8").match(/^date:\s*["']?(\d{4}-\d{2}-\d{2})["']?/m);
+  const date = fs
+    .readFileSync(file, "utf-8")
+    .match(/^date:\s*["']?(\d{4}-\d{2}-\d{2})["']?/m);
   if (!date) continue;
   postDateBySlug.set(dirent.name.trim().replace(/\s+/g, "-"), date[1]);
 }
@@ -33,8 +35,8 @@ const toLastmod = (date) => new Date(`${date}T00:00:00Z`).toISOString();
 
 export default defineConfig({
   site: SITE_URL,
-  trailingSlash: "always",          // Gatsby 5 기본값과 동일
-  build: { format: "directory" },   // /slug/index.html — 기존 URL 보존
+  trailingSlash: "always", // Gatsby 5 기본값과 동일
+  build: { format: "directory" }, // /slug/index.html — 기존 URL 보존
   integrations: [
     react(),
     mdx(), // mdx는 아래 markdown 설정을 상속(extendMarkdownConfig 기본 true)
@@ -44,7 +46,9 @@ export default defineConfig({
         const slug = decodeURIComponent(item.url)
           .replace(`${SITE_URL}/`, "")
           .replace(/\/$/, "");
-        const date = postDateBySlug.get(slug) ?? (slug === "" || slug === "tag" ? latestPostDate : undefined);
+        const date =
+          postDateBySlug.get(slug) ??
+          (slug === "" || slug === "tag" ? latestPostDate : undefined);
         if (date) item.lastmod = toLastmod(date);
         return item;
       },
@@ -52,14 +56,14 @@ export default defineConfig({
   ],
   vite: { plugins: [vanillaExtractPlugin()] },
   markdown: {
-    syntaxHighlight: "prism",       // Shiki 대신 Prism — 기존 클래스 체계/테마 CSS 유지
+    syntaxHighlight: "prism", // Shiki 대신 Prism — 기존 클래스 체계/테마 CSS 유지
     // Astro 7부터 마크다운 엔진이 교체 가능한 processor 구조가 됐다.
     // 기본값은 Sätteri지만 remark/rehype 파이프라인을 유지하려면 unified()를 명시해야 한다.
     processor: unified({
-      smartypants: false,           // 기본 옵션 대신 oldschool 대시 옵션으로 직접 지정
+      smartypants: false, // 기본 옵션 대신 oldschool 대시 옵션으로 직접 지정
       remarkPlugins: [[remarkSmartypants, { dashes: "oldschool" }]],
       rehypePlugins: [
-        rehypeHeadingIds,           // 커스텀 플러그인보다 먼저 id 주입 (Astro 문서 권장 방식)
+        rehypeHeadingIds, // 커스텀 플러그인보다 먼저 id 주입 (Astro 문서 권장 방식)
         rehypeAutolinkHeaders,
         [rehypeExternalLinks, { target: "_blank", rel: ["nofollow", "noopener"] }], // v2-16 B2
       ],
