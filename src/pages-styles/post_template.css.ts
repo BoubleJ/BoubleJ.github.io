@@ -1,4 +1,4 @@
-import { globalStyle, style } from "@vanilla-extract/css";
+import { globalStyle, keyframes, style } from "@vanilla-extract/css";
 
 // 마크다운 컨테이너 - 레이아웃만 관리 (기존 PostContent.css.ts에서 이동)
 export const markdownRenderer = style({
@@ -46,6 +46,11 @@ export const postBodyToc = style({
   },
 });
 
+const growProgress = keyframes({
+  from: { transform: "scaleX(0)" },
+  to: { transform: "scaleX(1)" },
+});
+
 // v2-15: 포스트 읽기 진행률 바 — 헤더(zIndex 1000)보다 위, 클릭 통과
 globalStyle("#reading-progress", {
   position: "fixed",
@@ -58,4 +63,10 @@ globalStyle("#reading-progress", {
   transformOrigin: "left",
   zIndex: 1001,
   pointerEvents: "none",
+  animationName: growProgress,
+  animationDuration: "auto",
+  animationTimingFunction: "linear",
+  animationFillMode: "both",
+  // 문서 전체 스크롤 진행도를 애니메이션 진행도로 그대로 매핑한다
+  animationTimeline: "scroll(root block)",
 });
