@@ -87,7 +87,7 @@ export const summary = style({
 
 export const thumbnailImage = style({
   width: "100%",
-  height: "200px",
+  aspectRatio: "1200 / 630", // 썸네일 규격과 같은 비율이라 잘리지 않음
   objectFit: "cover", // v2-13 C1: 썸네일 비율이 달라도 카드 레이아웃이 깨지지 않도록
   borderRadius: "10px 10px 0 0",
 });
