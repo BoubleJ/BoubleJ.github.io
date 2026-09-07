@@ -55,11 +55,12 @@ const blogPosting =
       }
     : null;
 ---
+
 <html lang="ko">
   <head>
     {/* v2-12: 파비콘 — 404 포함 전 페이지 공통 */}
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" type="image/png" sizes="96x96" href="/favicon.png" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon.png">
     {!noMeta && (
       <>
         <title>{title}</title>
@@ -102,11 +103,15 @@ const blogPosting =
   <body>
     {/* v2-16 A1: 첫 페인트 전에 테마 클래스 적용 — MPA FOUC 제거. vanilla-extract 해시 클래스명을 빌드 시 주입 */}
     <script is:inline define:vars={{ light: lightThemeClass, dark: darkThemeClass }}>
-      try {
-        const saved = localStorage.getItem("theme");
-        const isDark = saved === "dark" || (!saved && matchMedia("(prefers-color-scheme: dark)").matches);
-        document.body.className = isDark ? dark : light; // define:vars로 주입된 테마 클래스명
-      } catch (_) { document.body.className = light; }
+    try {
+      const saved = localStorage.getItem("theme");
+      const isDark =
+        saved === "dark" ||
+        (!saved && matchMedia("(prefers-color-scheme: dark)").matches);
+      document.body.className = isDark ? dark : light; // define:vars로 주입된 테마 클래스명
+    } catch (_) {
+      document.body.className = light;
+    }
     </script>
     <div id="app">
       <Header client:load pathname={Astro.url.pathname} />

@@ -41,6 +41,7 @@ const headImage = await getImage({ src: thumbnail, format: "webp", width: 1200 }
 const ogImage = thumbnail.src;
 const tocHeadings = headings.filter((h: MarkdownHeading) => h.depth <= 3);
 ---
+
 <Layout
   title={title}
   description={summary}
@@ -49,7 +50,14 @@ const tocHeadings = headings.filter((h: MarkdownHeading) => h.depth <= 3);
   type="article"
   datePublished={entry.data.date}
 >
-  <PostHead client:load title={title} date={date} categories={categories} thumbnail={headImage.src} readingTimeText={readingTimeText} />
+  <PostHead
+    client:load
+    title={title}
+    date={date}
+    categories={categories}
+    thumbnail={headImage.src}
+    readingTimeText={readingTimeText}
+  />
   <div class={postBody}>
     <div class={postBodyContent}>
       <div class={`${markdownRenderer} markdown-content`}>
