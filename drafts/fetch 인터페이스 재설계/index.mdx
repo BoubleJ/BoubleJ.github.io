@@ -1,0 +1,537 @@
+---
+date: "2026-11-10"
+title: "http 인터페이스 재설계 (1) : axios 기반"
+categories: ["TypeScript"]
+summary: "사용하기 불편했던 http 인터페이스를 axios 기반으로 재설계하면서 겪은 고민과 시행착오를 정리했습니다."
+thumbnail: "./thumbnail.png"
+---
+공통 인터페이스는 프로젝트 전역에서 쓰이기 때문에 잘 설계해야 합니다. 설계를 잘못하면 모든 사용처에서 쓰기 불편해지고 예상하지 못한 버그를 만나기도 하는데요. 요구사항이 바뀌었을 때 유연하게 대응하기도 어렵습니다.
+
+
+
+이 글에서는 사용성이 좋지 않았던 기존 http 인터페이스를 재설계하는 과정에서 겪었던 고민과 트러블슈팅을 공유하고자 합니다.
+
+
+
+# 기존 http 인터페이스의 문제
+
+
+
+기존 http 인터페이스 사용 방식에는 두 가지 문제가 있었어요.
+
+### 1. 매번 사용처에서 주입하는 필수헤더
+
+저희 서비스는 디바이스 환경에 따라 노출할 수 있는 작품 목록이 다릅니다. 그래서 모든 api 요청에 채널헤더를 필수로 넘겨야 했는데요. 모든 요청에 같은 값을 넘기는 헤더라면 `Fetch` 구현체 안에서 넣는 게 자연스럽습니다. 그런데 기존 인터페이스는 이 헤더를 사용처에서 직접 넣어야 하는 방식이었습니다.
+
+이렇게 되면 누군가 헤더를 넘기는 것을 잊었을 때 에러가 발생할 수 있습니다.
+
+### 2. 메서드 체이닝 문제
+
+api 를 호출하는 데 꼭 필요한 값은 url 과 파라미터와 http 메서드입니다. 그런데 기존 인터페이스는 단순한 api 를 호출할 때도 이 값들 외에 메서드가 최소 2개 붙습니다. config 같은 추가 설정을 넘기는 것도 아닌데 말이죠.
+
+```typescript
+export async function getData(params: RankingsGenresParams) {
+  const url = '...api'
+  const res = await new Fetch(url)
+    .addHeader(params.host)
+    .addParams(deleteHostParam(params))
+    .request<Res>()
+
+  return res
+}
+```
+
+
+
+심지어
+
+```typescript
+ const url = 'api...'
+  const res = new Fetch(url, '')
+    .httpMethod('POST')
+    .addHeaderContent('xForm')
+    .addParams(fetchParam)
+    .addBodyNull(false)
+    .request<Res>()
+  return res
+```
+
+이렇게 메서드가 5개나 붙는 경우도 있었습니다.
+
+메서드가 많아질수록 사용하는 개발자는 부담스럽습니다. 메서드마다 어떤 역할을 하는지 알아야 하기 때문이죠. 메서드 호출 순서가 따로 정해져 있나? 이 메서드는 뭐지? 놓친 메서드는 없나? 하는 고뇌에 빠지게 됩니다.
+
+잘 만든 공통 인터페이스는 내부 동작을 몰라도 쉽게 사용할 수 있어야 한다고 생각합니다. 그런데 기존 인터페이스는 그러지 못했죠. 실제로 팀원들도 불편하다는 이야기를 많이 했었어요.
+
+
+
+&nbsp;
+
+&nbsp;
+
+# axios 로 새 인터페이스 만들기
+
+## 라이브러리 선택과 구현 목표
+
+이런 문제를 해결하려고 http 인터페이스를 새로 만들기로 했습니다. 먼저 http 라이브러리를 골라야 했는데요. 저는 axios 를 골랐습니다.
+
+사실 이때만 해도 기술을 고를 때 깊이 고민하지 않았습니다. 누군가 왜 axios 를 골랐냐고 물었다면 "음... 인터셉터 기능이 좋아서요? 편해서요?" 라고 답했을 것 같아요. 틀린 이유는 아니지만 남들이 좋다고 하니까 쓰는 것에 가까웠죠.
+
+axios 가 좋지 않은 라이브러리라는 뜻은 아닙니다. 다만 fetch, ky  등 axios 외 다양한 선택지가 있고 그중 저희 서비스 상황에 가장 맞는 라이브러리가 무엇인지 고민하지 않았습니다. 돌이켜 보면 아쉬운 부분이에요.
+
+
+
+&nbsp;
+
+어찌됐든  axios 로 구현을 시작했습니다. 구현 목표는 세 가지로 잡았습니다.
+
+1. 사용처에서는 http 메서드와 api 엔드포인트와 파라미터만 넘긴다. config 는 필요할 때만 넘긴다.
+2. 나머지 공통 로직은 구현체 안에서 처리한다. 개발자는 http 인터페이스의 내부 동작을 몰라도 된다.
+3. 나중에 http 라이브러리를 바꾸더라도 사용처 코드는 수정하지 않고 구현체 안쪽만 바꾸면 되도록 추상화한다.
+
+
+
+&nbsp;
+
+## 공통 로직만 포함된 base 클래스
+
+모든 요청에 필요한 로직들만 넣었습니다.
+
+
+
+```typescript
+
+export function createAxiosInstance(baseUrl: string | undefined, timeout: number, config: AxiosRequestConfig) {
+  const axiosInstance = axios.create({
+    baseURL: baseUrl,
+    timeout,
+    paramsSerializer: (params) => {
+      return qs.stringify(params, { arrayFormat: 'comma' })
+    },
+    ...config,
+  })
+  return axiosInstance
+}
+
+export abstract class BaseAxios implements ApiInterface {
+  protected instance: AxiosInstance
+
+  constructor({
+    baseUrl,
+    timeout,
+    config,
+  }: {
+    baseUrl: string | undefined
+    timeout: number
+    config: AxiosRequestConfig
+  }) {
+    this.instance = createAxiosInstance(baseUrl, timeout, config)
+    this.setInterceptors()
+  }
+
+  protected abstract setInterceptors(): void
+
+  public get<R = unknown>(url: string, { params, config }: ApiOptions = {}) {
+    return this.instance.get<R>(url, {
+      params,
+      headers: config,
+    })
+  }
+
+  public post<R = unknown>(url: string, { params, config }: ApiOptions = {}) {
+    return this.instance.post<R>(url, params, {
+      headers: config,
+    })
+  }
+
+  public put<R = unknown>(url: string, { params, config }: ApiOptions = {}) {
+    return this.instance.put<R>(url, params, {
+      headers: config,
+    })
+  }
+
+  public patch<R = unknown>(url: string, { params, config }: ApiOptions = {}) {
+    return this.instance.patch<R>(url, params, {
+      headers: config,
+    })
+  }
+
+  public delete<R = unknown>(url: string, { params, config }: ApiOptions = {}) {
+    return this.instance.delete<R>(url, {
+      data: params,
+      headers: config,
+    })
+  }
+}
+```
+
+
+
+`createAxiosInstance` 는 모든 요청에 똑같이 들어가는 설정으로 axios 인스턴스를 만듭니다. 
+
+`paramsSerializer` 에 qs 의 `arrayFormat: 'comma'` 를 지정해서 혹시나 사용처에서 파라미터를 배열 형태로 넘길 경우 `ids=1,2,3` 형태의 쿼리스트링으로 보내기 위함입니다. 
+
+`BaseAxios` 는 생성자에서 인스턴스를 만들고 바로 `setInterceptors` 를 호출합니다. `setInterceptors` 는 abstract 메서드라서 상속받는 클래스가 반드시 구현해야 하는데요. 아래에 나오는 서버용과 클라이언트용 클래스가 이 메서드에서 각자 인터셉터를 등록합니다.
+
+`get` `post` `put` `patch` `delete` 다섯 메서드는 모두 `(url, { params, config })` 형태로 인자를 받습니다. axios 는 메서드마다 파라미터를 넣는 자리가 다른데요. `get` 은 `params` 를 쿼리스트링으로 보내고 `post` `put` `patch` 는 두 번째 인자인 body 로 보내고 `delete` 는 `data` 옵션에 담아 보냅니다. 이 차이를 `BaseAxios` 안에서 처리하기 때문에 사용처는 메서드 이름만 바꿔서 호출하면 됩니다. 
+
+
+
+## 헤더 주입
+
+```typescript
+
+export default class ApiServer extends BaseAxios {
+  protected setInterceptors() {
+    setServerInterceptors(this.instance)
+  }
+}
+
+const setServerInterceptors = (instance: AxiosInstance) => {
+  instance.interceptors.request.use((config) => {
+    return onRequest(config, {
+      ...getRequestHeader(),
+    })
+  })
+  instance.interceptors.response.use(onResponse, onErrorResponse)
+}
+
+export const getRequestHeader = () => {
+  return {
+    ...Object.fromEntries(headers().entries()),
+    [HEADER.CHANNEL]: getChannel(),
+    [HEADER.COOKIE]: getCookie(),
+  }
+}
+
+```
+
+`ApiServer` 는 `BaseAxios` 를 상속받고 `setInterceptors` 에서 `setServerInterceptors` 를 호출합니다. 서버 컴포넌트에서 api 를 요청할 때 이 클래스를 써요.
+
+요청 인터셉터는 `getRequestHeader` 가 만든 헤더를 `onRequest` 에 넘겨서 모든 요청에 붙입니다. 그래서 사용처는 채널헤더를 직접 넘기지 않아도 됩니다.
+
+`getRequestHeader` 는 Next.js 의 `headers()` 로 브라우저가 보낸 요청 헤더를 읽고 api 요청에 그대로 옮겨 싣습니다. 그다음 채널헤더는 `getChannel()` 로 쿠키는 `getCookie()` 로 서버용 값을 넣습니다.
+
+응답 인터셉터인 `onResponse` 와 `onErrorResponse` 는 클라이언트용 클래스와 같은 함수를 씁니다.
+
+
+
+```typescript
+
+export default class ApiClient extends BaseAxios {
+  protected setInterceptors() {
+    setClientInterceptors(this.instance)
+  }
+}
+
+export const setClientInterceptors = (instance: AxiosInstance) => {
+  instance.interceptors.request.use((config) =>
+    onRequest(config, {
+      [HEADER.CHANNEL]: getChannelForClient(),
+    }),
+  )
+  instance.interceptors.response.use(onResponse, onErrorResponse)
+}
+
+```
+
+`ApiClient` 도 `BaseAxios` 를 상속받고 `setInterceptors` 에서 `setClientInterceptors` 를 호출합니다. 클라이언트 컴포넌트에서 api 를 요청할 때 이 클래스를 써요.
+
+채널헤더 값은 `getChannelForClient()` 가 쿠키에서 읽어옵니다. 브라우저 요청 시 쿠키를 기본적으로 넘기지만 명시적으로 표현해놓았습니다. 
+
+응답 인터셉터는 서버용 클래스와 같은 `onResponse` 와 `onErrorResponse` 를 씁니다.
+
+
+
+&nbsp;
+
+## 서버용과 클라이언트용 클래스를 나눈 이유
+
+여기서 궁금한 점이 생길 수 있습니다. 
+
+
+
+필수헤더값을 왜 클라이언트용 서버용으로 나누었나요??
+
+
+
+사실 저도 인터페이스를 만들면서 클라이언트, 서버 모두 동일한 인터페이스를 사용하면서 동시에 헤더도 구현체 내부에서 주입하도록 설계를 시도해봤는데요. 
+
+
+
+&nbsp;
+
+&nbsp;
+
+### 1. typeof window 로 서버와 클라이언트 분기하기
+
+`typeof window === 'undefined'` 조건으로 실행 환경을 나눠서 헤더를 넣는 방법을 먼저 시도해봤어요.
+
+```typescript
+const getHeader = () => {
+  if (typeof window === 'undefined') {
+    return getRequestHeader()
+  }
+  return { [HEADER.CHANNEL]: getChannelForClient() }
+}
+```
+
+하지만 이 방법에는 근본적인 문제가 있었습니다. Next.js 는 빌드할 때 `typeof window` 를 서버 번들에서는 `"undefined"` 로 클라이언트 번들에서는 `"object"` 로 바꿔 넣는데요. 그래서 `typeof window === 'undefined'` 조건이 성립하는지는 번들마다 정해지지만 파일에서 import 한 모듈은 이 조건과 관계없이 서버 번들과 클라이언트 번들에 모두 들어갑니다. 이 파일은 서버용 헤더 함수와 클라이언트용 헤더 함수를 모두 import 하고 있는데요. 서버용 헤더 함수는 `next/headers` 를 쓰기 때문에 클라이언트 컴포넌트에서 이 파일을 import 하면 `next/headers` 도 클라이언트 번들에 들어갑니다. `next/headers` 는 서버 컴포넌트에서만 쓸 수 있는 모듈이라서 Next.js 는 빌드할 때 아래 에러를 던집니다.
+
+```
+You're importing a component that needs next/headers. That only works in a Server Component but one of its parents is marked with "use client", so it's a Client Component.
+```
+
+결국 이 방법은 실패했어요.
+
+
+
+### 2. lazy import 로 모듈을 불러오는 시점 늦추기
+
+그렇다면 lazy import 로 모듈을 불러오는 시점을 늦추면 되지 않을까요? 서버에서는 서버용 모듈만 불러오고 클라이언트에서는 클라이언트용 모듈만 불러오도록 바꿔봤습니다.
+
+```typescript
+const getHeader = async () => {
+  if (typeof window === 'undefined') {
+    const { getRequestHeader } = await import('./axios-server')
+    return getRequestHeader()
+  }
+  const { getChannelForClient } = await import('./channel-client')
+  return { [HEADER.CHANNEL]: getChannelForClient() }
+}
+```
+
+클라이언트 번들에서는 `typeof window` 가 `"object"` 로 바뀌어서 조건이 `"object" === 'undefined'` 가 되는데요. 코드를 실행하지 않아도 `"object" === 'undefined'` 가 `false` 라는 것을 알 수 있습니다. 이렇게 webpack 은 빌드할 때 결과가 `false` 로 정해진 조건을 미리 계산하고 `if` 블록 안의 `import()` 를 번들에 넣지 않습니다. 그래서 `next/headers` 는 클라이언트 번들에 들어가지 않습니다.
+
+문제는 Client Component 가 서버에서도 렌더링된다는 점이었어요. Next.js 는 첫 요청의 HTML 을 만들 때 Client Component 를 서버에서 한 번 렌더링합니다. 이때 쓰는 번들에서는 `typeof window` 가 `"undefined"` 로 바뀌어서 조건이 성립하는데요. 그래서 `import('./axios-server')` 가 번들에 들어갑니다. Next.js 는 이 코드도 Client Component 의 코드로 보기 때문에 1번과 같은 에러를 던집니다.
+
+결국 lazy import 는 모듈을 실행하는 시점만 늦출 뿐 Client Component 의 코드에 `next/headers` 가 들어가는 것은 막지 못했어요.
+
+### 3. webpack 설정 바꾸기
+
+그렇다면 webpack 설정을 바꿔서 서버와 클라이언트에서 서로 다른 파일을 불러오게 하면 어떨까요? `next.config.js` 의 `webpack` 설정에서 `resolve.alias` 를 쓰면 같은 import 경로가 환경마다 다른 파일을 가리키도록 만들 수 있습니다.
+
+하지만 이 방법도 간단하지 않았어요. `webpack` 설정 함수가 받는 `isServer` 는 서버 번들인지 클라이언트 번들인지만 알려줍니다. 2번에서 본 Client Component 를 서버에서 렌더링하는 번들도 서버 번들에 속하는데요. 그래서 `isServer` 로 나누면 이 번들에 서버용 파일이 들어가고 1번과 같은 에러가 납니다. 이 번들까지 구분하려면 Next.js 가 내부에서 번들을 나누는 방식까지 다뤄야 합니다.
+
+설정을 바꾸는 부담도 컸습니다. webpack 설정은 프로젝트 전체 빌드에 적용되고 Turbopack 으로 빌드하면 적용되지 않습니다. 헤더를 넣는 위치 하나를 합치려고 빌드 설정까지 바꾸는 게 맞는지 의문이 들었어요.
+
+결국 서버용 클래스와 클라이언트용 클래스를 나누기로 결정했습니다.
+
+
+
+&nbsp;
+
+## 인터셉터
+
+```typescript
+
+
+export const onRequest = (config: InternalAxiosRequestConfig, requestHeader: RequestHeader) => {
+  const { headers } = config
+
+  const customHeaders = new AxiosHeaders({
+    ...headers,
+    ...requestHeader,
+  })
+
+  return Promise.resolve({
+    ...config,
+    headers: customHeaders,
+  })
+}
+
+export const onResponse = (res: AxiosResponse): AxiosResponse => {
+  return res
+}
+
+export const onErrorResponse = (error: AxiosError | Error) => {
+  if (axios.isAxiosError(error)) {
+    try {
+      if (typeof error.response?.data === 'string') {
+        error.response.data = JSON.parse(error.response.data)
+      }
+    } catch {}
+
+    const { status } = (error.response ?? {}) as AxiosResponse
+
+    const responseData = error.response?.data as HttpErrorData
+
+    throw new HttpError(status, responseData)
+  }
+  return Promise.reject(error)
+}
+```
+
+여기서 `new AxiosHeaders()` 를 사용한 이유는 인터셉터가 돌려주는 config 의 `headers` 가 `AxiosRequestHeaders` 타입이기 때문인데요. 이 타입은 `AxiosHeaders` 클래스 타입을 포함해서 `set` `get` `has` `delete` 같은 메서드가 있어야 합니다.
+
+```typescript
+export type AxiosRequestHeaders = RawAxiosRequestHeaders & AxiosHeaders;
+```
+
+기존 헤더를 합쳐 일반 객체를 만들면 헤더 값만 복사되고 메서드는 복사되지 않습니다. 그래서 타입 에러가 발생하고 이를 막으려면 `as AxiosRequestHeaders` 로 타입 단언을 해야 합니다. 성능상 문제는 없겠지만 개인적으로 타입 단언을 좋아하지 않아서요.... `AxiosHeaders` 인스턴스를 그대로 사용해서 타입 단언 없이 타입이 맞도록 해봤습니다.
+
+
+
+&nbsp;
+
+## 에러 처리
+
+```typescript
+export interface HttpErrorData {
+  code: number
+  message?: string
+  [key: string]: unknown
+}
+
+type DefaultHttpErrorData = Omit<HttpErrorData, 'code' | 'message'>
+
+export default class HttpError<TData = DefaultHttpErrorData> extends Error {
+  status: number
+  code: number
+
+  data?: TData
+
+  constructor(status: number, data?: HttpErrorData) {
+    super()
+    this.name = 'HttpError'
+    this.status = status
+    const { code, message, ...rest } = data ?? {}
+    this.message = message || ''
+    this.code = code || 0
+    this.data = rest as TData
+  }
+}
+
+```
+
+`onErrorResponse` 가 던지는 `HttpError` 는 `Error` 를 상속받은 클래스입니다. 응답 상태 코드와 서버가 내려준 에러 응답을 나눠서 담는데요.
+
+
+| 필드        | 값                 |
+| --------- | ----------------- |
+| `status`  | HTTP 상태 코드        |
+| `code`    | 서버가 내려준 에러 코드     |
+| `message` | 서버가 내려준 에러 메시지    |
+| `data`    | 서버가 내려준 에러 응답 데이터 |
+
+
+`data` 의 타입은 제네릭 `TData` 로 정합니다. API 마다 에러 응답에 담기는 필드가 다르기 때문인데요. 사내 api 중 4xx 에러에서 `data` 값을 함께 내려주는 경우가 있어서 추가했습니다.
+
+### 1. onError 의 error 를 HttpError 로 추론하기
+
+TanStack Query 의 기본 설정에서는 `onError` 의 `error` 가 `Error` 타입인데요. 그래서 `status` 나 `code` 를 꺼내려면 사용처마다 `instanceof` 로 타입을 좁혀야 했습니다.
+
+```typescript
+useMutation({
+  mutationFn: postCoupon,
+  onError: (error) => {
+    if (error instanceof HttpError && error.code === 4001) {
+      showToast('쿠폰 사용 한도를 넘었어요')
+    }
+  },
+})
+```
+
+매번 확인하는 게 번거로워서 TanStack Query 의 `Register` 인터페이스로 기본 에러 타입을 `HttpError` 로 지정했습니다.
+
+```typescript
+import type HttpError from './http-error'
+import '@tanstack/react-query'
+
+declare module '@tanstack/react-query' {
+  interface Register {
+    defaultError: HttpError
+  }
+}
+```
+
+`Register` 의 `defaultError` 를 지정해 두면 `useQuery` 와 `useMutation` 이 돌려주는 `error` 와 `onError` 의 인자가 `Error` 대신 `HttpError` 타입으로 추론됩니다. 그래서 `instanceof` 없이 `status` 와 `code` 를 바로 꺼내 쓸 수 있어요.
+
+```typescript
+useMutation({
+  mutationFn: postCoupon,
+  onError: (error) => {
+    if (error.code === 4001) {
+      showToast('쿠폰 사용 한도를 넘었어요')
+    }
+  },
+})
+```
+
+### 2. 제네릭으로 error.data 타입 지정하기
+
+1번만 적용하면 `error.data` 의 필드 타입은 알 수 없습니다. 제네릭을 넘기지 않으면 `data` 의 필드가 모두 `unknown` 이 되는데요. `data` 의 필드까지 타입과 함께 꺼내려면 `useMutation` 의 에러 타입 자리에 `HttpError<에러 데이터 타입>` 을 넘깁니다.
+
+```typescript
+useMutation<void, HttpError<CouponErrorData>, CouponRequest>({
+  mutationFn: postCoupon,
+  onError: (error) => {
+    if (error.code === 4001) {
+      showToast(`남은 쿠폰 수는 ${error.data?.remainCount}개예요`)
+    }
+  },
+})
+```
+
+이렇게 하면 `error.data` 가 `CouponErrorData` 타입이 되어서 `remainCount` 를 타입과 함께 꺼낼 수 있습니다.
+
+
+
+&nbsp;
+
+&nbsp;
+
+## 사용처
+
+새로 만든 http 인터페이스 사용방법은 아래와 같습니다. 
+
+```typescript
+export default async function getProductsApi(params: ProductsParams) {
+  const { data } = await ApiServer.get<ProductsRes>('/api/products', {
+    params,
+  })
+
+  return data
+}
+```
+
+기존 인터페이스와 비교하면 채널헤더를 넣는 코드, 메서드 체이닝이 모두 사라지고 http 메서드, 엔드포인트url, 파라미터 딱 필요한 값만 넘기면 됩니다. 보기만해도 편안해지는군요
+
+
+
+&nbsp;
+
+&nbsp;
+
+## 마치며
+
+이렇게 http 인터페이스를 새로 설계해봤는데요. 좋은 인터페이스가 무엇인지 고민하며 설계했더니 팀원들의 만족도도 높았고 저도 뿌듯했습니다.
+
+다만 모든 과정이 순조롭지는 않았어요. 운영환경과 개발환경에서 몇 가지 에러가 발생했는데요..... 눈물이 좔좔 흐르더군요. 역시 공통 인터페이스 제작의 길은 험난하기 짝이 없습니다.  트러블슈팅 과정은 별도 글로 정리할 예정입니다.
+
+
+
+&nbsp;
+
+근데 놀랍게도 이 구조에도 부족한 점이 있다고 판단해서 최종적으로는 fetch 기반 인터페이스로 다시 설계했습니다.... 나름 잘 만들었다 생각했는데 아쉬운 부분이 있더군요. 이 과정도 별도 글로 정리할 예정입니다. 
+
+
+
+&nbsp;
+
+&nbsp;
+
+<details>
+
+<summary>참고문헌</summary>
+
+<div markdown="1">
+
+https://webpack.js.org/plugins/define-plugin/
+
+https://github.com/webpack/webpack/blob/v5.90.0/lib/ConstPlugin.js#L161
+
+https://github.com/webpack/webpack/blob/v5.90.0/lib/javascript/JavascriptParser.js#L1921
+
+</div>
+
+</details>
