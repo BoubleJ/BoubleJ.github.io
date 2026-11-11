@@ -166,7 +166,7 @@ https://example.com
 date: "2026-09-01"
 title: "제목"
 categories: ["React", "Next.js"]
-summary: "한 줄 요약입니다. ~를 공유합니다 또는 ~를 분석했습니다 로 끝냅니다."
+summary: "한 줄 요약입니다."
 thumbnail: "./thumbnail.png"
 ---
 ```
