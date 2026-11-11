@@ -267,52 +267,75 @@ export const setClientInterceptors = (instance: AxiosInstance) => {
 `typeof window === 'undefined'` 조건으로 실행 환경을 나눠서 헤더를 넣는 방법을 먼저 시도해봤어요.
 
 ```typescript
+
+//interceptors.ts
+
 const getHeader = () => {
   if (typeof window === 'undefined') {
     return getRequestHeader()
   }
-  return { [HEADER.CHANNEL]: getChannelForClient() }
+  return getClientRequestHeader()
 }
 ```
 
-하지만 이 방법에는 근본적인 문제가 있었습니다. Next.js 는 빌드할 때 `typeof window` 를 서버 번들에서는 `"undefined"` 로 클라이언트 번들에서는 `"object"` 로 바꿔 넣는데요. 그래서 `typeof window === 'undefined'` 조건이 성립하는지는 번들마다 정해지지만 파일에서 import 한 모듈은 이 조건과 관계없이 서버 번들과 클라이언트 번들에 모두 들어갑니다. 이 파일은 서버용 헤더 함수와 클라이언트용 헤더 함수를 모두 import 하고 있는데요. 서버용 헤더 함수는 `next/headers` 를 쓰기 때문에 클라이언트 컴포넌트에서 이 파일을 import 하면 `next/headers` 도 클라이언트 번들에 들어갑니다. `next/headers` 는 서버 컴포넌트에서만 쓸 수 있는 모듈이라서 Next.js 는 빌드할 때 아래 에러를 던집니다.
+하지만 이 방법에는 근본적인 문제가 있었습니다. 파일에서 import 한 모듈은 `typeof window === 'undefined'` 조건이 성립하는지와 관계없이 번들에 들어가는데요. 이 파일(`interceptors.ts`)은 서버용 헤더 함수에 필요한 `next/headers` 와 클라이언트용 헤더 함수를 모두 import 하고 있습니다. 그래서 Client Component 에서 이 파일을 import 하면 `next/headers` 도 함께 들어갑니다. `next/headers` 는 서버 컴포넌트에서만 쓸 수 있는 모듈이라서 Next.js 는 빌드할 때 아래 에러를 던집니다.
 
 ```
 You're importing a component that needs next/headers. That only works in a Server Component but one of its parents is marked with "use client", so it's a Client Component.
+
+ 1 | import type { AxiosInstance } from 'axios'
+ 2 | import { headers } from 'next/headers'
+   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Import trace for requested module:
+./interceptors.ts
+./axiosClient.ts
 ```
 
-결국 이 방법은 실패했어요.
 
 
+&nbsp;
+
+&nbsp;
 
 ### 2. lazy import 로 모듈을 불러오는 시점 늦추기
 
-그렇다면 lazy import 로 모듈을 불러오는 시점을 늦추면 되지 않을까요? 서버에서는 서버용 모듈만 불러오고 클라이언트에서는 클라이언트용 모듈만 불러오도록 바꿔봤습니다.
+그렇다면 lazy import 로 모듈을 불러오는 시점을 늦추면 되지 않을까요? 코드가 실행될 때 서버에서는 서버용 모듈만 불러오고 클라이언트에서는 클라이언트용 모듈만 불러오도록 바꿔봤습니다.
 
 ```typescript
 const getHeader = async () => {
   if (typeof window === 'undefined') {
-    const { getRequestHeader } = await import('./axios-server')
+    const { getRequestHeader } = await import('./serverHeader')
     return getRequestHeader()
   }
-  const { getChannelForClient } = await import('./channel-client')
-  return { [HEADER.CHANNEL]: getChannelForClient() }
+  const { getClientRequestHeader } = await import('./clientHeader')
+  return getClientRequestHeader()
 }
 ```
 
-클라이언트 번들에서는 `typeof window` 가 `"object"` 로 바뀌어서 조건이 `"object" === 'undefined'` 가 되는데요. 코드를 실행하지 않아도 `"object" === 'undefined'` 가 `false` 라는 것을 알 수 있습니다. 이렇게 webpack 은 빌드할 때 결과가 `false` 로 정해진 조건을 미리 계산하고 `if` 블록 안의 `import()` 를 번들에 넣지 않습니다. 그래서 `next/headers` 는 클라이언트 번들에 들어가지 않습니다.
+그런데 Client Component 는 브라우저에서만 실행되지 않습니다. 사용자가 페이지에 처음 들어오면 Next.js 는 서버에서 HTML 을 미리 만드는데요. 이때 Client Component 도 서버에서 한 번 실행됩니다. 서버에는 `window` 가 없어서 `typeof window === 'undefined'` 조건이 성립하고 `import('./serverHeader')` 분기를 타게 됩니다. 문제는 서버에서 실행되더라도 Next.js 가 이 코드를 Client Component 의 코드로 본다는 점이에요. 그래서 `serverHeader.ts` 가 import 한 `next/headers` 때문에 1번과 같은 에러가 납니다.
 
-문제는 Client Component 가 서버에서도 렌더링된다는 점이었어요. Next.js 는 첫 요청의 HTML 을 만들 때 Client Component 를 서버에서 한 번 렌더링합니다. 이때 쓰는 번들에서는 `typeof window` 가 `"undefined"` 로 바뀌어서 조건이 성립하는데요. 그래서 `import('./axios-server')` 가 번들에 들어갑니다. Next.js 는 이 코드도 Client Component 의 코드로 보기 때문에 1번과 같은 에러를 던집니다.
+```
+You're importing a component that needs next/headers. That only works in a Server Component but one of its parents is marked with "use client", so it's a Client Component.
+
+ 1 | import { headers } from 'next/headers'
+   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Import trace for requested module:
+./serverHeader.ts
+./interceptors.ts
+./axiosClient.ts
+```
 
 결국 lazy import 는 모듈을 실행하는 시점만 늦출 뿐 Client Component 의 코드에 `next/headers` 가 들어가는 것은 막지 못했어요.
 
 ### 3. webpack 설정 바꾸기
 
-그렇다면 webpack 설정을 바꿔서 서버와 클라이언트에서 서로 다른 파일을 불러오게 하면 어떨까요? `next.config.js` 의 `webpack` 설정에서 `resolve.alias` 를 쓰면 같은 import 경로가 환경마다 다른 파일을 가리키도록 만들 수 있습니다.
+그렇다면 webpack 설정을 바꿔서 서버와 클라이언트에서 서로 다른 파일을 불러오게 하면 어떨까요? `next.config.js` 의 `webpack` 설정에서 `resolve.alias` 를 쓰면 같은 import 경로가 환경마다 다른 파일을 가리키도록 만들 수 있긴합니다.
 
-하지만 이 방법도 간단하지 않았어요. `webpack` 설정 함수가 받는 `isServer` 는 서버 번들인지 클라이언트 번들인지만 알려줍니다. 2번에서 본 Client Component 를 서버에서 렌더링하는 번들도 서버 번들에 속하는데요. 그래서 `isServer` 로 나누면 이 번들에 서버용 파일이 들어가고 1번과 같은 에러가 납니다. 이 번들까지 구분하려면 Next.js 가 내부에서 번들을 나누는 방식까지 다뤄야 합니다.
+하지만 이 방법도 마냥 순탄하진 않습니다. `webpack` 설정 함수가 받는 `isServer` 는 서버 번들인지 클라이언트 번들인지만 알려줍니다. 2번에서 본 Client Component 를 서버에서 렌더링하는 번들도 서버 번들에 속하는데요. 그래서 `isServer` 로 나누면 이 번들에 서버용 파일이 들어가고 1번과 같은 에러가 납니다. 이 번들까지 구분하려면 Next.js 가 내부에서 번들을 나누는 방식까지 다뤄야 합니다.
 
-설정을 바꾸는 부담도 컸습니다. webpack 설정은 프로젝트 전체 빌드에 적용되고 Turbopack 으로 빌드하면 적용되지 않습니다. 헤더를 넣는 위치 하나를 합치려고 빌드 설정까지 바꾸는 게 맞는지 의문이 들었어요.
+이렇다보니 헤더를 넣는 위치 하나를 합치려고 이렇게 빌드 설정까지 바꾸는 게 맞는지 의문이 들었어요.
 
 결국 서버용 클래스와 클라이언트용 클래스를 나누기로 결정했습니다.
 
@@ -546,11 +569,9 @@ export default async function getProductsApi(params: ProductsParams) {
 
 <div markdown="1">
 
-https://webpack.js.org/plugins/define-plugin/
+https://nextjs.org/docs/app/guides/server-and-client-boundary
 
-https://github.com/webpack/webpack/blob/v5.90.0/lib/ConstPlugin.js#L161
-
-https://github.com/webpack/webpack/blob/v5.90.0/lib/javascript/JavascriptParser.js#L1921
+https://nextjs.org/docs/app/getting-started/server-and-client-components
 
 </div>
 
