@@ -1,7 +1,7 @@
 ---
 date: "2026-11-10"
 title: "http 인터페이스 재설계 (1) : axios 기반"
-categories: ["TypeScript"]
+categories: ["TypeScript", "Next.js", "axios", "TanStack-Query", "Architecture"]
 summary: "사용하기 불편했던 http 인터페이스를 axios 기반으로 재설계하면서 겪은 고민과 시행착오를 정리했습니다."
 thumbnail: "./thumbnail.png"
 ---
@@ -479,6 +479,26 @@ useMutation<void, HttpError<CouponErrorData>, CouponRequest>({
 &nbsp;
 
 &nbsp;
+
+## 싱글톤 인스턴스로 사용하기
+
+사용처에서 요청할 때마다 http 클래스 인스턴스를 새로 생성하면 axios 인스턴스와 인터셉터도 매번 새로 만들어지는데요. 그래서 인스턴스는 한 번만 만들고 그 인스턴스를 export 해서 모든 사용처가 함께 쓰도록 했습니다.
+
+```typescript
+export default new ApiServer({
+  baseUrl: API_URL,
+  timeout: 5000,
+  config: {
+    headers: {
+      [HEADER.CONTENT_TYPE]: HEADER_CONTENT.json,
+    },
+  },
+})
+```
+
+모듈은 처음 import 될 때 한 번만 실행됩니다. 그래서 여러 파일에서 import 해도 모두 같은 인스턴스를 받아요.
+
+아래 사용처 코드는 이 인스턴스를 import 해서 `ApiServer.get()` 처럼 바로 호출합니다.
 
 ## 사용처
 
