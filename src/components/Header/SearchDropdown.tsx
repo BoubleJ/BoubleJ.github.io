@@ -10,7 +10,6 @@ interface SearchDropdownProps {
   onClose: () => void;
 }
 
-// 제목 중 매칭된 부분만 <mark>로 감싼다 (대소문자 무시, 첫 매칭 1건만)
 const highlightTitle = (title: string, term: string): ReactNode => {
   const t = term.trim();
   if (!t) return title;

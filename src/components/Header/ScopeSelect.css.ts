@@ -6,7 +6,6 @@ export const root = style({
   flexShrink: 0,
 });
 
-// 기존 네이티브 select와 같은 외형의 트리거 버튼
 export const trigger = style({
   display: "flex",
   alignItems: "center",
@@ -47,7 +46,6 @@ export const chevronOpen = style({
   transform: "rotate(180deg)",
 });
 
-// 옵션 목록: 오버레이(레이아웃 영향 없음), 검색 결과 드롭다운(z 1000)보다 위
 export const list = style({
   position: "absolute",
   top: "calc(100% + 4px)",

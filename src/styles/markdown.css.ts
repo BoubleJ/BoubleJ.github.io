@@ -40,7 +40,7 @@ globalStyle(".markdown-content blockquote, .markdown-blockquote", {
 });
 
 globalStyle(".markdown-content details", {
-  margin: "20px 0", // 인용문과 동일한 간격 — 앞뒤 문단에 붙어 보이지 않도록
+  margin: "20px 0",
 });
 
 globalStyle(".markdown-content ol, .markdown-content ul, .markdown-ol, .markdown-ul", {
@@ -69,14 +69,10 @@ globalStyle(".markdown-content img", {
   margin: "12px 0 6px 0",
 });
 
-// 세로로 긴 이미지는 본문 폭을 그대로 채우면 화면 몇 개 분량으로 늘어난다.
-// 원본은 그대로 두고 표시 크기만 줄여 고해상도 화면의 선명함을 지킨다.
-// img-sm: 모바일·태블릿 스크린샷. 실제 기기로 보는 비율에 가깝게.
 globalStyle(".markdown-content .img-sm img", {
   maxWidth: "360px",
 });
 
-// img-md: 세로로 긴 데스크톱 화면. 글자가 읽힐 만큼은 남긴다.
 globalStyle(".markdown-content .img-md img", {
   maxWidth: "560px",
 });
@@ -98,20 +94,17 @@ globalStyle(".markdown-content table th", {
   fontWeight: "bold",
 });
 
-// 코드블록은 Prism.js가 처리하므로 마크다운 스타일에서 제외
-// 인라인 코드만 대상 — 클래스 부착 없이 래퍼 후손 셀렉터로 커버 (v2-16 A4)
 globalStyle(".markdown-content code:not([class*='language-'])", {
   backgroundColor: vars.color.codeBg,
   padding: "2px 6px",
   borderRadius: "3px",
   fontSize: "85%",
-  overflowWrap: "anywhere", // 긴 Tailwind 클래스가 본문에 들어와도 가로 스크롤이 생기지 않도록
+  overflowWrap: "anywhere",
   fontFamily:
     'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace',
   color: vars.color.codeColor,
 });
 
-// 코드블록 복사 버튼 스타일
 globalStyle(".markdown-content pre[class*='language-'], .markdown-content pre", {
   position: "relative",
   margin: "28px 0 10px 0",
@@ -159,13 +152,10 @@ globalStyle(".markdown-content .code-copy-button .code-copy-icon", {
   lineHeight: 1,
 });
 
-// PrismJS Code Block Theme Overrides for Dark Mode
-// 다크모드(darkTheme 클래스가 body에 적용됨)일 때 Prism 스타일을 재정의합니다.
-
 globalStyle(
   `body.${darkTheme} :not(pre) > code[class*="language-"], body.${darkTheme} pre[class*="language-"]`,
   {
-    backgroundColor: "#161b22", // GitHub Dark Dimmed background
+    backgroundColor: "#161b22",
     color: "#adbac7",
     textShadow: "none",
   },
@@ -207,8 +197,6 @@ globalStyle(`body.${darkTheme} .token.constant`, {
   color: "#6cb6ff",
 });
 
-// 머메이드 다이어그램 — mermaid.ts가 pre.language-mermaid를 이 요소로 교체한다.
-// 넓은 다이어그램은 본문이 아니라 이 안에서만 가로 스크롤한다.
 globalStyle(".markdown-content .mermaid-diagram", {
   margin: "20px 0",
   overflowX: "auto",

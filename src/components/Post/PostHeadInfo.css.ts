@@ -42,7 +42,6 @@ export const categoryList = style({
   gap: "6px",
 });
 
-// 헤더는 brightness(0.25) 썸네일 위라 배경이 어둡습니다. 흰 테두리와 반투명 배경으로 칩을 세웁니다.
 export const categoryItem = style({
   padding: "3px 8px",
   borderRadius: "4px",

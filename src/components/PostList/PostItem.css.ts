@@ -87,12 +87,11 @@ export const summary = style({
 
 export const thumbnailImage = style({
   width: "100%",
-  aspectRatio: "1200 / 630", // 썸네일 규격과 같은 비율이라 잘리지 않음
-  objectFit: "cover", // v2-13 C1: 썸네일 비율이 달라도 카드 레이아웃이 깨지지 않도록
+  aspectRatio: "1200 / 630",
+  objectFit: "cover",
   borderRadius: "10px 10px 0 0",
 });
 
-// 검색어 하이라이트 <mark> — 브라우저 기본 대신 테마 토큰 기반으로 라이트/다크 각각 지정 (스펙 v2-6)
 globalStyle(`${lightTheme} ${title} mark, ${lightTheme} ${summary} mark`, {
   backgroundColor: "#fff3a0",
   color: vars.color.text,

@@ -1,6 +1,3 @@
-// src/scripts/code-copy.ts — PostContent.tsx의 복사 버튼 로직 바닐라 이식 (React/createRoot 의존 제거)
-// 아이콘은 [slug].astro가 Astro SVG 컴포넌트로 <template>에 심어둔 것을 복제해 쓴다
-// (src/assets/icons/*.svg가 단일 원본 — 마크업을 이 파일에 문자열로 중복하지 않는다)
 const iconTemplate = (id: string) =>
   document.getElementById(id) as HTMLTemplateElement | null;
 const copyIcon = iconTemplate("icon-copy");
@@ -13,7 +10,6 @@ const paintIcon = (host: HTMLElement, template: HTMLTemplateElement | null) => {
 
 const root = document.querySelector(".markdown-content");
 if (root) {
-  // 머메이드 블록은 mermaid.ts가 다이어그램으로 교체하므로 복사 버튼을 달지 않는다
   root.querySelectorAll("pre:not(.language-mermaid)").forEach((pre) => {
     if (pre.querySelector(".code-copy-button")) return;
 

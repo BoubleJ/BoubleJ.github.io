@@ -1,11 +1,6 @@
 import { style } from "@vanilla-extract/css";
 import { vars } from "@/styles/theme.css";
 
-// v2-2 버그 수정: headerVisible/headerHidden에 keyframes(slideDown/slideUp)를 병용하면
-// (a) 최초 렌더에서 isVisible=true로 인해 slideDown이 재생되고
-// (b) 빠른 방향 전환 시 keyframe이 고정 시작값에서 재시작해 점프/깜빡임이 발생했다.
-// transform만 선언하고, 전환은 아래 header의 transition("transform 0.3s ease-in-out, ...")이
-// 현재 계산값에서 목표값으로 보간하도록 위임한다 — 초기 애니메이션 없음 + 연속적인 전환.
 export const header = style({
   position: "fixed",
   top: 0,
@@ -123,7 +118,6 @@ export const searchIconButton = style({
   },
 });
 
-// 검색 열림 상태의 아이콘 버튼 하이라이트 (Home 활성 표시와 같은 맥락의 활성 피드백)
 export const searchIconButtonActive = style({
   backgroundColor: vars.color.buttonHoverBg,
 });

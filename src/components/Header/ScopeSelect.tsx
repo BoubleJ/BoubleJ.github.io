@@ -12,7 +12,6 @@ interface ScopeSelectProps {
   onChange: (value: string) => void;
 }
 
-// 네이티브 <select>를 대체하는 커스텀 드롭다운 (기능 동일: 전체/제목/본문 범위 선택)
 export default function ScopeSelect({ value, onChange }: ScopeSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);

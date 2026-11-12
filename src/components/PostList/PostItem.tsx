@@ -1,4 +1,3 @@
-// src/components/PostList/PostItem.tsx
 import * as styles from "./PostItem.css";
 
 interface PostItemProps {
@@ -12,7 +11,6 @@ interface PostItemProps {
   searchTerm?: string;
 }
 
-// 대소문자 무시 전체 매칭 <mark> 래핑 (스펙 v2-6)
 const highlight = (text: string, term: string) => {
   const t = term.trim();
   if (!t) return text;

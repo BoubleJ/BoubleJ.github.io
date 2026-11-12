@@ -21,7 +21,6 @@ export default function SearchContainer({
   onSearchClose,
   initialQuery,
 }: SearchContainerProps) {
-  // 펼침 트랜지션(0.3s) 종료 후 overflow를 풀어 스코프 드롭다운이 잘리지 않게 한다
   const [isSettled, setIsSettled] = useState(false);
   useEffect(() => {
     if (!isSearchOpen) {
@@ -82,7 +81,7 @@ export default function SearchContainer({
           </form>
         </div>
       </div>
-      {/* 오버레이: 아코디언(overflow hidden) 밖에 두어 잘리지 않고, 레이아웃에도 영향 없음 */}
+
       <div className={styles.dropdownOverlay}>
         <div className={styles.dropdownOverlayInner}>
           <SearchDropdown

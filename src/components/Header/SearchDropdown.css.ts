@@ -1,7 +1,6 @@
 import { style } from "@vanilla-extract/css";
 import { vars } from "@/styles/theme.css";
 
-// 신규 UI(스펙 v2-6) — 색상은 반드시 기존 테마 토큰만 사용
 export const dropdown = style({
   listStyle: "none",
   margin: 0,
@@ -11,11 +10,10 @@ export const dropdown = style({
   border: `1px solid ${vars.color.border}`,
   borderRadius: "8px",
   backgroundColor: vars.color.background,
-  // 결과 5개 이상이면 리스트 내부 스크롤 (아이템 76px 기준 4.5개 노출 — 잘린 항목으로 스크롤 가능함을 암시)
   maxHeight: "342px",
   overflowX: "hidden",
   overflowY: "auto",
-  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)", // 오버레이로 콘텐츠 위에 뜨므로 구분용
+  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
 });
 
 export const item = style({

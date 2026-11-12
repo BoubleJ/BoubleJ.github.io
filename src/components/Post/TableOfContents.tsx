@@ -42,14 +42,12 @@ const TocList = ({ nodes }: { nodes: TocNode[] }) => (
 export default function TableOfContents({ headings }: TableOfContentsProps) {
   const tree = buildTree(headings);
 
-  // 스펙 v2-9: IntersectionObserver 스크롤 스파이 — 현재 뷰포트에 걸린 섹션의 목차 링크를 강조
   useEffect(() => {
     const headingEls = [
       ...document.querySelectorAll<HTMLElement>(
         ".markdown-content h1[id], .markdown-content h2[id], .markdown-content h3[id]",
       ),
     ];
-    // 헤딩 id → TOC 링크 (href는 퍼센트 인코딩이므로 디코드해서 매칭)
     const links = new Map<string, HTMLAnchorElement>(
       [
         ...document.querySelectorAll<HTMLAnchorElement>(
@@ -58,7 +56,6 @@ export default function TableOfContents({ headings }: TableOfContentsProps) {
       ].map((a) => [decodeURIComponent(a.hash.slice(1)), a]),
     );
 
-    // 목차가 길면 tocScrollArea에 스크롤이 생기므로 활성 링크를 이 영역 안으로 끌어옴
     const scrollArea = document.querySelector<HTMLElement>(
       `nav[aria-label="목차"] .${styles.tocScrollArea}`,
     );
@@ -66,7 +63,6 @@ export default function TableOfContents({ headings }: TableOfContentsProps) {
       "(prefers-reduced-motion: reduce)",
     ).matches;
 
-    // scrollIntoView는 페이지까지 함께 움직이므로 컨테이너 scrollTop만 직접 보정
     const revealInScrollArea = (a: HTMLAnchorElement) => {
       if (!scrollArea || scrollArea.scrollHeight <= scrollArea.clientHeight) return;
 
@@ -99,10 +95,8 @@ export default function TableOfContents({ headings }: TableOfContentsProps) {
       if (active) revealInScrollArea(active);
     };
 
-    // 고정 헤더(70px)+여유를 rootMargin 상단 -80px로 보정, 하단 -60%로 "화면 상단부에 있는 헤딩"을 현재 섹션으로 판정
     const io = new IntersectionObserver(
       () => {
-        // 관찰 콜백마다 '뷰포트 상단(80px) 위를 지나간 마지막 헤딩'을 현재 섹션으로 계산
         const current =
           headingEls.filter((h) => h.getBoundingClientRect().top <= 81).at(-1) ??
           headingEls[0];
@@ -114,8 +108,6 @@ export default function TableOfContents({ headings }: TableOfContentsProps) {
       io.observe(h);
     });
 
-    // 클릭 시 즉시 활성(스크롤 애니메이션 완료 전 반응성) — 이후 스파이가 이어받음
-    // 해시 이동은 anchor-history.ts가 replaceState로 처리해 hashchange가 발생하지 않으므로 클릭 기반
     const nav = document.querySelector('nav[aria-label="목차"]');
     const onNavClick = (e: Event) => {
       const a = (e.target as Element).closest?.<HTMLAnchorElement>('a[href^="#"]');
@@ -127,7 +119,6 @@ export default function TableOfContents({ headings }: TableOfContentsProps) {
       io.disconnect();
       nav?.removeEventListener("click", onNavClick);
     };
-    // DOM(.markdown-content)만 조회하며 headings prop 값 자체는 참조하지 않음 — 마운트 시 1회 실행
   }, []);
 
   if (tree.length === 0) return null;

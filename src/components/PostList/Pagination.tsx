@@ -1,8 +1,3 @@
-// src/components/PostList/Pagination.tsx — 신규 UI (스펙 v2-8)
-// [이전][1..N][다음], 현재 페이지는 primary 강조, 페이지가 많으면 현재±2 + 처음/끝 + 말줄임
-// SEO: 페이지 이동을 <button>이 아닌 <a href>로 렌더한다. 크롤러는 onClick을 발동시키지 않고
-// href만 따라가므로, 버튼이면 2페이지 이후의 글이 링크로 도달 불가능해진다.
-// 실제 이동은 onClick에서 preventDefault 후 클라이언트 사이드로 처리해 기존 UX를 유지한다.
 import type { MouseEvent } from "react";
 import * as styles from "./Pagination.css";
 
@@ -42,7 +37,6 @@ export default function Pagination({
   const entries = buildPageEntries(currentPage, totalPages);
 
   const handleClick = (page: number) => (e: MouseEvent<HTMLAnchorElement>) => {
-    // 새 탭/새 창으로 여는 조작(⌘·Ctrl·Shift 클릭 등)은 브라우저 기본 동작에 맡긴다
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
     e.preventDefault();
     onPageChange(page);
@@ -72,7 +66,6 @@ export default function Pagination({
       )}
       {entries.map((entry, i) =>
         entry === "ellipsis" ? (
-          // 말줄임 다음은 항상 실제 페이지 번호이므로 이를 이용해 안정적인 key를 만든다
           <span
             key={`ellipsis-before-${entries[i + 1]}`}
             className={styles.ellipsis}

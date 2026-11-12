@@ -1,5 +1,3 @@
-// src/lib/posts.ts
-
 import readingTime from "reading-time";
 import { getImage } from "astro:assets";
 import { type CollectionEntry, getCollection } from "astro:content";
@@ -14,7 +12,6 @@ export interface PostSummary {
   thumbnail: string;
 }
 
-// Gatsby(lodash orderBy) 정렬 = 코드포인트 비교 (스펙 §2)
 const byDateThenTitleDesc = (
   a: CollectionEntry<"posts">,
   b: CollectionEntry<"posts">,
@@ -27,10 +24,8 @@ const byDateThenTitleDesc = (
 export const getSortedPosts = async () =>
   (await getCollection("posts")).sort(byDateThenTitleDesc);
 
-// "2024-01-02" → "2024.01.02." (기존 formatString "YYYY.MM.DD.")
 export const formatDate = (date: string) => `${date.replaceAll("-", ".")}.`;
 
-// v2-16 A5: frontmatter 제외 본문만 입력 (기존 Gatsby의 "원문 전체 입력" 버그 폐기, 표시값 ±1분 허용)
 const READING_WORDS_PER_MINUTE = 500;
 
 export const getReadingTimeText = (
@@ -38,9 +33,8 @@ export const getReadingTimeText = (
 ): string | undefined =>
   entry.body
     ? readingTime(entry.body, { wordsPerMinute: READING_WORDS_PER_MINUTE }).text
-    : undefined; // 예: "9 min read"
+    : undefined;
 
-// 목록 카드는 564x200 이라 2배 밀도까지 감안해 1200 폭 webp 하나로 충분합니다
 export const toPostSummary = async (
   p: CollectionEntry<"posts">,
 ): Promise<PostSummary> => ({
