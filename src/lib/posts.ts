@@ -31,9 +31,14 @@ export const getSortedPosts = async () =>
 export const formatDate = (date: string) => `${date.replaceAll("-", ".")}.`;
 
 // v2-16 A5: frontmatter 제외 본문만 입력 (기존 Gatsby의 "원문 전체 입력" 버그 폐기, 표시값 ±1분 허용)
+const READING_WORDS_PER_MINUTE = 500;
+
 export const getReadingTimeText = (
   entry: CollectionEntry<"posts">,
-): string | undefined => (entry.body ? readingTime(entry.body).text : undefined); // 예: "9 min read"
+): string | undefined =>
+  entry.body
+    ? readingTime(entry.body, { wordsPerMinute: READING_WORDS_PER_MINUTE }).text
+    : undefined; // 예: "9 min read"
 
 // 목록 카드는 564x200 이라 2배 밀도까지 감안해 1200 폭 webp 하나로 충분합니다
 export const toPostSummary = async (
