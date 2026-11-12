@@ -1,5 +1,4 @@
 import { createContext, type ReactNode, useContext, useEffect, useState } from "react";
-import { darkTheme, lightTheme } from "@/styles/theme.css";
 
 type Theme = "light" | "dark";
 
@@ -13,7 +12,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 const getInitialTheme = (): Theme => {
   if (typeof document === "undefined") return "light";
-  return document.body.className === darkTheme ? "dark" : "light";
+  return document.documentElement.dataset.theme === "dark" ? "dark" : "light";
 };
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
@@ -23,19 +22,19 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     const savedTheme = localStorage.getItem("theme") as Theme;
     if (savedTheme) {
       setThemeState(savedTheme);
-      document.body.className = savedTheme === "dark" ? darkTheme : lightTheme;
+      document.documentElement.dataset.theme = savedTheme;
     } else {
       const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
       const initialTheme = prefersDark ? "dark" : "light";
       setThemeState(initialTheme);
-      document.body.className = initialTheme === "dark" ? darkTheme : lightTheme;
+      document.documentElement.dataset.theme = initialTheme;
     }
   }, []);
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme);
     localStorage.setItem("theme", newTheme);
-    document.body.className = newTheme === "dark" ? darkTheme : lightTheme;
+    document.documentElement.dataset.theme = newTheme;
     window.dispatchEvent(new CustomEvent("themechange", { detail: { theme: newTheme } }));
   };
 

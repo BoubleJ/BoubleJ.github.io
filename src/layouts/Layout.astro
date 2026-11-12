@@ -5,10 +5,6 @@ import Footer from "@/components/Footer/Footer";
 import Header from "@/components/Header/Header";
 import ScrollToTop from "@/components/ScrollToTop/ScrollToTop";
 import { SITE } from "@/consts";
-import {
-  darkTheme as darkThemeClass,
-  lightTheme as lightThemeClass,
-} from "@/styles/theme.css";
 import { container } from "./Layout.css";
 
 interface Props {
@@ -53,6 +49,17 @@ const blogPosting =
 
 <html lang="ko">
   <head>
+    <script is:inline>
+    try {
+      const saved = localStorage.getItem("theme");
+      const isDark =
+        saved === "dark" ||
+        (!saved && matchMedia("(prefers-color-scheme: dark)").matches);
+      document.documentElement.dataset.theme = isDark ? "dark" : "light";
+    } catch (_) {
+      document.documentElement.dataset.theme = "light";
+    }
+    </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon.png">
     {!noMeta && (
@@ -92,17 +99,6 @@ const blogPosting =
     )}
   </head>
   <body>
-    <script is:inline define:vars={{ light: lightThemeClass, dark: darkThemeClass }}>
-    try {
-      const saved = localStorage.getItem("theme");
-      const isDark =
-        saved === "dark" ||
-        (!saved && matchMedia("(prefers-color-scheme: dark)").matches);
-      document.body.className = isDark ? dark : light;
-    } catch (_) {
-      document.body.className = light;
-    }
-    </script>
     <div id="app">
       <Header client:load pathname={Astro.url.pathname} />
       <main class={container}><slot /></main>

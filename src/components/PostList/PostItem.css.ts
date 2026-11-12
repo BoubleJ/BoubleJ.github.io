@@ -1,5 +1,5 @@
 import { globalStyle, keyframes, style } from "@vanilla-extract/css";
-import { darkTheme, lightTheme, vars } from "@/styles/theme.css";
+import { vars } from "@/styles/theme.css";
 
 const slideUpFadeIn = keyframes({
   "0%": {
@@ -92,16 +92,19 @@ export const thumbnailImage = style({
   borderRadius: "10px 10px 0 0",
 });
 
-globalStyle(`${lightTheme} ${title} mark, ${lightTheme} ${summary} mark`, {
+globalStyle(`${title} mark, ${summary} mark`, {
   backgroundColor: "#fff3a0",
   color: vars.color.text,
   borderRadius: "2px",
   padding: "0 1px",
 });
 
-globalStyle(`${darkTheme} ${title} mark, ${darkTheme} ${summary} mark`, {
-  backgroundColor: "rgba(255, 214, 51, 0.35)",
-  color: vars.color.text,
-  borderRadius: "2px",
-  padding: "0 1px",
-});
+globalStyle(
+  `:root[data-theme="dark"] ${title} mark, :root[data-theme="dark"] ${summary} mark`,
+  {
+    backgroundColor: "rgba(255, 214, 51, 0.35)",
+    color: vars.color.text,
+    borderRadius: "2px",
+    padding: "0 1px",
+  },
+);

@@ -1,5 +1,5 @@
 import { globalStyle } from "@vanilla-extract/css";
-import { darkTheme, vars } from "./theme.css";
+import { vars } from "./theme.css";
 
 globalStyle(".markdown-content h1, .markdown-h1", {
   marginTop: "60px",
@@ -153,7 +153,7 @@ globalStyle(".markdown-content .code-copy-button .code-copy-icon", {
 });
 
 globalStyle(
-  `body.${darkTheme} :not(pre) > code[class*="language-"], body.${darkTheme} pre[class*="language-"]`,
+  `:root[data-theme="dark"] :not(pre) > code[class*="language-"], :root[data-theme="dark"] pre[class*="language-"]`,
   {
     backgroundColor: "#161b22",
     color: "#adbac7",
@@ -162,38 +162,38 @@ globalStyle(
 );
 
 globalStyle(
-  `body.${darkTheme} .token.comment, body.${darkTheme} .token.prolog, body.${darkTheme} .token.doctype, body.${darkTheme} .token.cdata`,
+  `:root[data-theme="dark"] .token.comment, :root[data-theme="dark"] .token.prolog, :root[data-theme="dark"] .token.doctype, :root[data-theme="dark"] .token.cdata`,
   {
     color: "#768390",
   },
 );
 
-globalStyle(`body.${darkTheme} .token.punctuation`, {
+globalStyle(`:root[data-theme="dark"] .token.punctuation`, {
   color: "#adbac7",
 });
 
 globalStyle(
-  `body.${darkTheme} .token.delimiter.important, body.${darkTheme} .token.selector, body.${darkTheme} .token.tag, body.${darkTheme} .token.operator, body.${darkTheme} .token.keyword`,
+  `:root[data-theme="dark"] .token.delimiter.important, :root[data-theme="dark"] .token.selector, :root[data-theme="dark"] .token.tag, :root[data-theme="dark"] .token.operator, :root[data-theme="dark"] .token.keyword`,
   {
     color: "#f47067",
   },
 );
 
 globalStyle(
-  `body.${darkTheme} .token.string, body.${darkTheme} .token.char, body.${darkTheme} .token.attr-value, body.${darkTheme} .token.regex, body.${darkTheme} .token.variable`,
+  `:root[data-theme="dark"] .token.string, :root[data-theme="dark"] .token.char, :root[data-theme="dark"] .token.attr-value, :root[data-theme="dark"] .token.regex, :root[data-theme="dark"] .token.variable`,
   {
     color: "#96d0ff",
   },
 );
 
 globalStyle(
-  `body.${darkTheme} .token.atrule, body.${darkTheme} .token.attr-value, body.${darkTheme} .token.function, body.${darkTheme} .token.class-name`,
+  `:root[data-theme="dark"] .token.atrule, :root[data-theme="dark"] .token.attr-value, :root[data-theme="dark"] .token.function, :root[data-theme="dark"] .token.class-name`,
   {
     color: "#dcbdfb",
   },
 );
 
-globalStyle(`body.${darkTheme} .token.constant`, {
+globalStyle(`:root[data-theme="dark"] .token.constant`, {
   color: "#6cb6ff",
 });
 
