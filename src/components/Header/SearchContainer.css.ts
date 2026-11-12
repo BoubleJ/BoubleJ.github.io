@@ -10,13 +10,18 @@ export const searchContainer = style({
   overflow: "hidden",
   maxHeight: 0,
   opacity: 0,
-  transition: "max-height 0.3s ease-out, opacity 0.3s ease-out",
+  transition:
+    "max-height 0.3s ease-out, opacity 0.3s ease-out, overflow 0s allow-discrete",
 });
 
-export const searchContainerOpen = style({ maxHeight: "200px", opacity: 1 });
+export const searchContainerOpen = style({
+  maxHeight: "200px",
+  opacity: 1,
+  overflow: "visible",
+  transition:
+    "max-height 0.3s ease-out, opacity 0.3s ease-out, overflow 0s 0.3s allow-discrete",
+});
 export const searchContainerClosed = style({ maxHeight: 0, opacity: 0 });
-
-export const searchContainerSettled = style({ overflow: "visible" });
 
 export const searchInner = style({
   maxWidth: "1200px",

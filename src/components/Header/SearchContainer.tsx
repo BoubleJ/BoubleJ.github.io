@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import CloseIcon from "@/components/icon/CloseIcon";
 import useSearch from "@/hooks/useSearch";
 import ScopeSelect from "./ScopeSelect";
@@ -21,16 +20,6 @@ export default function SearchContainer({
   onSearchClose,
   initialQuery,
 }: SearchContainerProps) {
-  const [isSettled, setIsSettled] = useState(false);
-  useEffect(() => {
-    if (!isSearchOpen) {
-      setIsSettled(false);
-      return;
-    }
-    const timer = setTimeout(() => setIsSettled(true), 300);
-    return () => clearTimeout(timer);
-  }, [isSearchOpen]);
-
   const {
     handleSearchSubmit,
     searchInputRef,
@@ -49,7 +38,7 @@ export default function SearchContainer({
   return (
     <div className={styles.searchPositioner}>
       <div
-        className={`${styles.searchContainer} ${isSearchOpen ? styles.searchContainerOpen : styles.searchContainerClosed} ${isSettled ? styles.searchContainerSettled : ""}`}
+        className={`${styles.searchContainer} ${isSearchOpen ? styles.searchContainerOpen : styles.searchContainerClosed}`}
       >
         <div className={styles.searchInner}>
           <form onSubmit={handleSearchSubmit} className={styles.searchForm}>
