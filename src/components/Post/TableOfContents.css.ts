@@ -1,4 +1,5 @@
 import { globalStyle, style } from "@vanilla-extract/css";
+import { vars } from "@/styles/theme.css";
 
 export const tocWrapper = style({
   position: "sticky",
@@ -7,8 +8,8 @@ export const tocWrapper = style({
   marginTop: "40px",
   minWidth: "260px",
   borderRadius: "12px",
-  backgroundColor: "var(--color-codeBg, #f6f8fa)",
-  border: "1px solid var(--color-border, #e1e4e8)",
+  backgroundColor: vars.color.codeBg,
+  border: `1px solid ${vars.color.border}`,
   "@media": {
     "(max-width: 768px)": {
       padding: "12px 10px",
@@ -22,10 +23,10 @@ export const tocTitle = style({
   fontWeight: 700,
   letterSpacing: "0.05em",
   textTransform: "uppercase",
-  color: "var(--color-secondary, #586069)",
+  color: vars.color.secondary,
   marginBottom: "14px",
   paddingBottom: "10px",
-  borderBottom: "1px solid var(--color-border, #e1e4e8)",
+  borderBottom: `1px solid ${vars.color.border}`,
   overflow: "hidden",
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
@@ -69,7 +70,7 @@ globalStyle(`${tocList} > ul > li > ul > li > ul li a`, {
 export const tocLink = style({
   fontSize: "0.8125rem",
   lineHeight: 1.5,
-  color: "var(--color-text, #24292e)",
+  color: vars.color.text,
   textDecoration: "none",
   display: "block",
   padding: "6px 8px",
@@ -79,17 +80,17 @@ export const tocLink = style({
   whiteSpace: "nowrap",
   transition: "color 0.15s ease, background-color 0.15s ease",
   ":hover": {
-    color: "var(--color-primary, #0969da)",
-    backgroundColor: "var(--color-buttonHoverBg, rgba(0,0,0,0.04))",
+    color: vars.color.primary,
+    backgroundColor: vars.color.buttonHoverBg,
   },
   ":focus-visible": {
-    outline: "2px solid var(--color-primary, #0969da)",
+    outline: `2px solid ${vars.color.primary}`,
     outlineOffset: "2px",
   },
 });
 
 export const tocLinkActive = style({
-  color: "var(--color-primary, #0969da)",
-  backgroundColor: "var(--color-buttonHoverBg, rgba(9,105,218,0.06))",
+  color: vars.color.primary,
+  backgroundColor: vars.color.buttonHoverBg,
   fontWeight: 600,
 });
