@@ -1,0 +1,1185 @@
+---
+date: "2026-11-17"
+title: "http 인터페이스 재설계 (2) fetch 기반"
+categories: ["TypeScript", "Next.js", "fetch", "TanStack-Query", "Architecture"]
+summary: "axios 를 fetch 로 바꾸면서 환경별 클래스와 Next.js 캐싱 타입 처리와 api 디렉토리 구조를 다시 설계한 과정을 정리했습니다."
+thumbnail: "./thumbnail.png"
+---
+지난 [http 인터페이스 재설계 (1) : axios 기반](/http-인터페이스-재설계-(1)-axios-기반/) 포스팅에서 사내 http 인터페이스를 새로 만들었는데요.
+
+나름 잘 만들었다 생각했지만 이 또한 문제가 있었습니다.. 그래서 결국 다시 재설계를 했는데요...ㅠㅠㅠ
+
+일단 재설계를 결심한 이유는 아래와 같습니다
+
+
+
+&nbsp;
+
+&nbsp;
+
+# axios 를 fetch 로 다시 바꾼 이유
+
+### 1. 미들웨어 환경 내 axios 사용불가
+
+저희 서비스는 Next.js 14 버전을 사용하고 있는데요. Next.js 14 와 15 버전의 미들웨어는 기본으로 Edge Runtime 에서 실행됩니다. Edge Runtime 은 Node.js API 를 지원하지 않고 `XMLHttpRequest` 도 없습니다.
+
+axios 는 브라우저에서는 xhr 로 서버에서는 Node 의 http 모듈로 요청을 보냅니다. 인터페이스를 만들 당시에는 axios 1.7 버전이 나오기 전이라 Edge Runtime 에서 요청을 보낼 방법이 없었어요. 그래서 미들웨어에서는 axios 를 쓸 수 없었습니다.
+
+때문에 미들웨어에서 api 를 호출할 때는 아래처럼 fetch 를 직접 썼습니다.
+
+```typescript
+const response = await fetch(`${API_URL}/api/users/`, {
+  headers: {
+    [HEADER.CHANNEL]: getChannelMiddleware(request),
+  },
+})
+```
+
+서버와 클라이언트에서 쓸 수 있는 인터페이스를 만들었지만 미들웨어에서는 쓸 수 없었던 거죠. 결국 api 를 호출하는 방식이 파편화된겁니다.
+
+다만 axios 1.7 버전부터는 fetch adapter 가 추가됐습니다. xhr 과 http 를 모두 쓸 수 없는 환경에서는 fetch 로 요청을 보내기 때문에 이 글을 쓰는 지금은 미들웨어에서도 axios 를 쓸 수 있는 것으로 알고 있습니다.
+
+> 그렇다면 axios 버전업 하면 되니까 문제 없는 걸까요?
+
+개인적으로 이렇게 특정 라이브러리 버전에 의존하는 것 자체가 불편하다고 생각합니다. Next.js 는 서버, 클라이언트, 미들웨어 등 여러 환경이 포함되어있는 프레임워크인데요, axios 를 쓰면 그 환경에서 axios 가 동작하는지를 개발자가 매번 axios 버전 확인을 해야합니다. axios 의존성이 생기는거죠.  fetch 는 세 환경에서 모두 기본으로 제공되기 때문에 이런 확인이 필요 없습니다. 이 점도 fetch 로 바꾼 이유 중 하나입니다.
+
+### 2. Next.js 확장 fetch 의 캐싱 기능 지원 여부
+
+Next.js 는 웹 표준 fetch 를 확장해서 제공합니다. 그래서 fetch 의 `cache` 옵션 외에도 `revalidate` 와 `tags` 같은 다양한 캐싱 기능을 쓸 수 있어요.
+
+```typescript
+const res = await fetch('https://...', {
+  next: { revalidate: false, tags: ['collection'] },
+})
+```
+
+하지만 axios 로는 이 캐싱 기능을 쓰기 어렵습니다. axios 는 서버에서 Node 의 http 모듈로 요청을 보내기 때문에 Next.js 가 확장한 fetch 를 거치지 않거든요. axios 1.7 버전부터 추가된 fetch adapter 에 `fetchOptions` 로 옵션을 넘길 수 있다고는 하는데요. 이 방법도 결국 axios 가 어떤 옵션을 fetch 에 넘겨주는지에 따라 Next.js 의 캐싱 기능을 쓸 수 있는지가 정해집니다. 1번에서 말씀드린 것처럼 Next.js 의 기능을 쓰는 데에도 특정 라이브러리에 의존하게 되는 거죠.
+
+
+
+### 3. 서버 클라이언트에서 다른 모듈을 사용하는 axios
+
+axios 는 실행 환경에 따라 요청을 보내는 방식이 다릅니다. 브라우저에서는 `XMLHttpRequest` 로 서버에서는 Node 의 http 모듈로 요청을 보내는데요. 이것만으로 axios 가 좋지 않다고 하긴 어렵습니다.
+
+다만 브라우저에서 굳이 `XMLHttpRequest` 를 써야 할 이유는 없다고 생각했어요. `XMLHttpRequest` 는 fetch 가 나오기 전부터 쓰던 브라우저 API 이고 지금은 브라우저와 Node 모두 fetch 를 기본으로 제공하기 때문이죠.
+
+
+
+&nbsp;
+
+### 4. Next.js 프레임워크의 fetch 사용 권장
+
+Next.js 는 http 요청 시 fetch 를 쓰도록 권장합니다.
+
+프레임워크나 라이브러리가 권장하는 방법을 반드시 따라야 한다고 생각하지는 않습니다. 서비스마다 처한 환경과 요구사항이 다르기 때문이죠. 다만 특별한 이유가 없다면 권장하는 방법을 따르지 않을 이유도 없습니다.
+
+
+
+## 구현 목표
+
+구현 목표는 두 가지로 잡았습니다.
+
+
+
+### 1. 사용처 변경을 최소화하고 fetch 로 교체하기
+
+1편에서 세운 목표 중 하나가 "라이브러리를 바꾸더라도 구현체만 수정하면 되도록 설계한다" 였는데요. 무지성 axios 선택 덕분에? fetch 로 바꾸는 이번 작업에서 이 목표가 지켜지는지 확인할 수 있겠네요.
+
+- 사용처는 지금처럼 http 메서드와 엔드포인트와 옵션만 넘긴다.
+- 응답은 axios 를 쓸 때처럼 `data` 로 꺼낸다. `const { data } = await ApiServer.get(...)` 형태를 그대로 쓸 수 있게 한다.
+- axios 가 대신 해주던 처리는 구현체 안에서 직접 구현한다.
+
+
+
+### 2. 여섯 가지 환경에 맞는 클래스 만들기
+
+저희 서비스가 api 를 호출하는 환경은 여섯 가지인데요. 환경마다 넣어야 하는 헤더와 요청을 보내는 주소와 쓸 수 있는 옵션이 다릅니다.
+
+기존 포스팅에선 서버 클라이언트 환경 전용 클래스만 만들었는데요. 프로젝트 규모가 커지고 여러 기능이 추가되면서 또 다른 환경 요청이 필요해졌고 이왕 이렇게 된김에 프로젝트에서 사용하는 모든 환경 별 클래스를 만들기로 했습니다.
+
+
+| 환경                   | 클래스                 |
+| -------------------- | ------------------- |
+| 서버 컴포넌트              | `ApiServer`         |
+| Next.js 캐싱을 쓰는 서버 요청 | `PublicApiServer`   |
+| 클라이언트 컴포넌트           | `ApiClient`         |
+| Next.js 라우트 핸들러      | `InternalApiClient` |
+| CDN 파일 조회            | `CdnClient`         |
+| 미들웨어                 | `ApiMiddleware`     |
+
+
+- 모든 환경 내 공통 처리 로직은 base 클래스에 둔다.
+- 각 환경 클래스는 base 클래스를 상속하고 그 환경에만 필요한 처리만 구현한다.
+
+
+
+&nbsp;
+
+&nbsp;
+
+# 설계 방법
+
+그럼 다시 http 인터페이스를 만들어볼까요.
+
+## base 클래스 제작
+
+모든 환경 내 공통 처리 로직을 base 클래스에 모았습니다.
+
+```typescript
+export abstract class BaseHttp implements ApiInterface {
+  private readonly baseUrl: string
+  private readonly timeout: number
+  private readonly defaultHeaders: RequestHeader
+
+  constructor({ baseUrl, timeout, headers }: BaseHttpOptions = {}) {
+    this.baseUrl = baseUrl ?? ''
+    this.timeout = timeout ?? DEFAULT_TIMEOUT
+    this.defaultHeaders = headers ?? {}
+  }
+
+  private async request<R>(method: HttpMethod, path: string, options = {}): Promise<ApiResponse<R>> {
+    ...
+  }
+
+  public get<R = unknown>(path: string, options?: QueryOptions) {
+    return this.request<R>('GET', path, options)
+  }
+
+  public post<R = unknown>(path: string, options?: BodyOptions) {
+    return this.request<R>('POST', path, options)
+  }
+
+  public put<R = unknown>(path: string, options?: BodyOptions) {
+    return this.request<R>('PUT', path, options)
+  }
+
+  public patch<R = unknown>(path: string, options?: BodyOptions) {
+    return this.request<R>('PATCH', path, options)
+  }
+
+  public delete<R = unknown>(path: string, options?: BodyOptions) {
+    return this.request<R>('DELETE', path, options)
+  }
+}
+```
+
+fetch 는 전역 함수라서 따로 만들 인스턴스가 없습니다. 그래서 `BaseHttp` 생성자는 baseUrl 과 timeout 과 모든 요청에 넣을 기본 헤더만 저장합니다.
+
+다섯 개의 public 메서드는 http 메서드 이름을 붙여 `request` 를 호출하기만 합니다. 요청을 만들고 보내고 응답을 처리하는 일은 모두 `request` 가 담당합니다.
+
+`get` 은 쿼리스트링으로 보낼 `params` 를 받는 `QueryOptions` 를 옵션으로 받고 나머지 메서드는 요청 본문으로 보낼 `body` 를 받는 `BodyOptions` 를 옵션으로 받습니다. 옵션을 이렇게 나눈 이유는 아래에서 설명할게요.
+
+`request` 가 받는 `HttpMethod` 타입은 `ApiInterface` 의 메서드 이름을 대문자로 바꿔 만들었습니다.
+
+```typescript
+type HttpMethod = Uppercase<keyof ApiInterface>
+```
+
+`HttpMethod` 는 `'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'` 유니온 타입이 됩니다. `ApiInterface` 에 메서드를 추가하거나 지우면 `HttpMethod` 도 함께 바뀌기 때문에 fetch 의 `method` 옵션에 넘기는 값을 따로 관리하지 않아도 되는 거죠.
+
+### 1. axios 가 대신 해주던 처리를 직접 구현
+
+axios 는 요청을 보내기 전과 응답을 받은 뒤에 여러 처리를 대신 해줍니다. 반면 fetch 는 요청을 보내고 `Response` 객체를 돌려주는 일만 하는데요. 그래서 axios 가 해주던 처리를 `request` 메서드 안에서 직접 구현해야 합니다.
+
+
+| 처리                   | axios              | fetch 기반 구현                      |
+| -------------------- | ------------------ | -------------------------------- |
+| 쿼리스트링 만들기            | `paramsSerializer` | `createUrl`                      |
+| body 를 JSON 문자열로 바꾸기 | 자동으로 변환            | `createBody`                     |
+| 헤더 합치기               | `AxiosHeaders`     | `createHeaders`                  |
+| timeout              | `timeout` 옵션       | `AbortController` 와 `setTimeout` |
+| 응답 본문 파싱             | 자동으로 변환            | `parseJson`                      |
+| 4xx 5xx 응답 처리        | 자동으로 reject        | `response.ok` 확인                 |
+
+
+`request` 메서드 전체 코드는 아래와 같습니다.
+
+```typescript
+private async request<R>(
+  method: HttpMethod,
+  path: string,
+  { params, body, config }: QueryOptions | BodyOptions = {},
+): Promise<ApiResponse<R>> {
+  const request: HttpRequest = {
+    url: this.createUrl(path, params),
+    method,
+    headers: createHeaders({ sources: [this.defaultHeaders, config] }),
+    ...(body && { body: createBody(body) }),
+  }
+
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), this.timeout)
+
+  try {
+    const response = await this.send(request, controller.signal)
+    if (!response.ok) throw onErrorResponse(response)
+
+    return { data: response.body as R, status: response.status }
+  } finally {
+    clearTimeout(timer)
+  }
+}
+```
+
+표에 적은 처리를 순서대로 살펴볼까요?
+
+
+
+**쿼리스트링 만들기**
+
+`createUrl` 은 baseUrl 과 path 뒤에 쿼리스트링을 붙여 요청 url 을 만듭니다.
+
+```typescript
+function createSearchParams(params?: object) {
+  if (params instanceof URLSearchParams) return params.toString()
+  return params ? qs.stringify(params, { arrayFormat: 'comma' }) : ''
+}
+
+private createUrl(path: string, params?: object) {
+  const query = createSearchParams(params)
+  return `${this.baseUrl}${path}${query ? `?${query}` : ''}`
+}
+```
+
+qs 의 `arrayFormat: 'comma'` 옵션으로 배열 파라미터를 `ids=1,2,3` 형태로 보냅니다. 사용처에서 `URLSearchParams` 를 넘기면 qs 를 거치지 않고 바로 문자열로 바꿉니다.
+
+
+
+**body 를 JSON 문자열로 바꾸기**
+
+axios 는 body 에 객체를 넘기면 JSON 문자열로 바꿔서 보냅니다. 하지만 fetch 에 객체를 그대로 넘기면 `[object Object]` 라는 문자열이 전송돼요. 그래서 `createBody` 에서 직접 JSON 문자열로 바꿨습니다.
+
+```typescript
+function createBody(body: object) {
+  if (body instanceof URLSearchParams) return body.toString()
+  return JSON.stringify(body)
+}
+```
+
+
+
+**헤더 합치기**
+
+`createHeaders` 는 여러 헤더 객체를 받아 `Headers` 인스턴스 하나로 합칩니다.
+
+```typescript
+export function createHeaders({ sources, base }: CreateHeadersParams) {
+  const headers = new Headers(base)
+
+  sources.forEach((source) => {
+    Object.entries(source ?? {}).forEach(([key, value]) => {
+      if (value === undefined) return
+      headers.set(key, value)
+    })
+  })
+
+  return headers
+}
+```
+
+`sources` 배열의 뒤쪽 객체가 앞쪽 객체의 같은 헤더를 덮어씁니다. `request` 에서는 `[this.defaultHeaders, config]` 순서로 넘기기 때문에 사용처에서 config 로 넘긴 헤더가 기본 헤더보다 우선해요.
+
+값이 undefined 인 헤더는 건너뛰는데요. `Headers` 의 `set` 에 undefined 를 넘기면 헤더가 빠지지 않고 `"undefined"` 문자열이 값으로 들어가기 때문입니다. axios 는 값이 undefined 인 헤더를 요청에 싣지 않았기 때문에 같은 동작이 되도록 맞췄습니다.
+
+
+
+**timeout**
+
+fetch 에는 timeout 옵션이 없습니다. 그래서 `AbortController` 의 signal 을 fetch 에 넘기고 timeout 시간이 지나면 `abort()` 를 호출해 요청을 중단하도록 했습니다.
+
+`finally` 에서 `clearTimeout` 을 호출하기 때문에 요청이 성공해도 실패해도 타이머가 남지 않습니다. 그리고 `send` 는 응답 본문까지 다 읽은 뒤에 끝나기 때문에 timeout 시간에는 응답 본문을 읽는 시간도 포함됩니다.
+
+
+
+**응답 본문 파싱**
+
+`send` 는 fetch 로 요청을 보내고 응답을 `HttpResponse` 형태로 바꿔 돌려줍니다.
+
+```typescript
+private async send(request: HttpRequest, signal: AbortSignal): Promise<HttpResponse> {
+  const { url, method, headers, body } = request
+
+  try {
+    const response = await fetch(url, { method, headers, body, signal })
+
+    return {
+      ok: response.ok,
+      status: response.status,
+      body: parseJson(await response.text()),
+    }
+  } catch (error) {
+    throw new HttpError(NETWORK_ERROR_STATUS, { code: 0, message: this.createNetworkErrorMessage(error, signal) })
+  }
+}
+```
+
+```typescript
+export function parseJson(text: string) {
+  try {
+    return JSON.parse(text)
+  } catch {
+    return text
+  }
+}
+```
+
+응답 본문은 `response.json()` 대신 `response.text()` 로 읽고 `parseJson` 으로 파싱합니다. `response.json()` 은 본문이 비어 있는 204 응답이나 502 HTML 페이지처럼 JSON 이 아닌 응답을 받으면 에러를 던지는데요. 이 에러는 `send` 의 `catch` 로 들어가서 네트워크 에러로 처리됩니다. 성공한 204 응답이 에러가 되고 502 응답은 상태 코드를 잃어버리는 거죠. `parseJson` 은 파싱에 실패하면 에러를 던지지 않고 문자열을 그대로 돌려줍니다. axios 도 JSON 파싱에 실패하면 문자열을 그대로 돌려주기 때문에 같은 동작이 되도록 맞췄어요.
+
+`catch` 블록은 네트워크 에러와 timeout 을 처리하는데요. 이 부분은 [에러 처리](#에러-처리) 에서 다룹니다.
+
+
+
+**4xx 5xx 응답 처리**
+
+axios 는 응답 상태 코드가 2xx 가 아니면 reject 합니다. 하지만 fetch 는 4xx 나 5xx 응답을 받아도 reject 하지 않고 `Response` 를 그대로 돌려줘요. fetch 가 reject 하는 경우는 네트워크 에러처럼 응답 자체를 받지 못했을 때뿐입니다.
+
+그래서 `request` 에서 `response.ok` 가 false 이면 `onErrorResponse` 로 `HttpError` 를 만들어 직접 던집니다.
+
+```typescript
+const response = await this.send(request, controller.signal)
+if (!response.ok) throw onErrorResponse(response)
+
+return { data: response.body as R, status: response.status }
+```
+
+에러가 없으면 `{ data, status }` 형태로 응답을 돌려줍니다. axios 응답처럼 `data` 로 꺼낼 수 있기 때문에 사용처의 `const { data } = await ApiServer.get(...)` 코드는 바꾸지 않아도 됩니다.
+
+`request` 메서드 내 `try` `catch` 문에선 `catch` 를 쓰지 않았는데요. `send` 와 `onErrorResponse` 가 던지는 에러는 이미 `HttpError` 라서 `request` 에서 다시 처리할 필요가 없기 때문입니다. 에러는 그대로 사용처까지 던져서 사용처에서 `status` 와 `code` 를 보고 처리하도록 했어요.
+
+
+
+### 2. params와 body 분리
+
+1편의 인터페이스는 http 메서드와 관계없이 파라미터를 `params` 하나로 받았습니다. `get` 은 `params` 를 쿼리스트링으로 보내고 `post` `put` `patch` `delete` 는 body 로 보냈는데요. 이 방식에는 아쉬운 점이 있었습니다.
+
+사용처 코드만 보고는 `params` 가 어디로 전송되는지 알 수 없다는 점입니다. axios 에서 `params` 는 쿼리스트링을 뜻하는 옵션 이름인데요. 1편 인터페이스에서는 `post` 에 넘긴 `params` 가 body 로 전송됩니다. 결국 `params` 가 어디로 가는지 확인하려면 구현체 코드를 열어봐야 했어요.
+
+그래서 옵션을 쿼리스트링용 `params` 와 body 용 `body` 로 나눴습니다.
+
+```typescript
+export interface QueryOptions {
+  params?: object
+  body?: never
+  config?: RequestHeader
+}
+
+export interface BodyOptions {
+  params?: never
+  body?: object
+  config?: RequestHeader
+}
+```
+
+`get` 은 `QueryOptions` 를 받고 `post` `put` `patch` `delete` 는 `BodyOptions` 를 받습니다. 각 인터페이스는 받지 않는 옵션을 `never` 타입으로 선언했는데요. `never` 타입 옵션에 값을 넘기면 타입 에러가 납니다. 그래서 아래 두 호출은 모두 컴파일 단계에서 에러가 나요.
+
+```typescript
+ApiServer.get('/api/products', { body: { page: 1 } }) //에러
+ApiServer.post('/api/coupons', { params: { couponId } }) //에러
+```
+
+받지 않는 옵션을 아예 빼지 않고 `never` 로 선언한 이유는 `request` 의 구조 분해 때문입니다. `request` 는 두 옵션 타입의 유니온을 받아 `{ params, body, config }` 로 구조 분해하는데요. TypeScript 는 유니온의 모든 멤버에 있는 속성만 구조 분해할 수 있게 합니다. `QueryOptions` 에 `body` 가 없으면 `body` 를 꺼낼 때 타입 에러가 나요. 두 인터페이스에 상대 옵션을 `never` 로 선언해 두면 `params` 와 `body` 가 양쪽에 모두 있어서 구조 분해할 수 있습니다.
+
+
+
+다만 변경 때문에 `post` `put` `patch` `delete` 사용처는 `params` 를 `body` 로 바꿔야 했습니다. 구현 목표를 "사용처 변경x"가 아닌 "최소화" 로 잡은 이유이기도 한데요. 옵션 이름 하나만 바꾸면 되는 작업이었고 사용처 코드에서 파라미터가 어디로 전송되는지 바로 보이게 됐기 때문에 바꿀 만하다고 판단했습니다.
+
+## 인터셉터를 대신하는 protected 메서드
+
+1편에서는 axios 인터셉터로 서버에서는 쿠키와 채널 헤더를 넣고 클라이언트에서는 채널 헤더를 넣었는데요. fetch 에는 인터셉터 기능이 없습니다.
+
+그래서 base 클래스에 protected 메서드 `interceptRequest` 를 추가했습니다.
+
+```typescript
+export abstract class BaseHttp implements ApiInterface {
+  protected interceptRequest?(request: HttpRequest): HttpRequest
+}
+```
+
+`interceptRequest` 는 요청 객체를 받아 헤더를 넣은 요청 객체를 돌려줍니다. 그리고 `request` 에서 요청 객체를 바로 보내지 않고 `interceptRequest` 를 거친 객체를 보내도록 고쳤습니다.
+
+```typescript
+const initialRequest: HttpRequest = {
+  url: this.createUrl(path, params),
+  method,
+  headers: createHeaders({ sources: [this.defaultHeaders, config] }),
+  ...(body && { body: createBody(body) }),
+}
+
+const request = this.interceptRequest?.(initialRequest) ?? initialRequest
+```
+
+axios 의 요청 인터셉터가 config 를 받아 고친 config 를 돌려주던 것과 같은 방식입니다.
+
+환경별 클래스는 `BaseHttp` 를 상속하고 `interceptRequest` 에서 그 환경에 맞는 헤더를 넣습니다. 클라이언트 컴포넌트에서 쓰는 `ApiClient` 는 아래처럼 채널 헤더를 넣어요.
+
+```typescript
+export default class ApiClient extends BaseHttp {
+  protected interceptRequest(request: HttpRequest) {
+    return onRequest(request, {
+      [HEADER.CHANNEL]: getChannelClient(),
+    })
+  }
+}
+```
+
+```typescript
+export function onRequest(request: HttpRequest, requestHeader: RequestHeader = {}): HttpRequest {
+  return {
+    ...request,
+    headers: createHeaders({ sources: [requestHeader], base: request.headers }),
+  }
+}
+```
+
+`onRequest` 는 요청에 이미 들어 있는 헤더 위에 환경별 클래스가 넘긴 헤더를 덮어씁니다.
+
+`request` 는 private 메서드로 두고 `interceptRequest` 만 protected 메서드로 열어둔 이유가 있는데요. TypeScript 에서는 상속한 클래스가 private 메서드와 같은 이름의 메서드를 선언하면 컴파일 에러가 납니다. 그래서 환경별 클래스는 `request` 를 다시 정의할 수 없고 `interceptRequest` 로 헤더를 넣는 일만 할 수 있습니다. 어떤 클래스로 요청을 보내든 요청 객체를 만들고 fetch 로 보내고 에러를 확인하는 과정은 모두 동일하도록 하기 위함이죠.
+
+`interceptRequest` 는 `?` 를 붙여 구현하지 않아도 되는 메서드로 만들었습니다. CDN 파일을 조회하는 `CdnClient` 처럼 헤더를 넣을 필요가 없는 클래스가 있기 때문입니다. abstract 메서드로 만들면 이런 클래스도 아무 일도 하지 않는 메서드를 만들어야 해요.
+
+```typescript
+export default class CdnClient extends BaseHttp {}
+```
+
+`interceptRequest` 를 구현하지 않으면 `this.interceptRequest?.(initialRequest)` 가 undefined 를 돌려주고 `initialRequest` 가 그대로 쓰입니다.
+
+
+
+&nbsp;
+
+&nbsp;
+
+## base 클래스를 상속한 환경별 클래스
+
+`BaseHttp` 를 만들었으니 각 환경별 상속 클래스를 만들어볼까요. 각 클래스는 `interceptRequest` 에서 그 환경에 필요한 헤더만 주입하도록 설계했습니다.
+
+### 1. 서버 컴포넌트용 ApiServer
+
+```typescript
+export default class ApiServer extends BaseHttp {
+  protected interceptRequest(request: HttpRequest) {
+    return onRequest(request, getRequestHeader())
+  }
+}
+```
+
+```typescript
+export function getRequestHeader() {
+  return {
+    ...Object.fromEntries(
+      headers()
+        .entries()
+        .filter(([key]) => !SKIP_FORWARD_HEADERS.has(key.toLowerCase())),
+    ),
+    [HEADER.CHANNEL]: getChannelServer(),
+    [HEADER.COOKIE]: headers().get(HEADER.COOKIE) ?? '',
+  }
+}
+```
+
+1편의 `ApiServer` 는 채널 헤더와 쿠키만 백엔드 요청에 넣었는데요. 이번에는 브라우저가 Next.js 서버로 보낸 요청 헤더 중 백엔드에 실제로 필요한 헤더만 넘기도록 바꿨습니다. 그 이유는 axios 인터페이스로 바꾼 뒤 사이드 이펙트가 생겼었거든요..... 이를 수정하는 과정에서 최종적으로 `SKIP_FORWARD_HEADERS` 에 넣은 헤더를 뺀 나머지 헤더만 넘기도록 했습니다. 어떤 문제가 있었는지는 차후 포스팅에서 자세히 다룰게요.
+
+
+
+### 2. 세션 헤더를 싣지 않는 PublicApiServer
+
+api 중 유저에 종속되지 않고 같은 응답을 내려주는 api 가 있을 수 있습니다. 이런 api 는 Next.js 의 fetch 캐싱을 쓰면 좋은데요. 요청마다 백엔드를 호출하지 않고 캐시된 응답을 다시 쓸 수 있기 때문입니다.
+
+이런 api 를 `ApiServer` 로 호출하지 않고 상속 클래스를 따로 만든 이유는 `ApiServer` 가 요청 헤더에 세션 쿠키를 넣기 때문입니다. Next.js 는 요청 헤더까지 합쳐서 캐시 키를 만드는데요. 세션 쿠키가 실리면 사용자마다 캐시 키가 달라집니다. 모든 사용자에게 같은 응답을 주는 api 인데도 캐시가 사용자마다 따로 만들어져서 캐싱하는 의미가 없어지는 거죠.
+
+그래서 세션 쿠키를 싣지 않는 `PublicApiServer` 를 만들었습니다.
+
+```typescript
+export default class PublicApiServer extends BaseHttp {}
+```
+
+`PublicApiServer` 는 `interceptRequest` 를 구현하지 않습니다. 브라우저 요청 헤더도 쿠키도 넣지 않아서 같은 api 를 같은 파라미터로 호출하면 캐시 키가 같아요.
+
+다음으로 사용처에서 Next.js 캐싱 옵션을 넘길 수 있도록 base 클래스를 고쳤습니다. 옵션 타입에 `next` 를 추가했는데요.
+
+```typescript
+export interface NextCache {
+  next?: NextFetchRequestConfig
+}
+```
+
+`request` 는 사용처가 넘긴 `next` 를 요청 객체에 담고 fetch 를 호출하는 `send` 메서드는 이 값을 fetch 옵션에 넘깁니다.
+
+```typescript
+const initialRequest: HttpRequest = {
+  url: this.createUrl(path, params),
+  method,
+  headers: createHeaders({ sources: [this.defaultHeaders, config] }),
+  ...(body && { body: createBody(body) }),
+  ...(next && { next }),
+}
+```
+
+```typescript
+const response = await fetch(url, { method, headers, body, signal, ...(next && { next }) })
+```
+
+이제 사용처에서 `next` 옵션으로 캐싱 방식을 정할 수 있습니다.
+
+```typescript
+const { data } = await PublicApiServer.get<GenresRes>('/api/genres', {
+  params: { contentType },
+  config: { [HEADER.CHANNEL]: channel },
+  next: { revalidate: false, tags: [GENRES_CACHE_TAG] },
+})
+```
+
+채널 헤더는 `PublicApiServer` 가 넣지 않기 때문에 사용처에서 config 로 넘깁니다. 채널 값은 몇 가지뿐이라 캐시 키도 채널마다 하나씩만 생겨요.
+
+다만 이렇게 하면 `next` 옵션을 `ApiServer` 에도 넘길 수 있게 되는데요. 이 문제는 다음 섹션에서 다룹니다.
+
+
+
+### 3. 클라이언트 컴포넌트용 ApiClient
+
+```typescript
+export default class ApiClient extends BaseHttp {
+  protected interceptRequest(request: HttpRequest) {
+    return onRequest(request, {
+      [HEADER.CHANNEL]: getChannelClient(),
+    })
+  }
+}
+```
+
+`ApiClient` 는 채널 헤더만 넣습니다. `getChannelClient()` 는 `document.cookie` 에서 채널 값을 읽어요.
+
+`ApiServer` 와 달리 쿠키는 넣지 않는데요. 브라우저가 같은 도메인으로 보내는 요청에는 브라우저가 쿠키를 직접 싣기 때문입니다.
+
+
+
+### 4. 라우트 핸들러 호출용 InternalApiClient
+
+```typescript
+export default class InternalApiClient extends BaseHttp {}
+```
+
+`InternalApiClient` 는 Next.js의 라우트 핸들러를 호출할 때 씁니다. 백엔드 api 가 아니라 `app/api` 아래에 만든 라우트 핸들러로 요청을 보내요.
+
+사용자 설정 값 중에는 httpOnly 쿠키에 저장하는 값이 있는데요. httpOnly 쿠키는 브라우저에서 `document.cookie` 로 바꿀 수 없습니다. 그래서 이런 값을 바꿀 때는 라우트 핸들러가 세션을 확인한 뒤 응답에 쿠키를 설정합니다.
+
+```typescript
+await InternalApiClient.post('/api/users/settings', { body: { value } })
+```
+
+라우트 핸들러는 쿠키만 설정하고 본문 없이 204 를 돌려주는데요. 앞에서 응답 본문을 `response.text()` 로 읽고 `parseJson` 으로 파싱하도록 만들었기 때문에 이 응답도 에러 없이 정상 응답으로 처리됩니다.
+
+라우트 핸들러는 채널 헤더를 쓰지 않습니다. 그래서 `InternalApiClient` 는 `interceptRequest` 를 구현하지 않았어요.
+
+
+
+### 5. CDN 파일 조회용 CdnClient
+
+```typescript
+export default class CdnClient extends BaseHttp {}
+```
+
+`CdnClient` 는 CDN 에 올려둔 정적 파일을 조회할 때 씁니다. 저희 서비스는 약관 HTML 파일과 약관 버전 목록을 담은 JSON 파일을 CDN 에서 내려받는데요. CDN 요청에는 채널 헤더와 쿠키가 필요 없어서 `interceptRequest` 를 구현하지 않았습니다.
+
+```typescript
+const { data: html } = await CdnClient.get<string>('/terms/privacy/index.html')
+const { data: metadata } = await CdnClient.get<Record<string, AgreementMeta>>('/terms/metadata.json')
+```
+
+두 파일은 응답 형식이 다르지만 `CdnClient` 에는 응답을 따로 처리하는 코드가 없습니다. `parseJson` 이 JSON 파일은 객체로 파싱하고 HTML 파일은 파싱에 실패하니 문자열 그대로 돌려주기 때문이에요.
+
+
+
+### 6. 미들웨어 호출용 ApiMiddleware
+
+미들웨어도 같은 인터페이스로 api 를 호출하도록 클래스를 만들었습니다. 다만 다른 클래스와 다른 점이 두 가지 있었는데요.
+
+첫 번째는 요청 헤더를 읽는 방법입니다. `ApiServer` 는 `next/headers` 의 `headers()` 로 브라우저 요청 헤더를 읽습니다. 이와 다르게 미들웨어는 요청을 `NextRequest` 인자로 받는데요. 때문에  다른 설계 방법이 필요합니다. 
+
+```typescript
+export default class ApiMiddleware extends BaseHttp {
+  private readonly nextRequest: NextRequest
+
+  constructor(nextRequest: NextRequest, options: BaseHttpOptions = {}) {
+    super(options)
+    this.nextRequest = nextRequest
+  }
+
+  protected interceptRequest(request: HttpRequest) {
+    return onRequest(request, {
+      ...getForwardHeaders(this.nextRequest.headers),
+      [HEADER.CHANNEL]: getChannelMiddleware(this.nextRequest),
+    })
+  }
+}
+```
+
+위 코드처럼 생성자에서 `NextRequest` 를 받도록 했습니다.
+
+이렇게 `NextRequest` 를 받는 방식에는 주의할 점이 있는데요. `ApiServer` 는 api 를 호출할 때마다 `headers()` 로 그 시점에 처리 중인 요청의 헤더를 읽습니다. 그래서 인스턴스를 하나만 만들어 공유해도 요청마다 맞는 헤더가 들어가요. 반면 `ApiMiddleware` 는 생성자에서 받은 `NextRequest` 를 인스턴스에 저장해두고 씁니다. 인스턴스 하나를 공유하면 처음 만들 때 받은 `NextRequest` 가 계속 쓰여서 다른 사용자의 요청에도 첫 번째 사용자의 쿠키와 헤더가 실리게 됩니다. 그래서 요청마다 인스턴스를 만들도록 했습니다.
+
+```typescript
+export default function createApiMiddleware(request: NextRequest) {
+  return new ApiMiddleware(request, {
+    baseUrl: API_URL,
+    headers: {
+      [HEADER.CONTENT_TYPE]: HEADER_CONTENT.json,
+    },
+  })
+}
+```
+
+두 번째는 응답 헤더가 필요하다는 점입니다. 미들웨어에서 호출하는 자동 로그인 api 는 로그인 결과인 세션 쿠키를 응답의 `Set-Cookie` 헤더로 보내는데요. 미들웨어는 이 값을 브라우저로 보내는 응답에 그대로 붙여야 합니다. 그런데 `send` 는 응답을 `{ ok, status, body }` 로만 돌려줘서 응답 헤더 반환하지 않는 상태였습니다. 그래서 base 클래스가 응답 헤더도 함께 돌려주도록 수정했습니다.
+
+```typescript
+return {
+  ok: response.ok,
+  status: response.status,
+  headers: response.headers,
+  body: parseJson(await response.text()),
+}
+```
+
+```typescript
+return { data: response.body as R, status: response.status, headers: response.headers }
+```
+
+이제 미들웨어에서 응답 헤더를 꺼내 쓸 수 있습니다.
+
+```typescript
+const { headers } = await createApiMiddleware(request).post('/api/auth/legacy-login', { body: { isAutoLogin } })
+const setCookies = headers.getSetCookie()
+```
+
+다른 사용처는 `data` 만 꺼내 쓰기 때문에 응답 헤더가 추가돼도 코드가 바뀌지 않습니다.
+
+이렇게 미들웨어 전용 클래스까지 만들면서 axios 기반 인터페이스의 문제점도 해결할 수 있게 되었습니다. axios 를 쓸 때는 미들웨어에서만 fetch 를 직접 호출해야 해서 api 를 호출하는 방식이 환경마다 달랐는데요. 이제는 서버와 클라이언트와 미들웨어 모두 같은 인터페이스로 api 를 호출합니다.
+
+
+
+&nbsp;
+
+&nbsp;
+
+## 환경별 인스턴스 생성
+
+만들어놓은 상속 클래스마다 인스턴스를 하나씩 만들어 사용처에서 이 인스턴스를 import 해서 사용하도록 했습니다.
+
+```typescript
+export default new ApiServer({
+  baseUrl: API_URL,
+  headers: {
+    [HEADER.CONTENT_TYPE]: HEADER_CONTENT.json,
+  },
+})
+```
+
+모듈은 처음 import 될 때 한 번만 실행되기 때문에 이 방식을 쓰면 여러 파일에서 import 해도 같은 인스턴스를 쓸 수 있죠. `ApiMiddleware` 는 `NextRequest` 가 요청마다 다르기 때문에 예외적으로 요청마다 인스턴스를 만듭니다.
+
+```typescript
+export default new CdnClient({
+  baseUrl: CDN_BASE_URL,
+})
+```
+
+`CdnClient` 인스턴스에는 기본 헤더를 넣지 않았습니다. CDN 에 올려둔 정적 파일을 받기만 하는 요청이라 채널 헤더나 `Content-Type` 같은 헤더가 필요 없기 때문이에요.
+
+
+
+&nbsp;
+
+&nbsp;
+
+## Next.js 캐싱 옵션을 잘못 넘기지 않도록 타입 처리
+
+`next` 옵션은 `PublicApiServer` 에서 쓰려고 추가했는데요. 지금 구조에서는 `ApiServer` 에도 `next` 옵션을 넘길 수 있습니다. 위에서 언급했듯이 `ApiServer` 로는 Next.js 캐싱을 쓰지 않도록 했기 때문에 `next` 옵션을 넘기지 못하도록 막아야 합니다.
+
+먼저 `ApiInterface` 에 제네릭 `ExtraOptions` 를 추가했습니다. 클래스마다 `next` 옵션 주입 가능여부를 나누기 위해서입니다.
+
+```typescript
+export interface NoCache {
+  next?: never
+}
+
+interface ApiInterface<ExtraOptions extends NextCache = NoCache> {
+  get: <R = unknown>(url: string, options?: QueryOptions & ExtraOptions) => Promise<ApiResponse<R>>
+  post: <R = unknown>(url: string, options?: BodyOptions & ExtraOptions) => Promise<ApiResponse<R>>
+  put: <R = unknown>(url: string, options?: BodyOptions & ExtraOptions) => Promise<ApiResponse<R>>
+  delete: <R = unknown>(url: string, options?: BodyOptions & ExtraOptions) => Promise<ApiResponse<R>>
+  patch: <R = unknown>(url: string, options?: BodyOptions & ExtraOptions) => Promise<ApiResponse<R>>
+}
+```
+
+`ExtraOptions` 의 기본값은 `next` 를 `never` 로 선언한 `NoCache` 로 정했습니다. 제네릭을 넘기지 않으면 `next` 옵션을 받지 않도록 하기 위함이죠. 캐싱을 쓰는 클래스는 `PublicApiServer` 하나뿐이라 `PublicApiServer` 만 제네릭을 넘기고 나머지 클래스는 기본값을 쓰도록 했어요.
+
+`BaseHttp` 도 같은 제네릭을 받아서 `ApiInterface` 에 넘기도록 했습니다. 이렇게 하면 상속하는 클래스는 `extends BaseHttp<NextCache>` 처럼 제네릭만 넘겨도 http 메서드들 모두 `next` 옵션을 받을 수 있습니다.
+
+```typescript
+export abstract class BaseHttp<ExtraOptions extends NextCache = NoCache> implements ApiInterface<ExtraOptions> {
+  public get<R = unknown>(path: string, options?: QueryOptions & ExtraOptions) {
+    return this.request<R>('GET', path, options)
+  }
+}
+```
+
+```typescript
+export default class PublicApiServer extends BaseHttp<NextCache> {}
+```
+
+이제 `ApiServer` 에 `next` 옵션을 넘기면 타입 에러가 나요.
+
+```typescript
+ApiServer.get('/api/genres', { next: { revalidate: 60 } }) // 에러
+PublicApiServer.get('/api/genres', { next: { revalidate: 60 } })
+```
+
+`request` 메서드는 그대로 `next` 를 받을 수 있는 타입으로 뒀습니다. `request` 는 모든 클래스가 함께 쓰는 private 메서드라서 `next` 를 받는 경우와 받지 않는 경우를 모두 처리해야 하기 때문입니다.
+
+즉 `next` 옵션 가능 여부는 사용처가 호출하는 public 메서드의 타입이 정하도록 했습니다.
+
+
+
+&nbsp;
+
+&nbsp;
+
+## 에러 처리
+
+`request` 에서 생기는 에러는 두 가지입니다. 응답을 받지 못한 경우와 4xx 5xx 응답을 받은 경우인데요. 두 경우 모두 `HttpError` 로 만들어 던지도록 했습니다.
+
+### 1. 응답을 받지 못한 경우
+
+네트워크가 끊기거나 timeout 으로 요청이 중단되면 fetch 가 reject 됩니다. `send` 의 `catch` 는 이 에러를 status 0 인 `HttpError` 로 바꿔 던지도록 했습니다.
+
+```typescript
+} catch (error) {
+  throw new HttpError(NETWORK_ERROR_STATUS, { code: 0, message: this.createNetworkErrorMessage(error, signal) })
+}
+```
+
+```typescript
+private createNetworkErrorMessage(error: unknown, signal: AbortSignal) {
+  if (signal.aborted) return `TIMEOUT: timeout of ${this.timeout}ms exceeded`
+  return `NETWORK_ERROR: ${error instanceof Error ? error.message : String(error)}`
+}
+```
+
+응답을 받지 못했으니 HTTP 상태 코드가 없습니다. 그래서 status 는 0 으로 두고 원인은 메시지로 구분하도록 했습니다. `signal.aborted` 가 true 이면 timeout 타이머가 요청을 중단한 것이라 `TIMEOUT` 메시지를 남기고 그 외에는 fetch 가 던진 에러 메시지를 `NETWORK_ERROR` 와 함께 남기도록 했습니다.
+
+
+
+### 2. 4xx 5xx 응답을 받은 경우
+
+응답이 4xx 5xx 이면 `onErrorResponse` 가 응답 본문으로 `HttpError` 를 만들도록 했습니다.
+
+```typescript
+function isHttpErrorData(data: unknown): data is HttpErrorData {
+  return typeof data === 'object' && data !== null && !Array.isArray(data)
+}
+
+export function onErrorResponse({ status, body }: HttpResponse) {
+  const data = isHttpErrorData(body) ? body : undefined
+  const message = data?.message || `HTTP ${status}`
+
+  return new HttpError(status, { ...data, code: data?.code ?? 0, message })
+}
+```
+
+`onErrorResponse` 는 응답 본문에서 `code` 와 `message` 를 꺼내 `HttpError` 를 만드는데요. 응답 본문은 `parseJson` 을 거치기 때문에 항상 객체로 오지는 않습니다. 예를 들어 로드밸런서가 돌려준 502 HTML 페이지는 문자열로 들어와요. 그래서 `isHttpErrorData` 로 본문이 객체인지 먼저 확인하고 객체일 때만 에러 데이터로 쓰도록 했습니다.
+
+서버가 에러 메시지를 내려주지 않으면 `HTTP 502` 처럼 상태 코드를 메시지로 남기도록 했습니다. 메시지가 빈 문자열이면 에러를 받은 사용처에서 `error.message` 만 보고는 무슨 에러인지 알 수 없기 때문이에요.
+
+
+
+&nbsp;
+
+&nbsp;
+
+## 디렉토리 구조와 api 함수 재설계
+
+인터페이스를 바꾸면서 api 함수를 두는 위치와 형태도 함께 정리했습니다.
+
+### 1. 기능 단위 디렉토리 구조
+
+기존에는 api 함수를 그 api 를 쓰는 도메인 폴더에 뒀습니다. 홈 화면에서 쓰는 api 는 `home/apis` 에 두고 내 서재 화면에서 쓰는 api 는 `library/.../apis` 에 두는 식이었는데요.
+
+```
+src
+├── home
+│   └── apis
+│       ├── getContentsRankings.ts
+│       └── getContentsRecentReads.ts
+├── library
+│   ├── recent
+│   │   └── apis
+│   │       └── getRecentVolumeAccess.ts
+│   └── favorites-contents
+│       └── apis
+│           └── deleteFavoritesContents.ts
+└── common
+    ├── hooks
+    │   └── user
+    │       └── apis
+    │           └── deleteUsersFavoritesContents.ts
+    └── components
+        └── content
+            └── apis
+                ├── getContentsClient.ts
+                └── getContentsServer.ts
+```
+
+문제는 api 하나를 여러 도메인에서 쓸 때였습니다. 여러 도메인에서 쓰는 api 를 어디에 둘지 기준을 정의하기 어렵다 보니 일단 `common` 에 넣자는 식으로 때우게 되었고 `common` 안에서도 `common/hooks/user/apis` 와 `common/components/content/apis` 처럼 다시 위치가 나뉘는 참사가 일어났습니다.
+
+이 문제는 백엔드와 프론트가 api 를 나누는 기준이 달라서 생겼습니다. 백엔드는 api 를 사용자와 작품처럼 기능 단위로 만드는데 프론트는 그 api 를 화면 도메인 단위로 관리했던 거죠. 그래서 프론트도 백엔드와 같은 기준인 기능 단위로 디렉토리를 나누기로 했습니다.
+
+기존에는 도메인 폴더 아래에 api 함수를 뒀다면 이번에는 `service` 라는 디렉토리를 따로 만들어 api 만 관리하도록 했습니다.
+
+기능 단위 기준은 엔드포인트로 잡았습니다. 실제로 백엔드팀에서 api 문서를 정리할 때 엔드포인트 기준으로 정리하기도 했구요. 엔드포인트의 첫 경로를 폴더 이름으로 쓰도록 했어요.
+
+예를 들면
+
+- `/api/users/me` 와 `/api/users/favorites/contents` 는 `service/users` 
+- `/api/contents` 는 `service/contents` 
+- `/api/genres` 는 `service/genres`
+
+```
+src/service
+├── _core
+│   └── api-instance   // 환경별 인스턴스
+├── contents
+│   ├── api.ts
+│   ├── server.ts
+│   └── client.ts
+├── genres
+│   ├── api.ts
+│   └── server.ts
+└── users
+    ├── api.ts         // 인스턴스를 인자로 받는 팩토리 함수
+    ├── server.ts      // ApiServer 인스턴스 api
+    ├── client.ts      // ApiClient 인스턴스 api
+    ├── internal.ts    // InternalApiClient 인스턴스 api
+    └── type.ts        // 요청과 응답 타입
+```
+
+### 2. 인스턴스를 인자로 받는 팩토리 함수
+
+기존 api 함수는 함수 안에서 인스턴스를 직접 import 해서 호출했습니다. 그래서 함수마다 쓰는 인스턴스가 정해져 버렸는데요. 같은 api 를 클라이언트 컴포넌트에서도 호출하려면 인스턴스만 다른 함수를 하나 더 만들어야 했어요.
+
+```typescript
+export default async function getContentsServerApi(params: ContentsParams) {
+  const { data } = await ApiServer.get<ContentsRes>('/api/contents', { params })
+  return data
+}
+```
+
+```typescript
+export default async function getContentsClientApi(params: ContentsParams) {
+  const { data } = await ApiClient.get<ContentsRes>('/api/contents', { params })
+  return data
+}
+```
+
+두 함수는 인스턴스만 다르고 엔드포인트와 파라미터와 응답 타입이 모두 같습니다. api 스펙이 바뀌면 두 파일을 함께 고쳐야 하는 거죠.
+
+그래서 `api.ts` 의 팩토리 함수가 인스턴스를 인자로 받아 api 함수를 담은 객체를 돌려주도록 했습니다.
+
+```typescript
+export function createUsersApi(request: ApiInterface) {
+  return {
+    async getUsersMe() {
+      const { data } = await request.get<UsersMeRes>('/api/users/me')
+      return data
+    },
+  }
+}
+```
+
+`server.ts` 와 `client.ts` 는 같은 팩토리 함수에 실행 환경에 맞는 인스턴스를 넘깁니다.
+
+```typescript
+export const usersApiServer = createUsersApi(ApiServer)
+```
+
+```typescript
+export const usersApiClient = createUsersApi(ApiClient)
+```
+
+api 함수는 `api.ts` 에 한 번만 작성하고 서버 컴포넌트에서는 `usersApiServer` 를, 클라이언트 컴포넌트에서는 `usersApiClient` 를 쓰면 됩니다. 인자 타입을 `ApiInterface` 로 받기 때문에 어떤 인스턴스를 넘겨도 api 함수 코드는 바뀌지 않는 이점을 누릴 수 있습니다.
+
+
+
+### 3. 캐싱 가능한 인스턴스만 넘길 수 있게 하기
+
+인스턴스를 팩토리 함수에 넘기는 구조가 되면서 팩토리 함수도 캐싱 가능한 인스턴스만 받도록 타입을 구성해야 했는데요. 그러기 위해선 캐싱을 쓰는 팩토리 함수의 인자 타입을 `next` 옵션을 받을 수 있는 인스턴스 타입으로 정하는 것이 필요했습니다.
+
+그래서 `CacheableApiInterface` 타입을 만들었습니다. `ApiInterface` 의 제네릭에 `NextCache` 를 넘겨서 모든 http 메서드가 `next` 옵션을 받도록 한 타입이에요.
+
+```typescript
+interface ApiInterface<ExtraOptions extends NextCache = NoCache> {
+  get: <R = unknown>(url: string, options?: QueryOptions & ExtraOptions) => Promise<ApiResponse<R>>
+  post: <R = unknown>(url: string, options?: BodyOptions & ExtraOptions) => Promise<ApiResponse<R>>
+}
+
+export type CacheableApiInterface = ApiInterface<NextCache>
+```
+
+캐싱을 쓰는 팩토리 함수는 인자 타입을 `CacheableApiInterface` 로 받습니다.
+
+```typescript
+export function createGenresApi(request: CacheableApiInterface) {
+  return {
+    async getGenres(contentType: ContentType, channel: Channel) {
+      const { data } = await request.get<GenresRes>('/api/genres', {
+        params: { contentType },
+        config: { [HEADER.CHANNEL]: channel },
+        next: { revalidate: false, tags: [GENRES_CACHE_TAG] },
+      })
+      return data
+    },
+  }
+}
+```
+
+```typescript
+createGenresApi(PublicApiServer)
+createGenresApi(ApiServer) // 에러
+```
+
+`createGenresApi` 에 `ApiServer` 를 넘기면 타입 에러가 납니다. `createGenresApi` 안에서는 `get` 에 `next` 를 넘기는데 `ApiServer` 의 `get` 은 `next` 를 받지 않기 때문이에요. 반대로 `PublicApiServer` 는 `ApiInterface` 를 받는 팩토리 함수에도 넘길 수 있습니다. `next` 를 넘기지 않는 호출도 받을 수 있기 때문입니다.
+
+
+
+&nbsp;
+
+&nbsp;
+
+## React Query 옵션 중앙화
+
+api 함수를 팩토리 함수로 바꾸면서 React Query 옵션도 같은 방식으로 정리했습니다.
+
+기존에는 `queryKey` 와 `queryFn` 을 쓰는 곳마다 직접 작성했습니다. 서버 컴포넌트에서 데이터를 미리 받아두는 prefetch 코드와 클라이언트 컴포넌트에서 데이터를 읽는 `useQuery` 코드는 같은 쿼리 옵션을 쓰는데도 각자 따로 작성했는데요. 예를 들면 아래와 같습니다.
+
+```typescript
+await queryClient.prefetchQuery({
+  queryKey: [NOVEL_GENRE_CONTENTS, params],
+  queryFn: () => contentsApiServer.getContents(params),
+})
+```
+
+```typescript
+useQuery({
+  queryKey: [NOVEL_GENRE_CONTENTS, params],
+  queryFn: () => contentsApiClient.getContents(params),
+})
+```
+
+두 코드는 `queryFn` 이 호출하는 인스턴스만 다르고 `queryKey` 와 호출하는 api 는 같습니다. 그래서 쿼리 옵션을 바꿔야 할 때는 두 곳을 모두 고쳐야 했어요.
+
+
+
+또한 `queryKey` 상수는 화면 도메인 폴더의 `constants/queryKeys.ts` 에 따로 있었습니다. 두 코드의 `queryKey` 가 조금이라도 달라지면 클라이언트는 서버가 prefetch 한 데이터를 찾지 못하고 api 를 다시 호출합니다. 같은 쿼리를 두 곳에서 맞춰가며 관리해야 했던 거죠.
+
+그래서 `queryKey` 와 `queryFn` 을 도메인 폴더의 `queries.ts` 한 곳에서 정의하도록 했습니다.
+
+```
+src/service
+└── contents
+    ├── api.ts
+    ├── queries.ts     // React Query 옵션 팩토리 함수
+    ├── server.ts
+    └── client.ts
+```
+
+`queries.ts` 도 api 객체를 인자로 받는 팩토리 함수로 만들었습니다.
+
+```typescript
+export function createContentsQueries(api: ReturnType<typeof createContentsApi>) {
+  return {
+    novelGenreContents: (params: ContentsParams) =>
+      queryOptions({
+        queryKey: [NOVEL_GENRE_CONTENTS_KEY, params],
+        queryFn: () => api.getContents(params),
+      }),
+  }
+}
+```
+
+추가로 쿼리 옵션을 관리할 때 일반 객체가 아닌 TanStack Query 에서 제공하는 `queryOptions` 를 사용했는데요. 일반 객체로 돌려주면 속성 이름에 오타가 나도 TypeScript 가 잡아주지 못하기 때문입니다.
+
+```typescript
+const novelGenreContents = (params: ContentsParams) => ({
+  queryKey: [NOVEL_GENRE_CONTENTS_KEY, params],
+  queryFn: () => api.getContents(params),
+  stallTime: 60 * 1000,
+})
+
+useQuery(novelGenreContents(params)) // 에러 안남
+```
+
+`staleTime` 을 `stallTime` 으로 잘못 썼는데도 타입 에러가 나지 않습니다. 객체가 필요한 속성을 갖고 있는지만 확인하는 TypeScript의 구조적 타이핑 특징 때문인데요. 타입에 없는 속성이 더 있는지는 객체 리터럴을 함수 인자에 바로 넘길 때만 검사합니다. 위 코드는 함수가 돌려준 객체를 `useQuery` 에 넘기기 때문에 이 검사를 받지 않아요.
+
+이 문제를 해결하려고 `queryOptions` 를 사용했습니다. `queryOptions` 로 감싸면 객체 리터럴을 `queryOptions` 의 인자로 바로 넘기게 되는데요. 그래서 TypeScript 가 타입에 없는 속성을 검사하고 오타를 타입 에러로 알려줍니다.
+
+```typescript
+queryOptions({
+  queryKey: [NOVEL_GENRE_CONTENTS_KEY, params],
+  queryFn: () => api.getContents(params),
+  stallTime: 60 * 1000, // 에러
+})
+```
+
+`queryFn` 은 서버에서는 `ApiServer` 로, 클라이언트에서는 `ApiClient` 로 api 를 호출해야 합니다. 쿼리 팩토리 함수가 api 객체를 인자로 받으면 `queryKey` 는 하나로 두고 `queryFn` 이 호출하는 인스턴스만 실행 환경에 맞게 바꿀 수 있어요.
+
+`server.ts` 와 `client.ts` 는 각자 만든 api 객체를 넘깁니다.
+
+```typescript
+const api = createContentsApi(ApiServer)
+export const contentsApiServer = api
+export const contentsQueries = createContentsQueries(api)
+```
+
+```typescript
+const api = createContentsApi(ApiClient)
+export const contentsApiClient = api
+export const contentsQueries = createContentsQueries(api)
+```
+
+이제 prefetch 코드와 `useQuery` 코드는 같은 쿼리 옵션을 가져다 씁니다.
+
+```typescript
+await queryClient.prefetchQuery(contentsQueries.novelGenreContents(params))
+```
+
+```typescript
+useQuery(contentsQueries.novelGenreContents(params))
+```
+
+이렇게 하면 쿼리 옵션을 바꿀 때 `queries.ts` 한 곳만 고치면 되고 서버와 클라이언트의 `queryKey` 가 어긋날 일도 없습니다.
+
+
+
+&nbsp;
+
+&nbsp;
+
+## 사용 예시
+
+그럼 이제 잘 설계되었는지 실제 사용처 예시를 한번 볼까요? 찜한 작품 목록을 조회하는 api 로 예를 들어볼게요.
+
+엔드포인트가 `/api/users` 로 시작하니 `service/users/api.ts` 의 팩토리 함수에 메서드를 추가합니다.
+
+```typescript
+export function createUsersApi(request: ApiInterface) {
+  return {
+    async getFavoritesContents(params: FavoritesContentsParams) {
+      const { data } = await request.get<FavoritesContentsRes>('/api/users/favorites/contents', { params })
+      return data
+    },
+  }
+}
+```
+
+http 메서드와 엔드포인트와 파라미터만 넘기면 됩니다. 나머지는 인스턴스가 알아서 해준답니다.
+
+`server.ts` 와 `client.ts` 는 고치지 않아도 됩니다. 팩토리 함수에 추가한 메서드는 `usersApiServer` 와 `usersApiClient` 에 함께 생기기 때문이에요. 서버 컴포넌트에서는 `usersApiServer` 를 import 해서 바로 호출합니다.
+
+```tsx
+import { usersApiServer } from '@/service/users/server'
+
+export default async function FavoritesContentsPage() {
+  const { contents } = await usersApiServer.getFavoritesContents({ page: 1 })
+
+  return <FavoritesContentsList contents={contents} />
+}
+```
+
+이런식으로 사용처에선 각 실행 환경에 맞는 api 를 import 해서 호출하면 됩니다. 
+
+상속 클래스별 호출 예시는 아래와 같습니다.
+
+**ApiServer**
+
+```typescript
+const user = await usersApiServer.getUsersMe()
+```
+
+**PublicApiServer**
+
+```typescript
+const { genres } = await genresApiServer.getGenres('WEBTOON')
+```
+
+**ApiClient**
+
+```typescript
+const { mutate } = useMutation({
+  mutationFn: usersApiClient.deleteFavoritesContents,
+})
+```
+
+**InternalApiClient**
+
+```typescript
+await usersApiInternal.postSettings({ value })
+```
+
+**CdnClient**
+
+```typescript
+const metadata = await agreementsApiServer.getAgreementMetadata('privacy')
+```
+
+**ApiMiddleware**
+
+```typescript
+const user = await createUsersApi(createApiMiddleware(request)).getUsersMe()
+```
+
+사용처는 어떤 인스턴스가 어떤 헤더를 넣는지 몰라도 됩니다. 도메인 폴더의 api 를 import 해서 호출하기만 하면 돼요.
+
+
+
+기존보다 훨씬 더 사용하기 편리해졌다는걸 느낄 수 있습니다.
+
+
+
+&nbsp;
+
+&nbsp;
+
+# 마치며
+
+axios 기반 인터페이스를 fetch 기반으로 다시 설계해봤는데요. 바뀐 내용을 정리하면 아래와 같습니다.
+
+- 서버와 클라이언트와 미들웨어를 포함한 여섯 가지 환경에서 같은 인터페이스로 api 를 호출합니다.
+- Next.js 의 fetch 캐싱 옵션을 쓸 수 있게 됐고 캐싱을 쓰면 안 되는 인스턴스에는 타입으로 `next` 옵션을 막았습니다.
+- api 함수를 기능 단위 폴더와 팩토리 함수로 정리해서 서버용과 클라이언트용 함수를 따로 만들지 않습니다.
+- React Query 옵션은 `queries.ts` 한 곳에서 관리합니다.
+
+1편에서 axios 를 깊이 고민하지 않고 골랐다고 말씀드렸는데요. 다시 설계하면서 기술을 고를 때는 서비스가 어떤 환경에서 실행되는지부터 따져봐야 한다는 걸 배웠습니다. Next.js 처럼 실행 환경이 여러 개인 프레임워크에서는 모든 환경에서 기본으로 제공되는 fetch 가 저희 서비스에 더 맞는 선택이었어요.
+
+`ApiServer` 에서 말씀드린 사이드 이펙트와 이를 해결한 과정은 다음 포스팅에서 정리하겠습니다.
+
+
+
+&nbsp;
+
+&nbsp;
+
+<details>
+
+<summary>참고문헌</summary>
+
+<div markdown="1">
+
+https://nextjs.org/docs/app/api-reference/functions/fetch
+
+https://tanstack.com/query/latest/docs/framework/react/guides/query-options
+
+https://github.com/axios/axios/releases/tag/v1.7.0
+
+https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
+
+</div>
+
+</details>
