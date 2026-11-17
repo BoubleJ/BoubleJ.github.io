@@ -78,7 +78,7 @@ export async function getData(params: RankingsGenresParams) {
 
 axios 가 좋지 않은 라이브러리라는 뜻은 아닙니다. 다만 fetch, ky 등 axios 외 다양한 선택지가 있고 그중 저희 서비스 상황에 가장 맞는 라이브러리가 무엇인지 고민하지 않았다는 게 돌이켜보면 아쉬운 부분 중 하나입니다.
 
-실제로 http 인터페이스 재설계 2편에서 axios 라이브러리를 생각 없이 선택한 업보를 받았거든요. 
+실제로 axios 라이브러리를 생각 없이 선택한 업보를 받아 결국 fetch 로 다시 바꾸고 말았는데요. 이 과정은 [http 인터페이스 재설계 (2) fetch 기반](/http-인터페이스-재설계-(2)-fetch-기반/) 에 정리했습니다.
 
 
 
@@ -706,7 +706,7 @@ export default async function getProductsApi(params: ProductsParams) {
 
 &nbsp;
 
-근데 놀랍게도 이 구조에도 부족한 점이 있다고 판단해서 최종적으로는 fetch 기반 인터페이스로 다시 설계했습니다.... 나름 잘 만들었다 생각했는데 아쉬운 부분이 있더군요. 이 과정도 별도 글로 정리할 예정입니다. 
+근데 놀랍게도 이 구조에도 부족한 점이 있다고 판단해서 최종적으로는 fetch 기반 인터페이스로 다시 설계했습니다.... 나름 잘 만들었다 생각했는데 아쉬운 부분이 있더군요. 이 과정은 [http 인터페이스 재설계 (2) fetch 기반](/http-인터페이스-재설계-(2)-fetch-기반/) 에 정리했습니다. 
 
 
 
