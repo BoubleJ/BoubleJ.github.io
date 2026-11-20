@@ -32,6 +32,9 @@ export default defineConfig({
   site: SITE_URL,
   trailingSlash: "always",
   build: { format: "directory" },
+  redirects: {
+    "/고군분투-다이얼로그-제작-일지/": "/선언형으로-다이얼로그-관리하기/",
+  },
   integrations: [
     react(),
     mdx(),
